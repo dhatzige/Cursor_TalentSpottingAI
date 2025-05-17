@@ -1,103 +1,129 @@
-import Image from "next/image";
+import Navbar from '@/components/layout/Navbar';
+import Link from 'next/link';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-[#0a0f1a] text-white">
+      <Navbar transparent={true} />
+      
+      <div className="gradient-background pt-20 pb-12">
+        <div className="container mx-auto px-4 text-center pt-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 animated-gradient-hero">
+            Find Your Dream Job
+          </h1>
+          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+            Connect with top companies and discover opportunities that match your skills and aspirations.
+          </p>
+          
+          <div className="max-w-3xl mx-auto mb-12 bg-[#0d1424] rounded-md shadow-xl overflow-hidden border border-gray-800">
+            <div className="p-4 w-full flex items-center">
+              <input
+                type="text"
+                placeholder="Search for jobs, skills, or companies..."
+                className="flex-grow py-2 px-4 bg-[#0d1424] text-white outline-none placeholder-gray-500 w-full"
+              />
+              <button
+                className="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition-colors"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+          
+          <div className="mt-6 space-x-4">
+            <Link
+              href="/jobs"
+              className="px-5 py-2 bg-blue-600 rounded-md text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+            >
+              Browse Jobs
+            </Link>
+            <Link
+              href="/create-account"
+              className="px-5 py-2 bg-white text-gray-800 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      
+      {/* Features Section */}
+      <div className="py-16 gradient-background">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center text-white">Why TalentSpottingAI</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
+              <div className="text-blue-400 text-2xl mb-4">🤖</div>
+              <h3 className="text-xl font-semibold text-white mb-2">AI-Powered Matching</h3>
+              <p className="text-gray-300 text-sm">Our advanced AI algorithms analyze skills, experience, and cultural fit to find the perfect match.</p>
+            </div>
+            
+            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
+              <div className="text-indigo-400 text-2xl mb-4">🌐</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Talent Network</h3>
+              <p className="text-gray-300 text-sm">Access our extensive network of pre-vetted candidates and connections with leading universities.</p>
+            </div>
+            
+            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
+              <div className="text-purple-400 text-2xl mb-4">⚙️</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Smart Automation</h3>
+              <p className="text-gray-300 text-sm">Automate repetitive tasks and streamline your hiring process with intelligent workflows.</p>
+            </div>
+            
+            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
+              <div className="text-green-400 text-2xl mb-4">🔒</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Secure & Private</h3>
+              <p className="text-gray-300 text-sm">Enterprise-grade security and privacy controls to protect your data and candidates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Stats Section */}
+      <section className="py-16 bg-[#121a2e]">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div className="p-6">
+              <p className="text-4xl font-bold text-blue-400 mb-2">10,000+</p>
+              <p className="text-white">Candidates Placed</p>
+            </div>
+            <div className="p-6">
+              <p className="text-4xl font-bold text-blue-400 mb-2">98%</p>
+              <p className="text-white">Client Satisfaction</p>
+            </div>
+            <div className="p-6">
+              <p className="text-4xl font-bold text-blue-400 mb-2">500+</p>
+              <p className="text-white">Partner Companies</p>
+            </div>
+            <div className="p-6">
+              <p className="text-4xl font-bold text-blue-400 mb-2">95%</p>
+              <p className="text-white">Retention Rate</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Call to Action Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Hiring?</h2>
+          <p className="text-xl mb-8">Join thousands of companies who've already streamlined their recruitment process.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/create-account" 
+              className="px-6 py-3 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors font-medium"
+            >
+              Get Started for Free
+            </Link>
+            <Link 
+              href="/contact" 
+              className="px-6 py-3 border border-white text-white rounded-md hover:bg-white hover:bg-opacity-10 transition-colors font-medium"
+            >
+              Contact Sales
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
