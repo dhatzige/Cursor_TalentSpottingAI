@@ -1,0 +1,109 @@
+import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { calculateMatchScore } from '../../controllers/employer/utils';
+
+const prisma = new PrismaClient();
+
+/**
+ * Controller for candidate-related operations
+ */
+
+// Get top candidates for the organization
+export const getTopCandidates = async (req: Request, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== 'employer') {
+      return res.status(403).json({ message: 'Unauthorized access to employer resources' });
+    }
+    
+    // Find the organization this user belongs to
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: { organization: true }
+    });
+    
+    if (!user || !user.organization) {
+      return res.status(404).json({ message: 'Organization not found for this user' });
+    }
+    
+    const organizationId = user.organization.id;
+    
+    // Get organization's job skills
+    const orgJobs = await prisma.job.findMany({
+      where: { organizationId },
+      include: { skills: true }
+    });
+    
+    // Extract all skills used by the organization
+    const orgSkillIds = new Set<string>();
+    orgJobs.forEach((job: any) => {
+      job.skills?.forEach((skill: any) => {
+        if (skill.id) orgSkillIds.add(skill.id);
+      });
+    });
+    
+    // Find students with matching skills
+    const students = await prisma.user.findMany({
+      where: { 
+        role: 'student',
+        student: {
+          skills: {
+            some: {
+              id: { in: Array.from(orgSkillIds) }
+            }
+          }
+        }
+      },
+      include: {
+        student: {
+          include: {
+            skills: true,
+            education: {
+              include: {
+                university: true
+              }
+            }
+          }
+        }
+      },
+      take: 10 // Limit to top 10 candidates
+    });
+    
+    // Calculate match scores for each student against org jobs
+    const candidates = [];
+    for (const student of students) {
+      const stdWithProfile = student.student;
+      
+      // Find the best matching job
+      let bestMatchScore = 0;
+      let bestMatchJob: any = null;
+      
+      for (const job of orgJobs) {
+        const score = calculateMatchScore(stdWithProfile, job);
+        if (score > bestMatchScore) {
+          bestMatchScore = score;
+          bestMatchJob = job;
+        }
+      }
+      
+      if (bestMatchJob) {
+        candidates.push({
+          id: student.id,
+          name: `${student.firstName} ${student.lastName}`,
+          role: student.student.title || 'Candidate',
+          matchScore: bestMatchScore,
+          university: student.student.education[0]?.university?.name || '',
+          skills: student.student.skills.map((s: any) => s.name),
+          applicationId: '' // No application ID yet since they haven't applied
+        });
+      }
+    }
+    
+    // Sort by match score
+    candidates.sort((a, b) => b.matchScore - a.matchScore);
+    
+    res.status(200).json({ candidates });
+  } catch (error) {
+    console.error('Top candidates error:', error);
+    res.status(500).json({ message: 'Server error fetching top candidates' });
+  }
+};

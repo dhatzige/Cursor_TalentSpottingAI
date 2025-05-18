@@ -1,4 +1,5 @@
 import Navbar from '@/components/layout/Navbar';
+import SearchBar from '@/components/home/SearchBar';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -8,26 +9,15 @@ export default function HomePage() {
       
       <div className="gradient-background pt-20 pb-12">
         <div className="container mx-auto px-4 text-center pt-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 animated-gradient-hero">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 animated-gradient-hero tracking-tight">
             Find Your Dream Job
           </h1>
           <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
             Connect with top companies and discover opportunities that match your skills and aspirations.
           </p>
           
-          <div className="max-w-3xl mx-auto mb-12 bg-[#0d1424] rounded-md shadow-xl overflow-hidden border border-gray-800">
-            <div className="p-4 w-full flex items-center">
-              <input
-                type="text"
-                placeholder="Search for jobs, skills, or companies..."
-                className="flex-grow py-2 px-4 bg-[#0d1424] text-white outline-none placeholder-gray-500 w-full"
-              />
-              <button
-                className="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition-colors"
-              >
-                Search
-              </button>
-            </div>
+          <div className="max-w-3xl mx-auto mb-12">
+            <SearchBar className="shadow-xl" />
           </div>
           
           <div className="mt-6 space-x-4">

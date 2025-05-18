@@ -31,6 +31,66 @@ declare module 'react' {
   export function useEffect(effect: EffectCallback, deps?: DependencyList): void;
   export type EffectCallback = () => (void | (() => void | undefined));
   export type DependencyList = ReadonlyArray<unknown>;
+  
+  // React Event types for React 19 compatibility
+  export interface SyntheticEvent<T = Element, E = Event> {
+    nativeEvent: E;
+    currentTarget: T;
+    target: EventTarget;
+    bubbles: boolean;
+    cancelable: boolean;
+    defaultPrevented: boolean;
+    eventPhase: number;
+    isTrusted: boolean;
+    preventDefault(): void;
+    isDefaultPrevented(): boolean;
+    stopPropagation(): void;
+    isPropagationStopped(): boolean;
+    persist(): void;
+    timeStamp: number;
+    type: string;
+  }
+  
+  export interface FormEvent<T = Element> extends SyntheticEvent<T, Event> {}
+  
+  export interface ChangeEvent<T = Element> extends SyntheticEvent<T, Event> {
+    target: EventTarget & T;
+  }
+  
+  export interface KeyboardEvent<T = Element> extends SyntheticEvent<T, KeyboardEvent> {
+    altKey: boolean;
+    charCode: number;
+    ctrlKey: boolean;
+    key: string;
+    keyCode: number;
+    locale: string;
+    location: number;
+    metaKey: boolean;
+    repeat: boolean;
+    shiftKey: boolean;
+    which: number;
+  }
+  
+  // Define missing native types
+  type NativeMouseEvent = globalThis.MouseEvent;
+  
+  export interface MouseEvent<T = Element, E = NativeMouseEvent> extends SyntheticEvent<T, E> {
+    altKey: boolean;
+    button: number;
+    buttons: number;
+    clientX: number;
+    clientY: number;
+    ctrlKey: boolean;
+    metaKey: boolean;
+    movementX: number;
+    movementY: number;
+    pageX: number;
+    pageY: number;
+    relatedTarget: EventTarget | null;
+    screenX: number;
+    screenY: number;
+    shiftKey: boolean;
+  }
 }
 
 // Next.js modules

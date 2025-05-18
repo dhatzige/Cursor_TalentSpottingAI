@@ -66,10 +66,33 @@ export const StudentService = {
   },
   
   /**
-   * Apply for a job
+   * Apply for a job with resume and cover letter
+   * @param jobId - ID of the job to apply for
+   * @param applicationData - FormData containing resume file and other application data
    */
-  applyForJob: async (jobId: string): Promise<{ message: string; applicationId: string }> => {
-    const response = await api.post(`/student/jobs/${jobId}/apply`);
+  applyForJob: async (jobId: string, applicationData: FormData): Promise<{ message: string; applicationId: string }> => {
+    const response = await api.post(`/student/jobs/${jobId}/apply`, applicationData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+  
+  /**
+   * Get application details
+   * @param applicationId - ID of the application to get
+   */
+  getApplicationDetails: async (applicationId: string) => {
+    const response = await api.get(`/student/applications/${applicationId}`);
+    return response.data;
+  },
+  
+  /**
+   * Update application status (for testing purposes, normally done by employers)
+   */
+  updateApplicationStatus: async (applicationId: string, status: string) => {
+    const response = await api.patch(`/student/applications/${applicationId}`, { status });
     return response.data;
   }
 };

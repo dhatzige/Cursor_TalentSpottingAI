@@ -100,6 +100,14 @@ export default function DashboardLayout({
                     Candidates
                   </Link>
                 </li>
+                <li>
+                  <Link 
+                    href="/employer/talent-search" 
+                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                  >
+                    Talent Search
+                  </Link>
+                </li>
               </>
             )}
             {userRole === 'university' && (

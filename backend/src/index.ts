@@ -9,6 +9,7 @@ import adminRoutes from './routes/admin.routes';
 import studentRoutes from './routes/student.routes';
 import employerRoutes from './routes/employer.routes';
 import universityRoutes from './routes/university.routes';
+import talentSearchRoutes from './routes/talent-search.routes';
 
 // Initialize environment and database
 dotenv.config();
@@ -32,6 +33,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/employer', employerRoutes);
 app.use('/api/university', universityRoutes);
+app.use('/api/talent', talentSearchRoutes);
 
 // 404 handler
 app.use((_req, res) => {

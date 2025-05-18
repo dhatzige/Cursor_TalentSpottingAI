@@ -5,15 +5,16 @@
 }
 
 .animated-gradient-hero {
-  background: linear-gradient(-45deg, #ff3b91, #ff5c5c, #5c6fff, #c56cff);
-  background-size: 300% 300%;
+  background: linear-gradient(90deg, #3b82f6, #6366f1, #ec4899, #f97316, #06b6d4);
+  background-size: 400% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradient 8s ease infinite;
+  animation: gradient-flow 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes gradient {
+@keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }

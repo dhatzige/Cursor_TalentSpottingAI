@@ -21,7 +21,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6 items-center">
           <Link 
-            href="/homepage" 
+            href="/" 
             className="text-white text-sm hover:text-gray-300 transition-colors"
           >
             Home
@@ -83,7 +83,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-[#0a1124] px-4 py-2 pb-4">
           <div className="flex flex-col space-y-3">
-            <Link href="/homepage" className="hover:text-[#1A73E8] transition-colors py-2 border-b border-gray-700">
+            <Link href="/" className="hover:text-[#1A73E8] transition-colors py-2 border-b border-gray-700">
               Home
             </Link>
             <Link href="/students" className="hover:text-[#1A73E8] transition-colors py-2 border-b border-gray-700">
@@ -107,7 +107,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                 Sign In
               </Link>
               <Link 
-                href="/register" 
+                href="/create-account" 
                 className="px-4 py-2 bg-[#1A73E8] rounded hover:bg-blue-700 transition-colors"
               >
                 Sign Up

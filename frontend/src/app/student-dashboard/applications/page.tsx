@@ -7,23 +7,25 @@ import Button from '../../components/Button';
 import { StudentService } from '../../../lib/api';
 import { useProtectedRoute } from '../../../lib/hooks/useProtectedRoute';
 
-interface ApplicationItem {
-  id: string;
-  jobId: string;
-  title: string;
-  company: string;
-  location: string;
-  status: 'pending' | 'interview' | 'accepted' | 'rejected';
-  appliedDate: string;
-  lastUpdated: string;
-  feedback?: string;
-}
+// Import modular components
+import {
+  FilterControls,
+  ApplicationItem,
+  LoadingState,
+  EmptyState,
+  NoMatchingApplications,
+  ErrorDisplay,
+  StatusBadge
+} from './components';
+
+// Import types separately to avoid naming conflicts
+import type { ApplicationItemType } from './components';
 
 export default function ApplicationsPage() {
   // Protect this route - only students can access
   const { loading: authLoading } = useProtectedRoute(['student'], '/login');
   
-  const [applications, setApplications] = useState<ApplicationItem[]>([]);
+  const [applications, setApplications] = useState<ApplicationItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -41,7 +43,7 @@ export default function ApplicationsPage() {
         // For now, we're using mocked data
         
         // Mock data for demonstration
-        const mockApplications: ApplicationItem[] = [
+        const mockApplications: ApplicationItemType[] = [
           {
             id: '1',
             jobId: 'job1',
@@ -103,24 +105,6 @@ export default function ApplicationsPage() {
     ? applications 
     : applications.filter(app => app.status === filterStatus);
 
-  // Status badge component
-  const StatusBadge = ({ status }: { status: ApplicationItem['status'] }) => {
-    const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending Review' },
-      interview: { color: 'bg-blue-100 text-blue-800', label: 'Interview Stage' },
-      accepted: { color: 'bg-green-100 text-green-800', label: 'Accepted' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Not Selected' }
-    };
-    
-    const config = statusConfig[status];
-    
-    return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
-        {config.label}
-      </span>
-    );
-  };
-
   return (
     <DashboardLayout title="My Applications" userRole="student">
       <div className="max-w-5xl mx-auto">
@@ -134,145 +118,31 @@ export default function ApplicationsPage() {
           </Link>
         </div>
         
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
-            {error}
-          </div>
-        )}
+        {/* Display error if any */}
+        <ErrorDisplay error={error} />
         
         {isLoading ? (
-          <div className="flex flex-col gap-4 items-center justify-center py-12">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-            <p className="text-gray-500">Loading your applications...</p>
-          </div>
+          <LoadingState />
         ) : applications.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-medium mb-2">No Applications Yet</h2>
-            <p className="text-gray-500 mb-6">
-              You haven't applied for any jobs yet. Start by browsing available positions.
-            </p>
-            <Link href="/student-dashboard">
-              <Button>Browse Jobs</Button>
-            </Link>
-          </div>
+          <EmptyState />
         ) : (
           <>
             {/* Filter Controls */}
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-4 flex flex-wrap gap-2">
-              <button
-                onClick={() => setFilterStatus('all')}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  filterStatus === 'all' 
-                    ? 'bg-blue-100 text-blue-800 font-medium' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                All Applications
-              </button>
-              <button
-                onClick={() => setFilterStatus('pending')}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  filterStatus === 'pending' 
-                    ? 'bg-yellow-100 text-yellow-800 font-medium' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                Pending
-              </button>
-              <button
-                onClick={() => setFilterStatus('interview')}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  filterStatus === 'interview' 
-                    ? 'bg-blue-100 text-blue-800 font-medium' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                Interview
-              </button>
-              <button
-                onClick={() => setFilterStatus('accepted')}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  filterStatus === 'accepted' 
-                    ? 'bg-green-100 text-green-800 font-medium' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                Accepted
-              </button>
-              <button
-                onClick={() => setFilterStatus('rejected')}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  filterStatus === 'rejected' 
-                    ? 'bg-red-100 text-red-800 font-medium' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                Not Selected
-              </button>
-            </div>
+            <FilterControls
+              activeFilter={filterStatus}
+              onFilterChange={setFilterStatus}
+            />
             
             {/* Applications List */}
             <div className="space-y-4">
               {filteredApplications.length === 0 ? (
-                <div className="bg-white p-4 rounded-lg text-center text-gray-500">
-                  No applications match the selected filter.
-                </div>
+                <NoMatchingApplications />
               ) : (
                 filteredApplications.map(application => (
-                  <div key={application.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div className="p-6">
-                      <div className="sm:flex sm:items-start sm:justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {application.title}
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-1">
-                            {application.company} • {application.location}
-                          </p>
-                          <div className="mb-2">
-                            <StatusBadge status={application.status} />
-                          </div>
-                          <p className="text-sm text-gray-500">
-                            Applied: {new Date(application.appliedDate).toLocaleDateString()}
-                            {application.lastUpdated !== application.appliedDate && (
-                              <span> • Updated: {new Date(application.lastUpdated).toLocaleDateString()}</span>
-                            )}
-                          </p>
-                        </div>
-                        
-                        <div className="mt-4 sm:mt-0">
-                          <Link href={`/job-application?id=${application.jobId}`}>
-                            <Button variant="outline" className="text-sm px-4 py-2">
-                              View Job
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                      
-                      {/* Feedback section for accepted/rejected applications */}
-                      {(application.status === 'accepted' || application.status === 'rejected') && application.feedback && (
-                        <div className={`mt-4 p-3 rounded-md ${
-                          application.status === 'accepted' ? 'bg-green-50' : 'bg-gray-50'
-                        }`}>
-                          <h4 className="text-sm font-medium mb-1">Feedback from Employer</h4>
-                          <p className="text-sm">{application.feedback}</p>
-                        </div>
-                      )}
-                      
-                      {/* Interview section */}
-                      {application.status === 'interview' && (
-                        <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                          <h4 className="text-sm font-medium mb-1">Interview Status</h4>
-                          <p className="text-sm">Your application is being reviewed for an interview. Check your email for further instructions.</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <ApplicationItem
+                    key={application.id}
+                    application={application}
+                  />
                 ))
               )}
             </div>

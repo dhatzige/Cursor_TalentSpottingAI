@@ -5,7 +5,8 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* Theme variables */
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -31,27 +32,7 @@
   backdrop-filter: blur(8px);
 }
 
-/* Animated Gradient Text */
-.animated-gradient-hero {
-  background: linear-gradient(-45deg, #ff3b91, #ff5c5c, #5c6fff, #c56cff);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradient 8s ease infinite;
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+/* Animated Gradient Text styles moved to gradient-bg.css */
 
 body {
   background: var(--background);

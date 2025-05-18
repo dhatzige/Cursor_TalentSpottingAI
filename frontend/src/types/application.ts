@@ -1,4 +1,23 @@
 // Application Types
+export interface Note {
+  id: string;
+  content: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface ScoreBreakdown {
+  skills: number;
+  education: number;
+  experience: number;
+  applicationQuality: number;
+}
+
+export interface CandidateScore {
+  overallScore: number;
+  breakdownScores: ScoreBreakdown;
+}
+
 export interface Application {
   id: string;
   jobId: string;
@@ -14,11 +33,13 @@ export interface Application {
   feedback?: string;
   skills?: string[];
   university?: string;
-  matchScore?: number;
+  matchScore?: number; // Legacy score field
+  scores?: CandidateScore; // Enhanced scoring with breakdown
   // Additional fields for enhanced matching
   experience?: number; // Years of experience
   education?: string; // Education level
   remotePreference?: boolean; // Preference for remote work
+  notes?: Note[];
 }
 
 export type ApplicationStatus = 'pending' | 'reviewing' | 'interview' | 'accepted' | 'rejected';
@@ -43,8 +64,9 @@ export interface ApplicationSubmission {
 // Props for Application Components
 export interface ApplicationDetailsProps {
   application: Application;
-  onStatusUpdate?: (applicationId: string, status: ApplicationStatus, feedback?: string) => Promise<void>;
-  onUpdateStatus?: (applicationId: string, status: ApplicationStatus, feedback?: string) => Promise<void>;
+  onStatusUpdate: (applicationId: string, newStatus: ApplicationStatus, feedback?: string) => Promise<void>;
+  onAddNote?: (applicationId: string, content: string) => Promise<void>;
+  onClose?: () => void;
   isEmployer?: boolean;
 }
 

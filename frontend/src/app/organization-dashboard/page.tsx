@@ -8,10 +8,10 @@ import { useProtectedRoute } from '../../lib/hooks/useProtectedRoute';
 import { useDashboardData } from '../../hooks/useDashboardData';
 
 // Tab components
-import OverviewTab from '../../components/dashboard/tabs/OverviewTab';
-import JobsTab from '../../components/dashboard/tabs/JobsTab';
-import CandidatesTab from '../../components/dashboard/tabs/CandidatesTab';
-import AnalyticsTab from '../../components/dashboard/tabs/AnalyticsTab';
+import OverviewTab from '../components/dashboard/tabs/OverviewTab';
+import JobsTab from '../components/dashboard/tabs/JobsTab';
+import CandidatesTab from '../components/dashboard/tabs/CandidatesTab';
+import AnalyticsTab from '../components/dashboard/tabs/AnalyticsTab';
 
 export default function OrganizationDashboardPage() {
   // Protect this route - only employer can access

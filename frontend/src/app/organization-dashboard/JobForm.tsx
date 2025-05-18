@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
+// Using React namespace for types to ensure compatibility with React 19
 import { EmployerService } from '../../lib/api';
 
 interface JobFormProps {
@@ -37,7 +38,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
     setSkills(skills.filter(skill => skill !== skillToRemove));
   };
   
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
@@ -85,7 +86,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
             type="text"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
             required
             placeholder="e.g., Senior Software Engineer"
           />
@@ -99,7 +100,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
             id="description"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[150px]"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
             required
             placeholder="Describe the job responsibilities, requirements, and benefits..."
           ></textarea>
@@ -114,7 +115,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
             type="text"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
             required
             placeholder="e.g., Remote, New York, NY, Hybrid - London"
           />
@@ -130,9 +131,9 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
               type="text"
               className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillInput(e.target.value)}
               placeholder="e.g., JavaScript, Python, Project Management"
-              onKeyDown={(e) => {
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   handleAddSkill();

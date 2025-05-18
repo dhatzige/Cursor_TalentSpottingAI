@@ -42,6 +42,22 @@ export default function JobApplicationForm({
     }
   };
 
+  // File validation
+  const validateFile = (file: File): string | null => {
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!allowedTypes.includes(file.type)) {
+      return 'File type not supported. Please upload a PDF or Word document.';
+    }
+    
+    if (file.size > maxSize) {
+      return 'File size exceeds 5MB. Please upload a smaller file.';
+    }
+    
+    return null;
+  };
+
   // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +65,13 @@ export default function JobApplicationForm({
     // Basic validation
     if (!resumeFile) {
       setError('Please upload your resume');
+      return;
+    }
+    
+    // File validation
+    const fileError = validateFile(resumeFile);
+    if (fileError) {
+      setError(fileError);
       return;
     }
     
@@ -66,11 +89,11 @@ export default function JobApplicationForm({
       const formData = new FormData();
       formData.append('resume', resumeFile);
       formData.append('coverLetter', coverLetter);
-      formData.append('additionalInfo', additionalInfo);
+      formData.append('jobId', jobId);
+      formData.append('additionalInfo', additionalInfo || '');
       
-      // Submit application (future implementation: update StudentService to handle form data)
-      // For now, we'll use the existing API method
-      const result = await StudentService.applyForJob(jobId);
+      // Submit application using updated StudentService
+      const result = await StudentService.applyForJob(jobId, formData);
       
       // Success
       setFormStatus('success');
@@ -107,7 +130,7 @@ export default function JobApplicationForm({
           Your application for {jobTitle} at {companyName} has been successfully submitted.
         </p>
         <Button 
-          variant="primary" 
+          variant="primary"
           onClick={() => router.push('/student-dashboard/applications')}
         >
           View My Applications
@@ -213,14 +236,16 @@ export default function JobApplicationForm({
           
           {/* Form Actions */}
           <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
+            {onCancel && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+            )}
             <Button
               type="submit"
               disabled={isSubmitting}

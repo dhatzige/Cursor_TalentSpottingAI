@@ -3,15 +3,20 @@
 import { useState } from 'react';
 import Button from '../../../components/Button';
 import StatusBadge from './StatusBadge';
-import { Application, ApplicationStatus, ApplicationDetailsProps } from '../../../../types/application';
+import CandidateScoreCard from './CandidateScoreCard';
+import { Application, ApplicationStatus, ApplicationDetailsProps, Note } from '../../../../types/application';
 
 export default function ApplicationDetails({
   application,
   onStatusUpdate,
+  onAddNote,
+  onClose,
   isEmployer = true
 }: ApplicationDetailsProps) {
   const [feedback, setFeedback] = useState(application.feedback || '');
+  const [noteContent, setNoteContent] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isAddingNote, setIsAddingNote] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
 
   const handleUpdateStatus = async (newStatus: ApplicationStatus) => {
@@ -27,6 +32,23 @@ export default function ApplicationDetails({
       setUpdateError('Failed to update status. Please try again.');
     } finally {
       setIsUpdating(false);
+    }
+  };
+  
+  const handleAddNote = async () => {
+    if (!onAddNote || !noteContent.trim()) return;
+    
+    setIsAddingNote(true);
+    setUpdateError(null);
+    
+    try {
+      await onAddNote(application.id, noteContent);
+      setNoteContent(''); // Clear note content after successful submission
+    } catch (err: any) {
+      console.error('Error adding note:', err);
+      setUpdateError('Failed to add note. Please try again.');
+    } finally {
+      setIsAddingNote(false);
     }
   };
 
@@ -52,6 +74,23 @@ export default function ApplicationDetails({
         </div>
       </div>
       
+      {/* Enhanced Candidate Scoring Card */}
+      {application.scores ? (
+        <div className="p-6 border-b border-gray-200">
+          <CandidateScoreCard scores={application.scores} />
+        </div>
+      ) : application.matchScore !== undefined ? (
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-medium mb-3">Match Score</h3>
+          <div className="flex items-center">
+            <div className={`text-xl font-bold rounded-full w-12 h-12 flex items-center justify-center ${application.matchScore >= 70 ? 'bg-green-100 text-green-800' : application.matchScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+              {application.matchScore}%
+            </div>
+            <p className="ml-3 text-sm text-gray-600">Basic skills match</p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="p-6 border-b border-gray-200">
         <h3 className="text-lg font-medium mb-3">Skills</h3>
         <div className="flex flex-wrap gap-2">
@@ -77,6 +116,50 @@ export default function ApplicationDetails({
         </div>
       </div>
       
+      {isEmployer && (
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-medium">Notes</h3>
+          </div>
+          
+          {/* Display existing notes */}
+          {application.notes && application.notes.length > 0 ? (
+            <div className="mb-4">
+              {application.notes.map((note: Note) => (
+                <div key={note.id} className="mb-3 bg-gray-50 p-3 rounded-md">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>{note.createdBy}</span>
+                    <span>{new Date(note.createdAt).toLocaleString()}</span>
+                  </div>
+                  <p className="text-sm">{note.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm mb-4">No notes yet</p>
+          )}
+          
+          {/* Add new note */}
+          <div>
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px] mb-2"
+              placeholder="Add a note about this application"
+              value={noteContent}
+              onChange={(e) => setNoteContent(e.target.value)}
+            />
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                onClick={handleAddNote}
+                disabled={isAddingNote || !noteContent.trim()}
+              >
+                {isAddingNote ? 'Adding...' : 'Add Note'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {application.resumeUrl && (
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-lg font-medium mb-3">Resume</h3>
@@ -95,7 +178,19 @@ export default function ApplicationDetails({
       )}
       
       <div className="p-6">
-        <h3 className="text-lg font-medium mb-3">Feedback</h3>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-lg font-medium">Application Status</h3>
+          {onClose && (
+            <Button 
+              variant="outline" 
+              onClick={onClose}
+              className="text-sm"
+            >
+              Close
+            </Button>
+          )}
+        </div>
+        
         <textarea
           className="w-full border border-gray-300 rounded-md p-2 min-h-[100px]"
           placeholder="Provide feedback to the candidate (they will see this if accepted or rejected)"
@@ -109,7 +204,7 @@ export default function ApplicationDetails({
           </div>
         )}
         
-        <div className="mt-4 flex gap-2 justify-end">
+        <div className="mt-4 flex flex-wrap gap-2 justify-end">
           <Button
             variant="outline"
             className="text-red-600 border-red-300 hover:bg-red-50"
@@ -121,6 +216,14 @@ export default function ApplicationDetails({
           <Button
             variant="outline"
             className="text-blue-600 border-blue-300 hover:bg-blue-50"
+            onClick={() => handleUpdateStatus('reviewing')}
+            disabled={isUpdating || application.status === 'reviewing'}
+          >
+            Mark for Review
+          </Button>
+          <Button
+            variant="outline" 
+            className="text-purple-600 border-purple-300 hover:bg-purple-50"
             onClick={() => handleUpdateStatus('interview')}
             disabled={isUpdating || application.status === 'interview'}
           >
