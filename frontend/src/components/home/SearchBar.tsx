@@ -2,17 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { parseSearchQuery } from '@/lib/utils/job-search';
 
 interface SearchBarProps {
   className?: string;
+  defaultValue?: string;
 }
 
-export default function SearchBar({ className = '' }: SearchBarProps) {
+export default function SearchBar({ className = '', defaultValue = '' }: SearchBarProps) {
   const router = useRouter();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(defaultValue);
   const [searchType, setSearchType] = useState('keyword');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [placeholder, setPlaceholder] = useState('Search for jobs, skills, or companies...');
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [showRecentSearches, setShowRecentSearches] = useState(false);
   
   // Different placeholder sets for each search type
   const standardPlaceholder = "Search for jobs, skills, or companies...";
@@ -31,18 +35,87 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
     "Full-stack developer with React and Node.js..."
   ];
   
+  const searchTips = [
+    'Use quotes for exact phrases: "product manager"',
+    'Use + for required terms: +remote developer',
+    'Use - to exclude terms: developer -senior',
+    'Use OR for alternatives: developer OR designer',
+    'Search looks in job title, description, skills, and company'
+  ];
+  
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const savedSearches = localStorage.getItem('recentSearches');
+    if (savedSearches) {
+      try {
+        setRecentSearches(JSON.parse(savedSearches).slice(0, 5));
+      } catch (e) {
+        console.error('Error parsing recent searches', e);
+      }
+    }
+  }, []);
+  
+  // Close recent searches dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Skip this feature since we can't use refs in this project
+      // User can dismiss by clicking the search button or elsewhere
+      const target = event.target as HTMLElement;
+      if (!target.closest('.search-bar-input') && !target.closest('.recent-searches')) {
+        setShowRecentSearches(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   // Function to handle search type selection
   const selectOption = (option: string) => {
     setSearchType(option);
     setIsDropdownOpen(false);
   };
 
+  // Save search to recent searches
+  const saveToRecentSearches = (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
+    
+    const updatedSearches = [
+      searchQuery, 
+      ...recentSearches.filter(s => s !== searchQuery)
+    ].slice(0, 5);
+    
+    setRecentSearches(updatedSearches);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+  };
+
   // Function to handle search submission
-  const handleSearch = (e: any) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/jobs/search?type=${searchType}&q=${encodeURIComponent(query)}`);
+    const trimmedQuery = query.trim();
+    
+    if (trimmedQuery) {
+      // Save to recent searches
+      saveToRecentSearches(trimmedQuery);
+      
+      // Hide recent searches dropdown
+      setShowRecentSearches(false);
+      
+      // We're not using searchType for now as requested (AI features will be last)
+      // Just pass the query parameter directly - both pages now use the same
+      // filterJobsBySearchTerms logic underneath
+      router.push(`/jobs?q=${encodeURIComponent(trimmedQuery)}`);
     }
+  };
+  
+  // Handle selecting a recent search
+  const selectRecentSearch = (searchQuery: string) => {
+    setQuery(searchQuery);
+    setShowRecentSearches(false);
+    
+    // Simply close dropdown after selection
   };
   
   // Simple typewriter effect
@@ -109,12 +182,12 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   }, [searchType]);
   
   return (
-    <div className={`${className} w-full max-w-xl mx-auto`}>
-      <form onSubmit={handleSearch} className="relative max-w-xl mx-auto">
-        <div className="flex rounded overflow-hidden border border-gray-800">
+    <div className={`${className} w-full mx-auto`}>
+      <form onSubmit={handleSearch} className="relative w-full mx-auto">
+        <div className="flex rounded-lg overflow-hidden border border-gray-700 bg-gray-800/80 shadow-inner shadow-blue-900/20">
           {/* Search Type Selector */}
           <div 
-            className="relative bg-[#0d1424] text-white px-3 py-2 flex items-center cursor-pointer border-r border-gray-800 w-[200px] whitespace-nowrap select-none"
+            className="relative bg-gray-800/90 text-white px-4 py-3 flex items-center cursor-pointer border-r border-gray-700 w-[220px] whitespace-nowrap select-none hover:bg-gray-700/80 transition-colors"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <div className="flex items-center justify-between w-full">
@@ -132,6 +205,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                   <div className="flex items-center">
                     <span className="mr-1 flex-shrink-0">✨</span>
                     <span className="block truncate">AI Search</span>
+                    <span className="text-xs bg-yellow-400/20 text-yellow-400 ml-1 px-1.5 py-0.5 rounded-sm font-medium">(Premium)</span>
                   </div>
                 )}
               </div>
@@ -142,18 +216,59 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
           </div>
 
           {/* Search Input */}
-          <input
-            type="text"
-            value={query}
-            onChange={(e: any) => setQuery(e.target.value)}
-            placeholder={placeholder}
-            className="flex-grow py-2 px-4 bg-[#0d1424] text-white outline-none placeholder-gray-500 w-full"
-          />
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              value={query}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+              onFocus={() => setShowRecentSearches(true)}
+              placeholder={placeholder}
+              className="search-bar-input w-full py-3 px-5 bg-gray-800/90 text-white text-base outline-none placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none shadow-inner"
+            />
+            
+            {/* Recent Searches Dropdown */}
+            {showRecentSearches && recentSearches.length > 0 && (
+              <div 
+                className="recent-searches absolute left-0 right-0 top-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-20"
+              >
+                <div className="p-2">
+                  <h4 className="text-xs text-gray-400 px-2 pb-1">Recent Searches</h4>
+                  <ul>
+                    {recentSearches.map((search, index) => (
+                      <li key={index}>
+                        <button
+                          type="button"
+                          onClick={() => selectRecentSearch(search)}
+                          className="w-full text-left px-3 py-2 hover:bg-blue-600/20 rounded text-white flex items-center"
+                        >
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {search}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="mt-2 pt-2 border-t border-gray-700">
+                    <h4 className="text-xs text-gray-400 px-2 pb-1">Search Tips</h4>
+                    <div className="px-3 py-2">
+                      {searchTips.map((tip, index) => (
+                        <p key={index} className="text-xs text-gray-300 mb-1">
+                          {tip}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Search Button */}
           <button 
             type="submit" 
-            className="bg-[#0d1424] text-white p-2 hover:bg-gray-900 transition-colors flex items-center justify-center w-12"
+            className="bg-blue-500 text-white p-4 hover:bg-blue-600 transition-colors flex items-center justify-center font-medium w-14 flex-shrink-0"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-5 w-5">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -163,10 +278,10 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
         
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute mt-1 left-0 w-56 bg-[#0d1424] rounded shadow-lg z-10 border border-gray-800">
+          <div className={`absolute mt-1 left-0 w-[220px] bg-gray-800 rounded-md shadow-xl z-10 border border-gray-700`}>
             <div className="py-1">
               <div 
-                className="px-4 py-2 flex items-center text-white hover:bg-[#1e2746] cursor-pointer"
+                className="px-4 py-3 flex items-center text-white hover:bg-gray-700 cursor-pointer transition-colors"
                 onClick={() => selectOption('keyword')}
               >
                 <div className="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0">
@@ -179,7 +294,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 <span>Keyword Search</span>
               </div>
               <div 
-                className="px-4 py-2 flex items-center text-white hover:bg-[#1e2746] cursor-pointer"
+                className="px-4 py-3 flex items-center text-white hover:bg-gray-700 cursor-pointer transition-colors"
                 onClick={() => selectOption('ai-free')}
               >
                 <div className="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0">
@@ -195,7 +310,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 </div>
               </div>
               <div 
-                className="px-4 py-2 flex items-center text-white hover:bg-[#1e2746] cursor-pointer"
+                className="px-4 py-3 flex items-center text-white hover:bg-gray-700 cursor-pointer transition-colors"
                 onClick={() => selectOption('ai-premium')}
               >
                 <div className="w-5 h-5 mr-2 flex items-center justify-center flex-shrink-0">
@@ -208,7 +323,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 <div className="flex items-center">
                   <span className="mr-1 flex-shrink-0">✨</span>
                   <span>AI Search</span>
-                  <span className="text-xs text-yellow-400 ml-1">(Premium)</span>
+                  <span className="text-xs bg-yellow-400/20 text-yellow-400 ml-1 px-1.5 py-0.5 rounded-sm font-medium">(Premium)</span>
                 </div>
               </div>
             </div>

@@ -1,0 +1,82 @@
+/* Animated Gradient Text */
+.animated-gradient-hero {
+  background: linear-gradient(270deg, #60a5fa, #a78bfa, #f472b6, #60a5fa);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-animation 6s ease infinite;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hero section background animation */
+.hero-bg-animation {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, rgba(167, 139, 250, 0.2) 50%, rgba(244, 114, 182, 0.2) 100%);
+  opacity: 0.5;
+  filter: blur(50px);
+  animation: pulse 15s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Feature icon backgrounds */
+.feature-icon-bg-blue {
+  background-color: rgba(96, 165, 250, 0.1);
+  color: rgba(96, 165, 250, 1);
+}
+
+.feature-icon-bg-purple {
+  background-color: rgba(167, 139, 250, 0.1);
+  color: rgba(167, 139, 250, 1);
+}
+
+.feature-icon-bg-green {
+  background-color: rgba(52, 211, 153, 0.1);
+  color: rgba(52, 211, 153, 1);
+}
+
+.feature-icon-bg-yellow {
+  background-color: rgba(251, 191, 36, 0.1);
+  color: rgba(251, 191, 36, 1);
+}
+
+.feature-icon-bg-red {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgba(239, 68, 68, 1);
+}
+
+.feature-icon-bg-indigo {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: rgba(99, 102, 241, 1);
+}

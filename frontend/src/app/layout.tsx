@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import './globals.css';
 import '../styles/gradient-bg.css';
 
+// Import the client component wrapper
+import ClientLayout from '../components/ClientLayout';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,8 +21,6 @@ export const metadata: Metadata = {
   description: "AI-powered talent acquisition platform connecting employers with the right candidates.",
 };
 
-import DevNavBar from "./components/DevNavBar";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,8 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {process.env.NODE_ENV === 'development' && <DevNavBar />}
-        {children}
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

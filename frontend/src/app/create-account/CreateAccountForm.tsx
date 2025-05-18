@@ -1,12 +1,12 @@
 // Reference: Createa_an_account.jpg
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Link from 'next/link';
-import { useAuth } from '../../lib/hooks/useAuth';
+import { registerUser, redirectToDashboard } from '../../lib/auth';
 
 export default function CreateAccountForm() {
   const [formData, setFormData] = useState({
@@ -18,7 +18,16 @@ export default function CreateAccountForm() {
   });
   
   const router = useRouter();
-  const { register, loading } = useAuth();
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  
+  // Check for role parameter in URL
+  useEffect(() => {
+    const roleParam = searchParams.get('role');
+    if (roleParam && ['student', 'employer', 'university'].includes(roleParam)) {
+      setFormData(prev => ({ ...prev, role: roleParam }));
+    }
+  }, [searchParams]);
   
   const [errors, setErrors] = useState<{
     fullName?: string;
@@ -77,20 +86,14 @@ export default function CreateAccountForm() {
       return;
     }
     
+    setLoading(true);
+    
     try {
-      await register(
-        formData.email,
-        formData.password,
-        formData.fullName,
-        formData.role
-      );
-      
-      // Redirect to appropriate dashboard based on role
-      router.push('/dashboard');
-    } catch (error: any) {
-      console.error('Registration error:', error);
+      const user = await registerUser(formData);
+      redirectToDashboard(user, router);
+    } catch (error) {
       setErrors({
-        general: error.response?.data?.message || 'Failed to create account. Please try again.'
+        general: 'Registration failed. Please try again.',
       });
     }
   };

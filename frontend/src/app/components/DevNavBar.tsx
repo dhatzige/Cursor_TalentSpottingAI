@@ -43,19 +43,25 @@ export default function DevNavBar() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ctrl+Shift+D to toggle dev nav
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+        console.log('DevNav shortcut triggered!');
+        e.preventDefault(); // Prevent any browser default actions
+        
+        // Toggle visibility directly without URL parameters
+        setShowDevNav(!showDevNav);
+        
+        // Update URL for persistence if needed
         const url = new URL(window.location.href);
-        if (url.searchParams.has('dev_nav')) {
+        if (showDevNav) {
           url.searchParams.delete('dev_nav');
         } else {
           url.searchParams.set('dev_nav', 'true');
         }
-        // Using push state instead of direct location change to avoid full page refresh
         window.history.pushState({}, '', url.toString());
-        setShowDevNav(!showDevNav);
       }
     };
 
+    // Always add the event listener, even when nav is hidden
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -67,8 +73,8 @@ export default function DevNavBar() {
   }
   
   return (
-    <nav className="w-full bg-gray-900 text-white px-4 py-3 flex gap-4 items-center shadow z-50">
-      <div className="text-yellow-400 mr-2 text-sm">DEV NAV →</div>
+    <nav className={`w-full bg-red-800 text-white px-4 py-3 flex gap-4 items-center shadow fixed top-0 left-0 z-[9999] ${showDevNav ? 'dev-nav-visible' : 'hidden'}`}>
+      <div className="text-yellow-400 mr-2 text-sm font-bold">DEV NAV →</div>
       <div className="flex gap-4 overflow-x-auto pb-1">
         {navLinks.map((link) => (
           <Link

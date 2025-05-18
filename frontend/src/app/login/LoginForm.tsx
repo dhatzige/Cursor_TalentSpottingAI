@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Link from 'next/link';
-import { useAuth } from '../../lib/hooks/useAuth';
+import { loginUser, redirectToDashboard } from '../../lib/auth';
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ export default function LoginForm() {
   }>({});
 
   const router = useRouter();
-  const { login, loading } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,14 +58,17 @@ export default function LoginForm() {
       return;
     }
     
+    setLoading(true);
+    
     try {
-      await login(formData.email, formData.password);
-      router.push('/dashboard'); // Redirect based on user role
-    } catch (error: any) {
-      console.error('Login error:', error);
+      const user = await loginUser(formData.email, formData.password);
+      redirectToDashboard(user, router);
+    } catch (error) {
       setErrors({
-        general: error.response?.data?.message || 'Failed to login. Please check your credentials.'
+        general: 'Invalid email or password',
       });
+    } finally {
+      setLoading(false);
     }
   };
 

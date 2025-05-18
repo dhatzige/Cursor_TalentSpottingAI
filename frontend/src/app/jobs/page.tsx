@@ -1,75 +1,255 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import SearchBar from '@/components/home/SearchBar';
+import { filterJobsBySearchTerms, filterJobsByFilters } from '@/lib/utils/job-search';
+import { mockJobs } from '@/lib/data/mockJobs';
+import JobFilterBar, { JobFilters } from '@/components/jobs/JobFilterBar';
+import JobsList from '@/components/jobs/JobsList';
 
 export default function JobsPage() {
-  const [filters, setFilters] = useState({
-    role: '',
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get search query from URL if present
+  const searchQuery = searchParams.get('q') || '';
+  
+  // Comprehensive filter state
+  const [filterState, setFilterState] = useState<JobFilters>({
+    jobTypes: [],
+    experienceLevels: [],
+    industries: [],
     location: '',
-    experience: '',
-    remote: false
+    remote: false,
+    salaryMin: '',
+    salaryMax: '',
+    postedWithin: '',
+    skills: [],
+    searchTerm: searchQuery // Initialize with URL search query
   });
   
-  // Mock job data
-  const jobs = [
-    {
-      id: 1,
-      title: 'Senior React Developer',
-      company: 'TechCorp',
-      location: 'San Francisco, CA',
-      description: 'We are looking for an experienced React developer to join our team...',
-      salary: '$120,000 - $150,000',
-      remote: true,
-      posted: '2 days ago',
-      tags: ['React', 'TypeScript', 'Node.js']
-    },
-    {
-      id: 2,
-      title: 'UX/UI Designer',
-      company: 'DesignHub',
-      location: 'New York, NY',
-      description: 'Join our creative team to design beautiful and intuitive interfaces...',
-      salary: '$90,000 - $120,000',
-      remote: true,
-      posted: '1 week ago',
-      tags: ['Figma', 'Adobe XD', 'UI/UX']
-    },
-    {
-      id: 3,
-      title: 'Data Scientist',
-      company: 'DataWorks',
-      location: 'Seattle, WA',
-      description: 'Looking for a data scientist with experience in machine learning...',
-      salary: '$130,000 - $160,000',
-      remote: false,
-      posted: '3 days ago',
-      tags: ['Python', 'Machine Learning', 'SQL']
-    },
-    {
-      id: 4,
-      title: 'Full Stack Developer',
-      company: 'WebSolutions',
-      location: 'Austin, TX',
-      description: 'Develop and maintain web applications using modern technologies...',
-      salary: '$100,000 - $130,000',
-      remote: true,
-      posted: '5 days ago',
-      tags: ['JavaScript', 'React', 'Node.js', 'MongoDB']
-    },
-    {
-      id: 5,
-      title: 'DevOps Engineer',
-      company: 'CloudTech',
-      location: 'Remote',
-      description: 'Help us build and maintain our cloud infrastructure...',
-      salary: '$110,000 - $140,000',
-      remote: true,
-      posted: '1 day ago',
-      tags: ['AWS', 'Docker', 'Kubernetes', 'CI/CD']
+  // Filtered/displayed jobs state
+  const [displayedJobs, setDisplayedJobs] = useState<typeof mockJobs>(mockJobs);
+  const [isFiltering, setIsFiltering] = useState(false);
+  
+  // Helper function to handle checkbox filter changes
+  const handleMultiSelectChange = (field: 'jobTypes' | 'experienceLevels' | 'industries', value: string) => {
+    setFilterState(prev => {
+      const currentValues = [...prev[field]];
+      const valueIndex = currentValues.indexOf(value);
+      
+      // Toggle value (add if not present, remove if present)
+      if (valueIndex === -1) {
+        currentValues.push(value);
+      } else {
+        currentValues.splice(valueIndex, 1);
+      }
+      
+      return { ...prev, [field]: currentValues };
+    });
+  };
+  
+  // Helper function for text inputs
+  const handleTextInputChange = (field: string, value: string | boolean) => {
+    setFilterState(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Helper function for adding/removing skill tags
+  const handleSkillInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const input = e.currentTarget;
+      const value = input.value.trim().toLowerCase();
+      
+      if (value && !filterState.skills.includes(value)) {
+        setFilterState(prev => ({
+          ...prev,
+          skills: [...prev.skills, value]
+        }));
+      }
+      
+      input.value = '';
     }
-  ];
+  };
+  
+  // Remove a skill tag
+  const removeSkill = (skill: string) => {
+    setFilterState(prev => ({
+      ...prev,
+      skills: prev.skills.filter(s => s !== skill)
+    }));
+  };
+  
+  // Apply all filters and search terms
+  const applyFilters = () => {
+    setIsFiltering(true);
+
+    // Generate URL parameters from filters
+    const params = new URLSearchParams();
+    
+    if (filterState.jobTypes.length > 0) {
+      filterState.jobTypes.forEach(jobType => params.append('jobType', jobType));
+    }
+    
+    if (filterState.experienceLevels.length > 0) {
+      filterState.experienceLevels.forEach(level => params.append('experienceLevel', level));
+    }
+    
+    if (filterState.industries.length > 0) {
+      filterState.industries.forEach(industry => params.append('industry', industry));
+    }
+    
+    if (filterState.location) params.set('location', filterState.location);
+    if (filterState.remote) params.set('remote', 'true');
+    if (filterState.salaryMin) params.set('salaryMin', filterState.salaryMin);
+    if (filterState.salaryMax) params.set('salaryMax', filterState.salaryMax);
+    if (filterState.postedWithin) params.set('postedWithin', filterState.postedWithin);
+    
+    if (filterState.skills.length > 0) {
+      filterState.skills.forEach(skill => params.append('skills', skill));
+    }
+    
+    if (filterState.searchTerm) params.set('q', filterState.searchTerm);
+    
+    // Update URL without refreshing page
+    const url = `/jobs${params.toString() ? '?' + params.toString() : ''}`;
+    router.replace(url);
+    
+    // Filter the jobs based on the current filters
+    let filteredJobs = [...mockJobs];
+    
+    // ALWAYS apply search term filtering FIRST if present
+    // This is critical to ensure search works properly
+    if (filterState.searchTerm) {
+      console.log(`Filtering jobs with search term: "${filterState.searchTerm}"`);
+      console.log(`Jobs before filtering: ${filteredJobs.length}`);
+      
+      // Apply the search filtering - this is the most important part for search functionality
+      filteredJobs = filterJobsBySearchTerms(filteredJobs, filterState.searchTerm) as typeof mockJobs;
+      console.log(`Jobs after search filtering: ${filteredJobs.length}`);
+    }
+    
+    // Only apply other filters if there are any jobs left after search
+    if (filteredJobs.length > 0) {
+      const hasAdditionalFilters = 
+        filterState.jobTypes.length > 0 ||
+        filterState.experienceLevels.length > 0 ||
+        filterState.industries.length > 0 ||
+        filterState.remote ||
+        filterState.location ||
+        filterState.salaryMin ||
+        filterState.salaryMax ||
+        filterState.postedWithin ||
+        filterState.skills.length > 0;
+      
+      if (hasAdditionalFilters) {
+        console.log('Applying additional filters');
+        filteredJobs = filterJobsByFilters(filteredJobs, {
+          jobType: filterState.jobTypes,
+          experienceLevel: filterState.experienceLevels,
+          industry: filterState.industries,
+          remote: filterState.remote,
+          location: filterState.location,
+          salaryMin: filterState.salaryMin ? parseInt(filterState.salaryMin, 10) : undefined,
+          salaryMax: filterState.salaryMax ? parseInt(filterState.salaryMax, 10) : undefined,
+          postedWithin: filterState.postedWithin ? parseInt(filterState.postedWithin, 10) : undefined,
+          skills: filterState.skills
+        }) as typeof mockJobs;
+        console.log(`Jobs after additional filters: ${filteredJobs.length}`);
+      }
+    }
+    
+    setDisplayedJobs(filteredJobs);
+    setTimeout(() => {
+      setIsFiltering(false);
+    }, 500); // Add slight delay for better UX
+  };
+  
+  // Reset all filters
+  const resetFilters = () => {
+    setFilterState({
+      jobTypes: [],
+      experienceLevels: [],
+      industries: [],
+      location: '',
+      remote: false,
+      salaryMin: '',
+      salaryMax: '',
+      postedWithin: '',
+      skills: [],
+      searchTerm: ''
+    });
+    
+    // Clear URL parameters
+    router.replace('/jobs');
+    
+    // Reset displayed jobs to all jobs
+    setDisplayedJobs(mockJobs);
+  };
+  
+  // Execute the search immediately when component loads and there's a search query
+  useEffect(() => {
+    const searchTermFromUrl = searchParams.get('q') || '';
+    
+    if (searchTermFromUrl) {
+      console.log('Initial search from URL query:', searchTermFromUrl);
+      
+      // Apply the search filter directly to avoid any race conditions
+      setIsFiltering(true);
+      
+      // Direct search application for queries coming from homepage
+      const filteredJobs = filterJobsBySearchTerms(mockJobs, searchTermFromUrl) as typeof mockJobs;
+      console.log(`Direct search found ${filteredJobs.length} jobs for term: "${searchTermFromUrl}"`);
+      
+      // Update the displayed jobs
+      setDisplayedJobs(filteredJobs);
+      setIsFiltering(false);
+    }
+  }, []); // Only run once on component mount
+  
+  // Initialize filters and jobs from URL parameters when they change
+  useEffect(() => {
+    // Parse URL parameters to set initial filter state
+    const jobTypes = searchParams.getAll('jobType');
+    const experienceLevels = searchParams.getAll('experienceLevel');
+    const industries = searchParams.getAll('industry');
+    const location = searchParams.get('location') || '';
+    const remote = searchParams.get('remote') === 'true';
+    const salaryMin = searchParams.get('salaryMin') || '';
+    const salaryMax = searchParams.get('salaryMax') || '';
+    const postedWithin = searchParams.get('postedWithin') || '';
+    const skills = searchParams.getAll('skills');
+    const searchTerm = searchParams.get('q') || '';
+    
+    // Always update the filter state from URL parameters
+    setFilterState({
+      jobTypes,
+      experienceLevels,
+      industries,
+      location,
+      remote,
+      salaryMin,
+      salaryMax,
+      postedWithin,
+      skills,
+      searchTerm
+    });
+    
+    // Only apply filters if we have specific filter parameters (not just search)
+    // We've already handled the search-only case in the first useEffect
+    if (jobTypes.length > 0 || experienceLevels.length > 0 || industries.length > 0 || 
+        location || remote || salaryMin || salaryMax || postedWithin || skills.length > 0) {
+      setTimeout(() => applyFilters(), 0);
+    } else if (!searchTerm) {
+      // No filters and no search term, show all jobs
+      setDisplayedJobs(mockJobs);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
@@ -79,97 +259,28 @@ export default function JobsPage() {
         <div className="mb-10">
           <h1 className="text-3xl font-bold mb-6">Browse Jobs</h1>
           <div className="mb-8">
-            <SearchBar className="max-w-3xl" />
+            <SearchBar 
+              className="max-w-3xl" 
+              defaultValue={filterState.searchTerm}
+            />
           </div>
           
-          <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Role/Title</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 bg-[#0d1424] border border-gray-700 rounded text-white"
-                  placeholder="e.g. Developer, Designer"
-                  value={filters.role}
-                  onChange={(e: any) => setFilters({...filters, role: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Location</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 bg-[#0d1424] border border-gray-700 rounded text-white"
-                  placeholder="e.g. San Francisco, Remote"
-                  value={filters.location}
-                  onChange={(e: any) => setFilters({...filters, location: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Experience</label>
-                <select 
-                  className="w-full px-3 py-2 bg-[#0d1424] border border-gray-700 rounded text-white"
-                  value={filters.experience}
-                  onChange={(e: any) => setFilters({...filters, experience: e.target.value})}
-                >
-                  <option value="">All Levels</option>
-                  <option value="entry">Entry Level</option>
-                  <option value="mid">Mid Level</option>
-                  <option value="senior">Senior Level</option>
-                  <option value="exec">Executive</option>
-                </select>
-              </div>
-              <div className="flex items-end">
-                <label className="flex items-center">
-                  <input 
-                    type="checkbox" 
-                    className="mr-2 h-5 w-5"
-                    checked={filters.remote}
-                    onChange={(e: any) => setFilters({...filters, remote: e.target.checked})}
-                  />
-                  <span>Remote Only</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="space-y-6">
-          {jobs.map(job => (
-            <div key={job.id} className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-colors cursor-pointer">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{job.title}</h2>
-                  <p className="text-blue-400">{job.company}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-gray-300">{job.salary}</p>
-                  <p className="text-sm text-gray-400">Posted {job.posted}</p>
-                </div>
-              </div>
-              
-              <div className="mb-4">
-                <div className="flex items-center mb-2">
-                  <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span className="text-gray-300">{job.location}</span>
-                  {job.remote && (
-                    <span className="ml-3 text-xs bg-green-900/50 text-green-400 px-2 py-1 rounded">Remote</span>
-                  )}
-                </div>
-                <p className="text-gray-300 line-clamp-2">{job.description}</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {job.tags.map((tag, index) => (
-                  <span key={index} className="text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+          <JobFilterBar
+            filterState={filterState}
+            handleMultiSelectChange={handleMultiSelectChange}
+            handleTextInputChange={handleTextInputChange}
+            handleSkillInput={handleSkillInput}
+            removeSkill={removeSkill}
+            applyFilters={applyFilters}
+            resetFilters={resetFilters}
+            isFiltering={isFiltering}
+          />
+          
+          <JobsList 
+            isFiltering={isFiltering}
+            displayedJobs={displayedJobs}
+            resetFilters={resetFilters}
+          />
         </div>
       </div>
     </div>
