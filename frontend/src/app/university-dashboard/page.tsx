@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import DashboardLayout from '../components/DashboardLayout';
+import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import StudentMetrics from './StudentMetrics';
 import EmployerPartners from './EmployerPartners';
 import StudentPlacement from './StudentPlacement';
@@ -82,9 +82,9 @@ export default function UniversityDashboardPage() {
   }, [authLoading]);
 
   return (
-    <DashboardLayout title="University Dashboard" userRole="university">
+    <UnifiedDashboardLayout title="" userRole="university" breadcrumbs={[{ label: 'Dashboard' }]}>
       <div>
-        <h1 className="text-2xl font-semibold mb-6">University Dashboard</h1>
+        
         
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
@@ -107,6 +107,6 @@ export default function UniversityDashboardPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </UnifiedDashboardLayout>
   );
 }

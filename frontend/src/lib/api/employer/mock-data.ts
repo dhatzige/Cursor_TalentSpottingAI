@@ -190,3 +190,13 @@ export const MOCK_DATA = {
     }
   ]
 };
+
+export const EMPLOYER_SETTINGS_MOCK = {
+  logoUrl: "/images/mock-company-logo.png",
+  plan: {
+    id: "basic",
+    name: "Basic",
+    price: "Free",
+    features: ["1 active job posting", "Community support"],
+  },
+};

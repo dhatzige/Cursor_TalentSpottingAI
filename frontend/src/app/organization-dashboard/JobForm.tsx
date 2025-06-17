@@ -67,7 +67,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
   };
   
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-gray-50 dark:bg-slate-800/50 p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">{isEditMode ? 'Edit Job' : 'Post a New Job'}</h2>
       
       {error && (
@@ -174,7 +174,7 @@ export default function JobForm({ onSubmitSuccess, onCancel, isEditMode = false,
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
             >
               Cancel

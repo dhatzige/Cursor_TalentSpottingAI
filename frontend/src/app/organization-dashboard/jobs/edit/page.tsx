@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import DashboardLayout from '../../../components/DashboardLayout';
+import { UnifiedDashboardLayout } from '../../../../components/dashboard';
 import { EmployerService } from '../../../../lib/api';
 import { useProtectedRoute } from '../../../../lib/hooks/useProtectedRoute';
 
@@ -110,12 +110,22 @@ export default function EditJobPage() {
   };
 
   return (
-    <DashboardLayout title={jobId ? 'Edit Job' : 'Create Job'} userRole="employer">
+    <UnifiedDashboardLayout
+      // Removing title to prevent duplication
+      title=""
+      description=""
+      userRole="employer"
+      userInfo={{
+        name: 'Demo User',
+        company: 'TalentSpottingAI Inc.',
+      }}
+      className="pt-0 mt-0" // Removing padding at the top
+    >
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header with back button and title */}
         <PageHeader isEditing={!!jobId} />
         
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md p-6">
           {/* Success and error notifications */}
           <NotificationDisplay error={error} successMessage={successMessage} />
           
@@ -133,6 +143,6 @@ export default function EditJobPage() {
           )}
         </div>
       </div>
-    </DashboardLayout>
+    </UnifiedDashboardLayout>
   );
 }

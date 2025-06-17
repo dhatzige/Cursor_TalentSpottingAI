@@ -2,20 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import DashboardLayout from '../../components/DashboardLayout';
+import { UnifiedDashboardLayout } from '../../../components/dashboard';
 import { EmployerService } from '../../../lib/api';
 import { useProtectedRoute } from '../../../lib/hooks/useProtectedRoute';
 
 // Import modular components
 import {
-  StatusFilter,
   ApplicationsHeader,
   ErrorDisplay,
   ComparisonControl,
-  ApplicationsContent,
+  ApplicationDetails,
   LoadingState,
   ComparisonView
 } from './components';
+import PaginatedApplicationsList from './components/PaginatedApplicationsList';
 
 // Import shared types
 import { Application, ApplicationStatus } from '../../../types/application';
@@ -46,13 +46,11 @@ export default function ApplicationReviewPage() {
   const applicationId = searchParams.get('id');
   
   // State
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [job, setJob] = useState<Job | null>(null);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
-  const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showComparison, setShowComparison] = useState(false);
+  const [job, setJob] = useState<Job | null>(null);
 
   useEffect(() => {
     // Initialize comparison mode if compare parameter exists
@@ -63,17 +61,38 @@ export default function ApplicationReviewPage() {
     // Skip loading if still authenticating
     if (authLoading) return;
     
-    const fetchApplicationsData = async () => {
+    // Only load job data independently if we have an applicationId (for application details) or compareParam
+    const fetchJobData = async () => {
+      if (!applicationId && !compareParam) return;
+      
       setIsLoading(true);
       setError(null);
       
       try {
-        // Load applications based on different entry points
-        if (compareParam) {
+        if (applicationId) {
+          // Handle single application view
+          try {
+            const fetchedApplication = await EmployerService.getApplicationById(applicationId) as Application;
+            setSelectedApplication(fetchedApplication);
+            
+            // Get the job details
+            const jobDetails = await EmployerService.getJobById(fetchedApplication.jobId);
+            setJob({
+              id: jobDetails.id,
+              title: jobDetails.title,
+              company: jobDetails.company,
+              status: (jobDetails.status === 'open' || jobDetails.status === 'closed' || jobDetails.status === 'draft') 
+                ? jobDetails.status as 'open' | 'closed' | 'draft'
+                : 'open'
+            });
+          } catch (appErr) {
+            console.error('Application not found: ', appErr);
+            setError('Application not found');
+          }
+        } else if (compareParam) {
           // Handle comparison view with applications from different jobs
           const applicationIds = compareParam.split(',');
           const fetchedApplications = await EmployerService.getApplicationsByIds(applicationIds) as Application[];
-          setApplications(fetchedApplications);
           
           if (fetchedApplications.length > 0) {
             // Get the job details for the first application
@@ -84,7 +103,6 @@ export default function ApplicationReviewPage() {
                 id: jobDetails.id,
                 title: jobDetails.title,
                 company: jobDetails.company,
-                // Convert string status to union type
                 status: (jobDetails.status === 'open' || jobDetails.status === 'closed' || jobDetails.status === 'draft') 
                   ? jobDetails.status as 'open' | 'closed' | 'draft'
                   : 'open'
@@ -93,92 +111,19 @@ export default function ApplicationReviewPage() {
               console.warn('Could not fetch job details: ', jobErr);
             }
           }
-        } else if (applicationId) {
-          // Handle single application view
-          try {
-            const fetchedApplication = await EmployerService.getApplicationById(applicationId) as Application;
-            setApplications([fetchedApplication]);
-            setSelectedApplication(fetchedApplication);
-            
-            // Get the job details
-            const jobDetails = await EmployerService.getJobById(fetchedApplication.jobId);
-            setJob({
-              id: jobDetails.id,
-              title: jobDetails.title,
-              company: jobDetails.company,
-              // Convert string status to union type
-              status: (jobDetails.status === 'open' || jobDetails.status === 'closed' || jobDetails.status === 'draft') 
-                ? jobDetails.status as 'open' | 'closed' | 'draft'
-                : 'open'
-            });
-          } catch (appErr) {
-            console.error('Application not found: ', appErr);
-            setError('Application not found');
-          }
-        } else if (jobId) {
-          // Standard job applications view
-          const fetchedApplications = await EmployerService.getJobApplications(jobId) as Application[];
-          setApplications(fetchedApplications);
-          
-          // Get the job details
-          try {
-            const jobDetails = await EmployerService.getJobById(jobId);
-            setJob({
-              id: jobDetails.id,
-              title: jobDetails.title,
-              company: jobDetails.company,
-              // Convert string status to union type
-              status: (jobDetails.status === 'open' || jobDetails.status === 'closed' || jobDetails.status === 'draft') 
-                ? jobDetails.status as 'open' | 'closed' | 'draft'
-                : 'open'
-            });
-          } catch (jobErr) {
-            console.error('Could not fetch job details: ', jobErr);
-            setError('Job not found');
-          }
-        } else {
-          // No parameters - show all applications from first job
-          const allJobs = await EmployerService.getAllJobs();
-          if (allJobs.length > 0) {
-            const firstJob = allJobs[0];
-            const fetchedApplications = await EmployerService.getJobApplications(firstJob.id) as Application[];
-            setApplications(fetchedApplications);
-            setJob({
-              id: firstJob.id,
-              title: firstJob.title,
-              company: firstJob.company,
-              // Convert string status to union type
-              status: (firstJob.status === 'open' || firstJob.status === 'closed' || firstJob.status === 'draft') 
-                ? firstJob.status as 'open' | 'closed' | 'draft'
-                : 'open'
-            });
-          }
         }
       } catch (err: any) {
-        console.error('Error fetching applications data:', err);
-        setError('Failed to load applications. Please try again later.');
+        console.error('Error fetching application data:', err);
+        setError('Failed to load application data. Please try again later.');
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchApplicationsData();
-  }, [jobId, authLoading, compareParam, applicationId]);
+    fetchJobData();
+  }, [authLoading, compareParam, applicationId]);
 
-  // Filter applications based on selected status
-  const filteredApplications = statusFilter === 'all' 
-    ? applications 
-    : applications.filter(app => app.status === statusFilter);
-
-  // Open application details
-  const handleViewApplication = (applicationId: string) => {
-    const application = applications.find(app => app.id === applicationId);
-    if (application) {
-      setSelectedApplication(application);
-    }
-  };
-
-  // Update application status
+  // Update application status handler for the ApplicationDetails component
   const handleUpdateStatus = async (applicationId: string, newStatus: ApplicationStatus, feedback?: string) => {
     if (!applicationId) return;
     
@@ -187,24 +132,9 @@ export default function ApplicationReviewPage() {
     
     try {
       // Call the API
-      const updatedApplication = await EmployerService.updateApplicationStatus(applicationId, newStatus);
+      await EmployerService.updateApplicationStatus(applicationId, newStatus);
       
-      // Update the application in our local state
-      const updatedApplications = applications.map(app => {
-        if (app.id === applicationId) {
-          return {
-            ...app,
-            status: newStatus,
-            feedback: feedback || app.feedback,
-            updatedAt: new Date().toISOString()
-          };
-        }
-        return app;
-      });
-      
-      setApplications(updatedApplications);
-      
-      // Update selected application if it's the one being modified
+      // Update selected application if it's the one we just updated
       if (selectedApplication && selectedApplication.id === applicationId) {
         setSelectedApplication({
           ...selectedApplication,
@@ -213,115 +143,172 @@ export default function ApplicationReviewPage() {
           updatedAt: new Date().toISOString()
         });
       }
-      
-      // Show success notification
-      alert(`Application status updated to ${newStatus}`);
-    } catch (error: any) {
-      console.error('Error updating application status:', error);
-      setError(`Failed to update application status: ${error.message || 'Unknown error'}`);
+    } catch (err: any) {
+      console.error('Error updating application status:', err);
+      setError('Failed to update application status. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
-  
-  // Add note to application
-  const handleAddNote = async (applicationId: string, content: string) => {
-    if (!applicationId || !content) return;
+
+  // Add a note to an application
+  const handleAddNote = async (applicationId: string, noteContent: string) => {
+    if (!applicationId || !noteContent.trim()) return;
     
     setIsLoading(true);
     setError(null);
     
     try {
       // Call the API
-      const response = await EmployerService.addApplicationNote(applicationId, content);
+      const response = await EmployerService.addApplicationNote(applicationId, noteContent);
       
-      // Check if it's a success response or a Note object
-      const isNoteObject = (obj: any): obj is Note => {
-        return obj && typeof obj === 'object' && 'id' in obj && 'content' in obj;
-      };
-      
-      // Update the selected application if it's the one being modified
-      if (selectedApplication && selectedApplication.id === applicationId && isNoteObject(response)) {
-        setSelectedApplication({
-          ...selectedApplication,
-          notes: [...(selectedApplication.notes || []), response]
-        });
+      // Handle the response which could be a success message or a Note object
+      if (response && typeof response === 'object' && 'id' in response && 'content' in response && 'createdAt' in response && 'createdBy' in response) {
+        // It's a valid Note object with all required properties
+        const newNote = response as Note;
+        
+        // Update the selected application if it matches
+        if (selectedApplication && selectedApplication.id === applicationId) {
+          setSelectedApplication({
+            ...selectedApplication,
+            notes: [...(selectedApplication.notes || []), newNote]
+          });
+        }
       }
-      
-      // Show success notification
-      alert('Note added successfully');
-    } catch (error: any) {
-      console.error('Error adding application note:', error);
-      setError(`Failed to add note: ${error.message || 'Unknown error'}`);
+    } catch (err: any) {
+      console.error('Error adding note:', err);
+      setError('Failed to add note. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
-  
-  // Close the details view
-  const handleCloseDetails = () => {
+
+  // Close application details
+  const handleCloseApplication = () => {
     setSelectedApplication(null);
-    // Update the URL without the application ID
-    if (jobId) {
-      router.push(`/organization-dashboard/applications?jobId=${jobId}`);
-    } else {
-      router.push('/organization-dashboard/applications');
+    
+    // Reset URL params if viewing a single application
+    if (applicationId) {
+      router.push(`/organization-dashboard/applications${jobId ? `?jobId=${jobId}` : ''}`);
     }
   };
-  
-  return (
-    <DashboardLayout title="Application Review" userRole="employer">
-      {isLoading && !applications.length ? (
-        <LoadingState />
-      ) : showComparison ? (
+
+  // Toggle comparison view
+  const handleToggleComparison = () => {
+    setShowComparison(!showComparison);
+    
+    // Reset URL if coming out of comparison view
+    if (showComparison && compareParam) {
+      router.push(`/organization-dashboard/applications${jobId ? `?jobId=${jobId}` : ''}`);
+    }
+  };
+
+  // Add to comparison
+  const handleAddToComparison = (applicationId: string) => {
+    router.push(`/organization-dashboard/applications?compare=${applicationId}`);
+  };
+
+  // Handle viewing an application's details
+  const handleViewApplication = (application: Application) => {
+    setSelectedApplication(application);
+    
+    // Update URL to include application ID for deep linking
+    if (jobId) {
+      router.push(`/organization-dashboard/applications?jobId=${jobId}&id=${application.id}`);
+    } else {
+      router.push(`/organization-dashboard/applications?id=${application.id}`);
+    }
+  };
+
+  // Render appropriate content based on context
+  const renderContent = () => {
+    if (authLoading) {
+      return <LoadingState />;
+    }
+    
+    if (error) {
+      return <ErrorDisplay error={error} />;
+    }
+    
+    if (showComparison && compareParam) {
+      // In a real implementation, we would fetch applications by ids here
+      // For now, we'll pass an empty array as we need to update the component later
+      return (
         <ComparisonView 
-          applications={applications}
+          applications={[]}
           jobId={jobId || ''}
-          onClose={() => {
-            setShowComparison(false);
-            // Remove compare parameter from URL
-            router.push('/organization-dashboard/applications' + (jobId ? `?jobId=${jobId}` : ''));
-          }}
+          onClose={handleToggleComparison}
         />
-      ) : (
-        <div className="p-6 max-w-6xl mx-auto">
-          {/* Header */}
+      );
+    }
+    
+    return (
+      <div className="space-y-6">
+        {job && (
           <ApplicationsHeader 
-            job={job} 
-            applicationCount={applications.length} 
-            error={error} 
+            job={job}
+            applicationCount={0} // Will be updated from PaginatedApplicationsList
+            error={null}
           />
-          
-          {/* Status filter */}
-          <div className="mb-6">
-            <StatusFilter 
-              selectedStatus={statusFilter} 
-              onStatusChange={setStatusFilter} 
-            />
+        )}
+        
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Applications list with pagination */}
+          <div className={`${selectedApplication ? 'lg:w-1/2' : 'w-full'}`}>
+            <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md overflow-hidden">
+              <div className="p-4 border-b border-gray-200">
+                <ComparisonControl 
+                  applications={[]} // We'll use the paginated applications list instead
+                  jobId={jobId || ''} 
+                  onCompareStart={handleToggleComparison} 
+                />
+              </div>
+              
+              <div className="p-4">
+                <PaginatedApplicationsList 
+                  initialJobId={jobId || undefined}
+                  onSelectApplication={handleViewApplication}
+                />
+              </div>
+            </div>
           </div>
           
-          {/* Error display */}
-          <ErrorDisplay error={error} />
-          
-          {/* Comparison control */}
-          <ComparisonControl 
-            applications={applications} 
-            jobId={jobId} 
-            onCompareStart={() => setShowComparison(true)} 
-          />
-          
-          {/* Applications content */}
-          <ApplicationsContent 
-            applications={filteredApplications}
-            selectedApplication={selectedApplication}
-            onSelectApplication={handleViewApplication}
-            onStatusUpdate={handleUpdateStatus}
-            onAddNote={handleAddNote}
-            onCloseDetails={handleCloseDetails}
-            job={job}
-          />
+          {/* Application details */}
+          {selectedApplication && (
+            <div className="lg:w-1/2">
+              <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md overflow-hidden h-full">
+                <ApplicationDetails 
+                  application={selectedApplication}
+                  onClose={handleCloseApplication}
+                  onStatusUpdate={handleUpdateStatus}
+                  onAddNote={handleAddNote}
+                  isEmployer={true}
+                />
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </DashboardLayout>
+      </div>
+    );
+  };
+
+  return (
+    <UnifiedDashboardLayout
+      // Removing title to prevent duplication
+      title=""
+      description=""
+      userRole="employer"
+      userInfo={{
+        name: 'Demo User',
+        company: 'TalentSpottingAI Inc.',
+      }}
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/organization-dashboard' },
+        { label: 'Applications' }
+      ]}
+      className="pt-0 mt-0" // Removing padding at the top
+    >
+      {renderContent()}
+    </UnifiedDashboardLayout>
   );
 }

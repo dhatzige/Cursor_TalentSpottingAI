@@ -53,20 +53,20 @@ export default function ApplicationDetails({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
+    <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-xl font-semibold mb-1">{application.studentName}</h2>
-            <p className="text-gray-600 mb-2">{application.university || 'University not specified'}</p>
+            <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-white">{application.studentName}</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">{application.university || 'University not specified'}</p>
             <StatusBadge status={application.status} />
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500 mb-1">
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
               Applied: {new Date(application.createdAt).toLocaleDateString()}
             </div>
             {application.matchScore && (
-              <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium inline-block">
+              <div className="bg-blue-100 text-blue-800 dark:bg-blue-700/50 dark:text-blue-200 px-2 py-1 rounded text-sm font-medium inline-block">
                 {application.matchScore}% Match
               </div>
             )}
@@ -81,24 +81,24 @@ export default function ApplicationDetails({
         </div>
       ) : application.matchScore !== undefined ? (
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-medium mb-3">Match Score</h3>
+          <h3 className="text-lg font-medium mb-3 text-gray-900 dark:text-white">Match Score</h3>
           <div className="flex items-center">
-            <div className={`text-xl font-bold rounded-full w-12 h-12 flex items-center justify-center ${application.matchScore >= 70 ? 'bg-green-100 text-green-800' : application.matchScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+            <div className={`text-xl font-bold rounded-full w-12 h-12 flex items-center justify-center ${application.matchScore >= 70 ? 'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200' : application.matchScore >= 50 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-700/50 dark:text-yellow-200' : 'bg-red-100 text-red-800 dark:bg-red-700/50 dark:text-red-200'}`}>
               {application.matchScore}%
             </div>
-            <p className="ml-3 text-sm text-gray-600">Basic skills match</p>
+            <p className="ml-3 text-sm text-gray-600 dark:text-gray-400">Basic skills match</p>
           </div>
         </div>
       ) : null}
 
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-lg font-medium mb-3">Skills</h3>
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-medium mb-3 text-gray-900 dark:text-white">Skills</h3>
         <div className="flex flex-wrap gap-2">
           {application.skills ? (
             application.skills.map(skill => (
               <span 
                 key={skill} 
-                className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded"
+                className="px-2 py-1 bg-gray-100 text-gray-800 dark:text-gray-200 text-xs font-medium rounded"
               >
                 {skill}
               </span>

@@ -4,10 +4,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Get admin dashboard stats
-export const getDashboardStats = async (req: Request, res: Response) => {
+export const getDashboardStats = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Unauthorized access to admin dashboard' });
+      res.status(403).json({ message: 'Unauthorized access to admin dashboard' });
+      return;
     }
     
     // Get counts from database
@@ -20,7 +21,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     ] = await Promise.all([
       prisma.user.count(),
       prisma.organization.count(),
-      prisma.user.count({ where: { role: 'student' } }),
+      prisma.user.count({ where: { role: 'STUDENT' } }),
       prisma.job.count(),
       prisma.application.count()
     ]);
@@ -37,14 +38,16 @@ export const getDashboardStats = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Admin dashboard stats error:', error);
     res.status(500).json({ message: 'Server error fetching admin statistics' });
+    return;
   }
 };
 
 // Get recent activity
-export const getRecentActivity = async (req: Request, res: Response) => {
+export const getRecentActivity = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Unauthorized access to admin activity' });
+      res.status(403).json({ message: 'Unauthorized access to admin activity' });
+      return;
     }
     
     // Get recent user registrations
@@ -104,7 +107,7 @@ export const getRecentActivity = async (req: Request, res: Response) => {
     
     // Format activities
     const activities = [
-      ...newUsers.map(user => ({
+      ...newUsers.map((user: { id: string; name: string; email: string; role: string; createdAt: Date }) => ({
         id: `user-${user.id}`,
         type: 'user_registration',
         title: `New ${user.role} registered`,
@@ -113,7 +116,7 @@ export const getRecentActivity = async (req: Request, res: Response) => {
         entityType: 'user',
         entityId: user.id
       })),
-      ...newJobs.map(job => ({
+      ...newJobs.map((job: { id: string; title: string; createdAt: Date; organization: { name: string } }) => ({
         id: `job-${job.id}`,
         type: 'job_posting',
         title: 'New job posted',
@@ -122,7 +125,7 @@ export const getRecentActivity = async (req: Request, res: Response) => {
         entityType: 'job',
         entityId: job.id
       })),
-      ...newApplications.map(app => ({
+      ...newApplications.map((app: { id: string; status: string; createdAt: Date; job: { title: string; organization: { name: string } }; user: { name: string } }) => ({
         id: `app-${app.id}`,
         type: 'application',
         title: 'New job application',
@@ -136,8 +139,10 @@ export const getRecentActivity = async (req: Request, res: Response) => {
      .slice(0, 10);
     
     res.status(200).json({ activities });
+    return;
   } catch (error) {
     console.error('Admin activity error:', error);
     res.status(500).json({ message: 'Server error fetching admin activity' });
+    return;
   }
 };

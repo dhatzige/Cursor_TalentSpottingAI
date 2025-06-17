@@ -52,7 +52,7 @@ interface TalentSearchFormProps {
   onSearch: (criteria: SearchCriteria) => void;
 }
 
-const TalentSearchForm: React.FC<TalentSearchFormProps> = ({ filters, onSearch }) => {
+const TalentSearchForm = ({ filters, onSearch }: TalentSearchFormProps): React.ReactElement => {
   const [locationInput, setLocationInput] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<Array<{ id: string; name: string }>>([]);
   const [selectedUniversities, setSelectedUniversities] = useState<Array<{ id: string; name: string }>>([]);
@@ -89,26 +89,26 @@ const TalentSearchForm: React.FC<TalentSearchFormProps> = ({ filters, onSearch }
   };
 
   return (
-    <Card className="p-4">
-      <h2 className="text-lg font-semibold mb-4">Search Filters</h2>
+    <Card className="p-4 dark:bg-slate-800 dark:border-slate-700">
+      <h2 className="text-lg font-semibold mb-4 dark:text-white">Search Filters</h2>
       
       <form onSubmit={handleSubmit}>
         {/* Location Search */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Location
           </label>
           <Input
             placeholder="Enter city or location"
             value={locationInput}
-            onChange={e => setLocationInput(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocationInput(e.target.value)}
             className="w-full"
           />
         </div>
         
         {/* Skills */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Required Skills
           </label>
           <MultiSelect
@@ -127,12 +127,12 @@ const TalentSearchForm: React.FC<TalentSearchFormProps> = ({ filters, onSearch }
             className="w-full"
             maxItems={4}
           />
-          <p className="mt-1 text-xs text-gray-500">Select up to 4 key skills</p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Select up to 4 key skills</p>
         </div>
         
         {/* Universities */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Universities
           </label>
           <MultiSelect
@@ -189,10 +189,18 @@ const TalentSearchForm: React.FC<TalentSearchFormProps> = ({ filters, onSearch }
         
         {/* Form Actions */}
         <div className="flex space-x-2">
-          <Button type="submit" className="flex-1" variant="primary">
+          <Button 
+            type="submit" 
+            className="flex-1" 
+            variant="primary"
+          >
             Search
           </Button>
-          <Button type="button" variant="outline" onClick={handleReset}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={handleReset}
+          >
             Reset
           </Button>
         </div>

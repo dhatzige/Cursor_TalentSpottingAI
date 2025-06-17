@@ -25,12 +25,12 @@ export default function EmployerPartners({ employers }: EmployerPartnersProps) {
   });
   
   return (
-    <div className="bg-white rounded-lg shadow mb-8">
-      <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">Employer Partners</h3>
+    <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow mb-8">
+      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Employer Partners</h3>
         <Link 
           href="/university-dashboard/employers" 
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
           View all
         </Link>
@@ -38,23 +38,23 @@ export default function EmployerPartners({ employers }: EmployerPartnersProps) {
       
       <div className="p-5">
         {sortedEmployers.length > 0 ? (
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-gray-100 dark:divide-gray-700">
             {sortedEmployers.slice(0, 5).map((employer) => (
               <li key={employer.id} className="py-4 first:pt-0 last:pb-0">
                 <div className="flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <div className="flex items-center">
-                      <h4 className="text-base font-medium text-gray-900">{employer.name}</h4>
+                      <h4 className="text-base font-medium text-gray-900 dark:text-white">{employer.name}</h4>
                       <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                         employer.hiringStatus === 'active' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {employer.hiringStatus === 'active' ? 'Hiring' : 'Not Hiring'}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">{employer.industry}</p>
-                    <div className="mt-2 flex flex-wrap gap-4 text-xs text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{employer.industry}</p>
+                    <div className="mt-2 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-300">
                       <span>{employer.openPositions} open positions</span>
                       <span>{employer.studentsHired} students hired</span>
                     </div>
@@ -66,7 +66,7 @@ export default function EmployerPartners({ employers }: EmployerPartnersProps) {
                     </Link>
                     <Link 
                       href={`/university-dashboard/messages/new?employerId=${employer.id}`}
-                      className="text-sm text-blue-600 hover:text-blue-800 whitespace-nowrap"
+                      className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 whitespace-nowrap"
                     >
                       Contact
                     </Link>
@@ -76,7 +76,7 @@ export default function EmployerPartners({ employers }: EmployerPartnersProps) {
             ))}
           </ul>
         ) : (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-gray-500 dark:text-gray-300">
             No employer partners found.
           </div>
         )}

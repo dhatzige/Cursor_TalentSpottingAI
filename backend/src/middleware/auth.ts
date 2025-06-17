@@ -11,12 +11,13 @@ interface DecodedToken {
   exp: number;
 }
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
   
   if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
+    res.status(401).json({ message: 'Access denied. No token provided.' });
+    return;
   }
   
   try {
@@ -28,7 +29,8 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     });
     
     if (!user) {
-      return res.status(401).json({ message: 'Invalid token. User not found.' });
+      res.status(401).json({ message: 'Invalid token. User not found.' });
+      return;
     }
     
     // Add user to request object for use in route handlers
@@ -39,21 +41,24 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     
     next();
   } catch (error) {
-    return res.status(403).json({ message: 'Invalid token.' });
+    res.status(403).json({ message: 'Invalid token.' });
+    return;
   }
 };
 
 // Role-based authorization middleware
 export const authorizeRoles = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({ message: 'User not authenticated' });
+      res.status(401).json({ message: 'User not authenticated' });
+      return;
     }
     
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ 
+    if (!req.user.role || !roles.includes(req.user.role)) { // Added check for req.user.role existence
+      res.status(403).json({ 
         message: `Access denied. Required role: ${roles.join(' or ')}.` 
       });
+      return;
     }
     
     next();

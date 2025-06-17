@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import DashboardLayout from '../components/DashboardLayout';
+import { UnifiedDashboardLayout } from '@/components/dashboard';
 import StatCard from '../components/dashboard/StatCard';
 import { useProtectedRoute } from '../../lib/hooks/useProtectedRoute';
 
@@ -146,9 +146,17 @@ export default function OrganizationDashboardPage() {
   }, [authLoading]);
 
   return (
-    <DashboardLayout title="Organization Dashboard" userRole="employer">
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold mb-6">Organization Dashboard</h1>
+    <UnifiedDashboardLayout
+      title=""
+      userRole="employer"
+      breadcrumbs={[{ label: 'Dashboard' }]}
+      userInfo={{
+        name: 'Demo User',
+        company: 'TalentSpottingAI Inc.',
+      }}
+      
+    >
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">
         
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
@@ -198,17 +206,17 @@ export default function OrganizationDashboardPage() {
             </div>
             
             {/* Job Postings */}
-            <section className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900">Your Job Postings</h2>
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors">
+            <section className="bg-gray-50 dark:bg-slate-800/50 shadow rounded-lg overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">Your Job Postings</h2>
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
                   Create New Job
                 </button>
               </div>
               
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-slate-700">
                     <tr>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
@@ -221,24 +229,24 @@ export default function OrganizationDashboardPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-gray-50 dark:bg-slate-800/50 divide-y divide-gray-200 dark:divide-gray-700">
                     {jobPostings.map(job => (
                       <tr key={job.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{job.title}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{job.department}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{job.department}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{job.location}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{job.location}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={
                             `px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            ${job.status === 'active' ? 'bg-green-100 text-green-800' : 
-                              job.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 
-                              'bg-gray-100 text-gray-800'}`
+                            ${job.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200' : 
+                              job.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-700/50 dark:text-yellow-200' : 
+                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`
                           }>
                             {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                           </span>
@@ -250,8 +258,8 @@ export default function OrganizationDashboardPage() {
                           {job.postedDate}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button className="text-blue-600 hover:text-blue-900 mr-4">Edit</button>
-                          <button className="text-gray-600 hover:text-gray-900">View</button>
+                          <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4">Edit</button>
+                          <button className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300">View</button>
                         </td>
                       </tr>
                     ))}
@@ -261,31 +269,31 @@ export default function OrganizationDashboardPage() {
             </section>
             
             {/* Top Candidates */}
-            <section className="bg-white shadow rounded-lg overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">Top Candidates</h2>
+            <section className="bg-gray-50 dark:bg-slate-800/50 shadow rounded-lg overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">Top Candidates</h2>
               </div>
               
               <div className="divide-y divide-gray-200">
                 {topCandidates.map(candidate => (
-                  <div key={candidate.id} className="p-6 flex items-center justify-between">
+                  <div key={candidate.id} className="p-6 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm mr-4">
                         {candidate.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
-                        <div className="text-sm text-gray-500">{candidate.position}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{candidate.name}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{candidate.position}</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center">
                       <div className="mr-6">
                         <div className="flex items-center">
-                          <div className="mr-2 text-sm font-medium text-gray-500">Match Score:</div>
+                          <div className="mr-2 text-sm font-medium text-gray-500 dark:text-gray-400">Match Score:</div>
                           <div className="flex items-center">
-                            <span className="text-sm font-medium text-gray-900">{candidate.matchScore}%</span>
-                            <div className="ml-2 w-16 bg-gray-200 rounded-full h-2.5">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">{candidate.matchScore}%</span>
+                            <div className="ml-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                               <div 
                                 className="bg-blue-600 h-2.5 rounded-full" 
                                 style={{ width: `${candidate.matchScore}%` }}
@@ -293,23 +301,23 @@ export default function OrganizationDashboardPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="text-sm text-gray-500">Applied: {candidate.appliedDate}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">Applied: {candidate.appliedDate}</div>
                       </div>
                       
                       <div>
                         <span className={
                           `px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                          ${candidate.status === 'new' ? 'bg-blue-100 text-blue-800' : 
-                            candidate.status === 'reviewing' ? 'bg-yellow-100 text-yellow-800' : 
-                            candidate.status === 'interview' ? 'bg-green-100 text-green-800' : 
-                            candidate.status === 'offer' ? 'bg-purple-100 text-purple-800' : 
-                            'bg-red-100 text-red-800'}`
+                          ${candidate.status === 'new' ? 'bg-blue-100 text-blue-800 dark:bg-blue-700/50 dark:text-blue-200' : 
+                            candidate.status === 'reviewing' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-700/50 dark:text-yellow-200' : 
+                            candidate.status === 'interview' ? 'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200' : 
+                            candidate.status === 'offer' ? 'bg-purple-100 text-purple-800 dark:bg-purple-700/50 dark:text-purple-200' : 
+                            'bg-red-100 text-red-800 dark:bg-red-700/50 dark:text-red-200'}`
                         }>
                           {candidate.status.charAt(0).toUpperCase() + candidate.status.slice(1)}
                         </span>
                       </div>
                       
-                      <button className="ml-6 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded transition-colors">
+                      <button className="ml-6 px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:hover:bg-slate-600/70 text-gray-800 dark:text-gray-200 text-sm font-medium rounded transition-colors">
                         View Profile
                       </button>
                     </div>
@@ -317,8 +325,8 @@ export default function OrganizationDashboardPage() {
                 ))}
               </div>
               
-              <div className="px-6 py-4 border-t border-gray-200 text-right">
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-500">
+              <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-right">
+                <button className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                   View All Candidates →
                 </button>
               </div>
@@ -326,6 +334,6 @@ export default function OrganizationDashboardPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </UnifiedDashboardLayout>
   );
 }

@@ -29,8 +29,8 @@ export const getOrganizationStats = async (req: Request, res: Response) => {
     // Get count of active jobs
     const activeJobsCount = await prisma.job.count({
       where: { 
-        organizationId,
-        status: 'OPEN'
+        organizationId
+        // status: 'OPEN' // Status field does not exist on Job model
       }
     });
     
@@ -46,8 +46,8 @@ export const getOrganizationStats = async (req: Request, res: Response) => {
     // Get positions filled
     const positionsFilled = await prisma.job.count({
       where: {
-        organizationId,
-        status: 'FILLED'
+        organizationId
+        // status: 'FILLED' // Status field does not exist on Job model
       }
     });
     

@@ -50,11 +50,58 @@ export interface SearchFilters {
 }
 
 /**
- * Job search query interface
+ * Pagination parameters
+ */
+export interface PaginationParams {
+  page: number;
+  pageSize: number;
+}
+
+/**
+ * Pagination information
+ */
+export interface PaginationInfo extends PaginationParams {
+  totalResults: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * Paginated job results
+ */
+export interface PaginatedJobResults {
+  results: JobListing[];
+  pagination: PaginationInfo;
+}
+
+/**
+ * Job search query interface including pagination
  */
 export interface JobSearchQuery {
   searchTerms: string;
   filters?: SearchFilters;
+  page?: number;
+  pageSize?: number;
+}
+
+/**
+ * Search response with pagination
+ */
+export interface JobSearchResponse {
+  results: JobListing[];
+  pagination: PaginationInfo;
+}
+
+/**
+ * Saved search interface
+ */
+export interface SavedSearch {
+  id: string;
+  name: string;
+  query: JobSearchQuery;
+  createdAt: string;
+  lastUsed: string;
 }
 
 /**

@@ -29,6 +29,7 @@ declare module 'react' {
   export type Dispatch<A> = (value: A) => void;
   export type SetStateAction<S> = S | ((prevState: S) => S);
   export function useEffect(effect: EffectCallback, deps?: DependencyList): void;
+  export function useMemo<T>(factory: () => T, deps: DependencyList): T;
   export type EffectCallback = () => (void | (() => void | undefined));
   export type DependencyList = ReadonlyArray<unknown>;
   

@@ -19,7 +19,7 @@ interface JobFormProps {
 
 export function JobForm({ job, isEditMode, isLoading, error, onSubmit, onCancel }: JobFormProps) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-gray-50 dark:bg-slate-800/50 p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">{isEditMode ? 'Edit Job' : 'Post a New Job'}</h2>
         <button
@@ -114,7 +114,7 @@ export function JobForm({ job, isEditMode, isLoading, error, onSubmit, onCancel 
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           >
             Cancel

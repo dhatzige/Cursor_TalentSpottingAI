@@ -5,6 +5,7 @@ import '../styles/gradient-bg.css';
 
 // Import the client component wrapper
 import ClientLayout from '../components/ClientLayout';
+import { AuthProvider } from '../lib/hooks/useAuth';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,9 +32,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+        <AuthProvider>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
+        </AuthProvider>
       </body>
     </html>
   );

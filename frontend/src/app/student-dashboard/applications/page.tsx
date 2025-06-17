@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import DashboardLayout from '../../components/DashboardLayout';
-import Button from '../../components/Button';
-import { StudentService } from '../../../lib/api';
-import { useProtectedRoute } from '../../../lib/hooks/useProtectedRoute';
+import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
+import { StudentService } from '@/lib/api';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 // Import modular components
 import {
@@ -105,50 +104,98 @@ export default function ApplicationsPage() {
     ? applications 
     : applications.filter(app => app.status === filterStatus);
 
+  // Mock user info - In a real application, this would come from auth context
+  const userInfo = {
+    name: 'Alex Johnson',
+    role: 'Student',
+  };
+
+  // Check if we're in development environment
+  const isDev = process.env.NODE_ENV === 'development';
+
   return (
-    <DashboardLayout title="My Applications" userRole="student">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">My Applications</h1>
-          
-          <Link href="/student-dashboard">
-            <Button variant="outline">
-              Back to Dashboard
-            </Button>
-          </Link>
+    <UnifiedDashboardLayout 
+      // Removing title to prevent duplication
+      title="" 
+      description=""
+      userRole="student"
+      userInfo={userInfo}
+      breadcrumbs={[
+        // If in development, link to the no-auth version
+        { label: 'Dashboard', href: isDev ? '/student-dashboard-noauth' : '/student-dashboard' },
+        { label: 'Applications' }
+      ]}
+      className="pt-0 mt-0" // Removing padding at the top
+    >
+      <div className="space-y-6">
+        <div className="flex justify-end items-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {applications.length} total applications
+          </div>
         </div>
         
         {/* Display error if any */}
-        <ErrorDisplay error={error} />
+        {error && <ErrorDisplay error={error} />}
         
         {isLoading ? (
           <LoadingState />
         ) : applications.length === 0 ? (
-          <EmptyState />
+          <div className="rounded-lg shadow-md p-8 bg-gray-50 dark:bg-slate-800/50">
+            <EmptyState />
+          </div>
         ) : (
           <>
             {/* Filter Controls */}
-            <FilterControls
-              activeFilter={filterStatus}
-              onFilterChange={setFilterStatus}
-            />
+            <div className="rounded-lg shadow-md p-4 bg-gray-50 dark:bg-slate-800/50">
+              <FilterControls
+                activeFilter={filterStatus}
+                onFilterChange={setFilterStatus}
+              />
+            </div>
+            
+            {/* Applications Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {['pending', 'interview', 'accepted', 'rejected'].map(status => {
+                const count = applications.filter(app => app.status === status).length;
+                return (
+                  <div 
+                    key={status}
+                    className={`bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md p-4 ${filterStatus === status ? 'ring-2 ring-blue-500' : ''} cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors`}
+                    onClick={() => setFilterStatus(status)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <StatusBadge status={status as any} />
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Total</p>
+                      </div>
+                      <span className="text-2xl font-semibold text-gray-900 dark:text-white">{count}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
             
             {/* Applications List */}
-            <div className="space-y-4">
+            <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md overflow-hidden">
               {filteredApplications.length === 0 ? (
-                <NoMatchingApplications />
+                <div className="p-8">
+                  <NoMatchingApplications />
+                </div>
               ) : (
-                filteredApplications.map(application => (
-                  <ApplicationItem
-                    key={application.id}
-                    application={application}
-                  />
-                ))
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredApplications.map(application => (
+                    <div key={application.id} className="hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors">
+                      <ApplicationItem
+                        application={application}
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </>
         )}
       </div>
-    </DashboardLayout>
+    </UnifiedDashboardLayout>
   );
 }

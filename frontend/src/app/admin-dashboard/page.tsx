@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import DashboardLayout from '../components/DashboardLayout';
+import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import DashboardStats from './DashboardStats';
 import ActivityFeed from './ActivityFeed';
 import { AdminService } from '../../lib/api';
@@ -76,9 +76,8 @@ export default function AdminDashboardPage() {
   }, [authLoading]);
 
   return (
-    <DashboardLayout title="Admin Dashboard" userRole="admin">
+    <UnifiedDashboardLayout title="Admin Dashboard" userRole="admin">
       <div>
-        <h1 className="text-2xl font-semibold mb-6">Admin Dashboard</h1>
         
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
@@ -101,6 +100,6 @@ export default function AdminDashboardPage() {
           </>
         )}
       </div>
-    </DashboardLayout>
+    </UnifiedDashboardLayout>
   );
 }

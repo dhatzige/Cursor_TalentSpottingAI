@@ -43,10 +43,10 @@ const scoreCategories: ScoreCategory[] = [
 
 // Function to determine score color based on value
 const getScoreColor = (score: number): string => {
-  if (score >= 80) return 'bg-green-100 text-green-800';
-  if (score >= 60) return 'bg-blue-100 text-blue-800';
-  if (score >= 40) return 'bg-yellow-100 text-yellow-800';
-  return 'bg-red-100 text-red-800';
+  if (score >= 80) return 'bg-green-100 text-green-800 dark:bg-green-700/50 dark:text-green-200';
+  if (score >= 60) return 'bg-blue-100 text-blue-800 dark:bg-blue-700/50 dark:text-blue-200';
+  if (score >= 40) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-700/50 dark:text-yellow-200';
+  return 'bg-red-100 text-red-800 dark:bg-red-700/50 dark:text-red-200';
 };
 
 // Function to get score recommendation text
@@ -61,8 +61,8 @@ export default function CandidateScoreCard({ scores }: CandidateScoreCardProps) 
   const { overallScore, breakdownScores } = scores;
   
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-4">
-      <h3 className="font-semibold text-gray-700 mb-2">Match Score Analysis</h3>
+    <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow p-4 mb-4">
+      <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Match Score Analysis</h3>
       
       {/* Overall Score */}
       <div className="flex items-center mb-4">
@@ -70,36 +70,36 @@ export default function CandidateScoreCard({ scores }: CandidateScoreCardProps) 
           {overallScore}%
         </div>
         <div className="ml-4">
-          <p className="text-sm text-gray-600">Overall Match</p>
-          <p className="text-sm font-medium">{getScoreRecommendation(overallScore)}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Overall Match</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">{getScoreRecommendation(overallScore)}</p>
         </div>
       </div>
       
       {/* Score Breakdown */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-gray-700">Score Breakdown</h4>
+        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Score Breakdown</h4>
         
         {scoreCategories.map((category) => (
           <div key={category.key} className="flex items-center">
             <div className="mr-2">{category.icon}</div>
             <div className="flex-grow">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-600">{category.name}</span>
-                <span className="text-xs font-semibold">{breakdownScores[category.key]}%</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{category.name}</span>
+                <span className="text-xs font-semibold text-gray-900 dark:text-white">{breakdownScores[category.key]}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                 <div 
                   className="bg-blue-600 h-1.5 rounded-full" 
                   style={{ width: `${breakdownScores[category.key]}%` }}
                 ></div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">{category.description}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{category.description}</p>
             </div>
           </div>
         ))}
       </div>
       
-      <div className="mt-4 text-xs text-gray-500 italic">
+      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 italic">
         Score calculated based on skills match, education relevance, experience alignment, and application quality.
       </div>
     </div>

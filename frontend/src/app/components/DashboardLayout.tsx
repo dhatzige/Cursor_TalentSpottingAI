@@ -13,31 +13,34 @@ export default function DashboardLayout({
   title, 
   userRole 
 }: DashboardLayoutProps) {
-  // Color map for role-specific styling
-  const roleColors = {
-    admin: 'bg-gray-800 text-white',
-    student: 'bg-blue-700 text-white',
-    employer: 'bg-green-700 text-white',
-    university: 'bg-purple-700 text-white',
-  };
+  // Consistent dark theme for sidebar
+  const sidebarBg = 'bg-slate-900'; // Or bg-gray-900, or a slightly different shade from the main gradient
+  const textColor = 'text-gray-200';
+  const linkHoverBg = 'hover:bg-slate-700/50';
+  const linkHoverText = 'hover:text-white';
+  const activeLinkBg = 'bg-blue-600'; // Example active state
+  const activeLinkText = 'text-white';
+
+  // TODO: Determine active link based on current path
+  // For now, the first 'Dashboard' link can be styled as active for demo
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen gradient-background text-gray-200">
       {/* Sidebar */}
-      <aside className={`w-64 ${roleColors[userRole]} flex-shrink-0`}>
-        <div className="p-4 border-b border-white/10">
-          <h2 className="text-xl font-bold">TalentSpottingAI</h2>
-          <p className="text-sm opacity-80 mt-1">
+      <aside className={`w-64 ${sidebarBg} ${textColor} flex-shrink-0 flex flex-col`}>
+        <div className="p-4 border-b border-slate-700">
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">TalentSpottingAI</h2>
+          <p className="text-sm text-slate-400 mt-1">
             {userRole.charAt(0).toUpperCase() + userRole.slice(1)} Dashboard
           </p>
         </div>
 
-        <nav className="p-4">
+        <nav className="p-4 flex-grow">
           <ul className="space-y-2">
             <li>
               <Link 
                 href={`/${userRole}-dashboard`} 
-                className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors ${userRole === 'admin' ? (activeLinkBg + ' ' + activeLinkText) : ''}`}
               >
                 Dashboard
               </Link>
@@ -47,7 +50,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/admin-dashboard/users" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Users
                   </Link>
@@ -55,7 +58,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/admin-dashboard/organizations" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Organizations
                   </Link>
@@ -67,7 +70,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/student-dashboard/jobs" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Jobs
                   </Link>
@@ -75,7 +78,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/student-dashboard/applications" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     My Applications
                   </Link>
@@ -87,25 +90,41 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/organization-dashboard/jobs" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Jobs
                   </Link>
                 </li>
                 <li>
                   <Link 
+                    href="/organization-dashboard/applications" 
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
+                  >
+                    Applications
+                  </Link>
+                </li>
+                <li>
+                  <Link 
                     href="/organization-dashboard/candidates" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Candidates
                   </Link>
                 </li>
                 <li>
                   <Link 
-                    href="/employer/talent-search" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    href="/organization-dashboard/analytics" 
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
-                    Talent Search
+                    Analytics
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/organization-dashboard/search" 
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
+                  >
+                    Advanced Search
                   </Link>
                 </li>
               </>
@@ -115,7 +134,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/university-dashboard/students" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Students
                   </Link>
@@ -123,7 +142,7 @@ export default function DashboardLayout({
                 <li>
                   <Link 
                     href="/university-dashboard/employers" 
-                    className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                    className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
                   >
                     Employers
                   </Link>
@@ -133,7 +152,7 @@ export default function DashboardLayout({
             <li>
               <Link 
                 href="/settings" 
-                className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors`}
               >
                 Settings
               </Link>
@@ -141,7 +160,7 @@ export default function DashboardLayout({
             <li>
               <Link 
                 href="/logout" 
-                className="block py-2 px-4 rounded hover:bg-white/10 transition"
+                className={`block py-2 px-4 rounded ${linkHoverBg} ${linkHoverText} transition-colors mt-auto mb-2`}
               >
                 Logout
               </Link>
@@ -151,10 +170,10 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1">
-        <header className="bg-white shadow">
+      <main className="flex-1 flex flex-col">
+        <header className="bg-slate-800/60 backdrop-blur-md shadow-lg">
           <div className="py-4 px-6">
-            <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
+            <h1 className="text-2xl font-bold text-white">{title}</h1>
           </div>
         </header>
         <div className="p-6">

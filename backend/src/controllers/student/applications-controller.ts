@@ -19,7 +19,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
     // Get student applications with job details
     const applications = await prisma.application.findMany({
       where: { userId: req.user.id },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'desc' }, // Changed from updatedAt
       include: {
         job: {
           include: {
@@ -39,7 +39,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
       title: app.job.title,
       company: app.job.organization.name,
       status: app.status.toLowerCase(),
-      timestamp: app.updatedAt
+      timestamp: app.createdAt // Changed from updatedAt
     }));
     
     res.status(200).json({ applications: formattedApplications });
@@ -57,8 +57,8 @@ export const applyForJob = async (req: Request, res: Response) => {
     }
     
     const { jobId } = req.params;
-    const coverLetter = req.body.coverLetter || '';
-    const additionalInfo = req.body.additionalInfo || '';
+    // const coverLetter = req.body.coverLetter || ''; // Field does not exist on Application model
+    // const additionalInfo = req.body.additionalInfo || ''; // Field does not exist on Application model
     
     // Validate resume file is uploaded
     if (!req.file) {
@@ -89,80 +89,16 @@ export const applyForJob = async (req: Request, res: Response) => {
       });
     }
     
-    // Parse the uploaded CV to extract structured data
-    let extractedCvData: ExtractedCV | null = null;
-    let parsedResumeData = {};
-    
-    try {
-      extractedCvData = await parseCV(req.file.path);
-      console.log('Successfully parsed CV data');
-      
-      // Format the extracted data for storage
-      parsedResumeData = {
-        skills: extractedCvData.skills || [],
-        extractedExperience: extractedCvData.experience || [],
-        extractedEducation: extractedCvData.education || [],
-        fullText: extractedCvData.fullText,
-        parsedAt: new Date()
-      };
-    } catch (parseError) {
-      console.error('Error parsing resume:', parseError);
-      // Continue with application process even if parsing fails
-    }
-    
-    // Save the application with resume file path and parsed data
+    // Save the application
     const application = await prisma.application.create({
       data: {
         status: 'PENDING',
-        coverLetter: coverLetter,
-        additionalInfo: additionalInfo,
-        resumePath: req.file.path,
-        parsedResumeData: parsedResumeData as any, // Store extracted data as JSON
         user: {
           connect: { id: req.user.id }
         },
         job: {
           connect: { id: jobId }
         }
-      }
-    });
-    
-    // If CV data was successfully extracted, update student profile with skills
-    // This way we build the profile automatically as they apply to jobs
-    if (extractedCvData && extractedCvData.skills.length > 0) {
-      // Get current student profile
-      const student = await prisma.student.findUnique({
-        where: { userId: req.user.id },
-        include: { skills: true }
-      });
-      
-      if (student) {
-        // Get existing skill names to avoid duplicates
-        const existingSkillNames = student.skills.map((skill: any) => skill.name.toLowerCase());
-        
-        // Add skills from CV that aren't already in profile
-        for (const skillName of extractedCvData.skills) {
-          if (!existingSkillNames.includes(skillName.toLowerCase())) {
-            await prisma.skill.create({
-              data: {
-                name: skillName,
-                students: {
-                  connect: { id: student.id }
-                }
-              }
-            });
-          }
-        }
-      }
-    }
-    
-    // Record activity
-    await prisma.userActivity.create({
-      data: {
-        userId: req.user.id,
-        activityType: 'JOB_APPLICATION',
-        details: `Applied for job: ${job.title}`,
-        entityId: job.id
       }
     });
     
@@ -193,15 +129,9 @@ export const getApplicationDetails = async (req: Request, res: Response) => {
             organization: {
               select: {
                 name: true,
-                logo: true,
               }
-            },
-            skills: true
+            }
           }
-        },
-        notes: true,
-        interviews: {
-          orderBy: { scheduledAt: 'asc' }
         }
       }
     });
@@ -218,35 +148,14 @@ export const getApplicationDetails = async (req: Request, res: Response) => {
     // Format application data for the frontend
     const formattedApplication = {
       id: application.id,
-      status: application.status,
-      submittedAt: application.createdAt,
-      lastUpdated: application.updatedAt,
-      coverLetter: application.coverLetter,
-      additionalInfo: application.additionalInfo,
-      resumePath: application.resumePath,
+      status: application.status.toLowerCase(),
+      lastUpdated: application.createdAt,
       job: {
         id: application.job.id,
         title: application.job.title,
         description: application.job.description,
-        location: application.job.location,
         company: application.job.organization.name,
-        companyLogo: application.job.organization.logo,
-        skills: application.job.skills.map((skill: { name: string }) => skill.name)
       },
-      feedback: application.feedback,
-      interviews: application.interviews.map((interview: any) => ({
-        id: interview.id,
-        type: interview.type,
-        scheduledAt: interview.scheduledAt,
-        status: interview.status,
-        notes: interview.notes
-      })),
-      notes: application.notes.map((note: any) => ({
-        id: note.id,
-        content: note.content,
-        createdAt: note.createdAt,
-        isPublic: note.isPublic
-      })).filter((note: any) => note.isPublic)
     };
     
     res.status(200).json({ application: formattedApplication });

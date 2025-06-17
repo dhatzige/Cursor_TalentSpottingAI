@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  // output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -16,17 +16,22 @@ datasource db {
 
 // --- Core Models ---
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  name        String
-  role        UserRole
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  organization Organization? @relation(fields: [organizationId], references: [id])
+  id            String       @id @default(uuid())
+  email         String       @unique
+  password      String
+  name          String
+  role          UserRole
+  status        String?      @default("ACTIVE")
+  lastActive    DateTime?    @default(now())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  organization  Organization? @relation(fields: [organizationId], references: [id])
   organizationId String?
-  jobs        Job[]    @relation("PostedJobs")
-  applications Application[]
+  university    University?   @relation(fields: [universityId], references: [id])
+  universityId  String?
+  student       Student?
+  jobs          Job[]        @relation("PostedJobs")
+  applications  Application[]
 }
 
 enum UserRole {
@@ -37,33 +42,37 @@ enum UserRole {
 }
 
 model Organization {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
+  industry    String?
   users       User[]
   jobs        Job[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
 }
 
 model Job {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  organization Organization @relation(fields: [organizationId], references: [id])
+  id             String       @id @default(uuid())
+  title          String
+  description    String
+  status         String?      @default("OPEN")
+  organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
-  postedBy    User    @relation("PostedJobs", fields: [postedById], references: [id])
-  postedById  String
-  applications Application[]
-  createdAt   DateTime @default(now())
+  postedBy       User         @relation("PostedJobs", fields: [postedById], references: [id])
+  postedById     String
+  employer       Employer?    @relation(fields: [employerId], references: [id])
+  employerId     String?
+  applications   Application[]
+  createdAt      DateTime     @default(now())
 }
 
 model Application {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  id        String             @id @default(uuid())
+  user      User               @relation(fields: [userId], references: [id])
   userId    String
-  job       Job      @relation(fields: [jobId], references: [id])
+  job       Job                @relation(fields: [jobId], references: [id])
   jobId     String
-  status    ApplicationStatus @default(PENDING)
-  createdAt DateTime @default(now())
+  status    ApplicationStatus  @default(PENDING)
+  createdAt DateTime           @default(now())
 }
 
 enum ApplicationStatus {
@@ -72,4 +81,65 @@ enum ApplicationStatus {
   REJECTED
 }
 
-// --- End Core Models ---
+// --- University Models ---
+model University {
+  id          String      @id @default(uuid())
+  name        String
+  location    String?
+  users       User[]
+  degrees     Degree[]
+  education   Education[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Degree {
+  id                String      @id @default(uuid())
+  name              String
+  field             String?
+  university        University   @relation(fields: [universityId], references: [id])
+  universityId      String
+  education         Education[]
+  prevPlacementRate Float?      // Previous period placement rate for trend calculation
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Student {
+  id          String      @id @default(uuid())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      @unique
+  placed      Boolean     @default(false)
+  salary      Float?
+  employer    Employer?   @relation(fields: [employerId], references: [id])
+  employerId  String?
+  education   Education[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Education {
+  id            String      @id @default(uuid())
+  student       Student     @relation(fields: [studentId], references: [id])
+  studentId     String
+  university    University  @relation(fields: [universityId], references: [id])
+  universityId  String
+  degree        Degree      @relation(fields: [degreeId], references: [id])
+  degreeId      String
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Employer {
+  id          String      @id @default(uuid())
+  name        String
+  industry    String?
+  students    Student[]   // Students hired by this employer
+  jobs        Job[]       // Jobs offered by this employer
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// --- End University Models ---

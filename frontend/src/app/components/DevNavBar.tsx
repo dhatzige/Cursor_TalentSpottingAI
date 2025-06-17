@@ -13,6 +13,8 @@ const navLinks = [
   // Dashboards
   { href: "/admin-dashboard", label: "Admin" },
   { href: "/student-dashboard", label: "Student" },
+  { href: "/dev-student-dashboard", label: "Student (No Auth)" },
+  { href: "/dev-student-dashboard/simple", label: "Student (Simple)" },
   { href: "/organization-dashboard", label: "Organization" },
   { href: "/university-dashboard", label: "University" },
   
@@ -21,71 +23,105 @@ const navLinks = [
   { href: "/students", label: "Students" },
   { href: "/universities", label: "Universities" },
   { href: "/blog", label: "Blog" },
+  
+  // Developer resources
+  { href: "/dev-dashboard", label: "UI Showcase" }
 ];
 
 export default function DevNavBar() {
   const pathname = usePathname();
   
-  // Only show the dev navbar when specifically requested with a query parameter
-  // Use useState and useEffect for client-side detection
+  // State for dev navbar visibility
   const [showDevNav, setShowDevNav] = useState(false);
   
-  // Check for query param, but only on the client side
+  // Load preference from localStorage if available
   useEffect(() => {
+    // Initial check: URL parameter takes precedence
     const searchParams = new URLSearchParams(window.location.search);
-    setShowDevNav(searchParams.has('dev_nav'));
+    if (searchParams.has('dev_nav')) {
+      setShowDevNav(true);
+      // Save preference
+      try {
+        localStorage.setItem('devNavVisible', 'true');
+      } catch (e) {
+        console.error('Could not save dev nav preference to localStorage');
+      }
+      return;
+    }
+    
+    // Otherwise check localStorage for saved preference
+    try {
+      const savedPreference = localStorage.getItem('devNavVisible');
+      if (savedPreference === 'true') {
+        setShowDevNav(true);
+      }
+    } catch (e) {
+      console.error('Could not read dev nav preference from localStorage');
+    }
   }, []);
   
-  // Hide by default unless specifically requested
-  const shouldHide = !showDevNav;
-  
-  // Add keyboard shortcut listener - client-side only
+  // Add keyboard shortcut listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ctrl+Shift+D to toggle dev nav
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'd') {
-        console.log('DevNav shortcut triggered!');
         e.preventDefault(); // Prevent any browser default actions
         
-        // Toggle visibility directly without URL parameters
-        setShowDevNav(!showDevNav);
+        // Toggle visibility and save preference
+        const newVisibility = !showDevNav;
+        setShowDevNav(newVisibility);
         
-        // Update URL for persistence if needed
-        const url = new URL(window.location.href);
-        if (showDevNav) {
-          url.searchParams.delete('dev_nav');
-        } else {
-          url.searchParams.set('dev_nav', 'true');
+        try {
+          localStorage.setItem('devNavVisible', newVisibility ? 'true' : 'false');
+        } catch (e) {
+          console.error('Could not save dev nav preference to localStorage');
         }
-        window.history.pushState({}, '', url.toString());
       }
     };
-
-    // Always add the event listener, even when nav is hidden
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [showDevNav]);
     
-  if (shouldHide) {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showDevNav]);
+  
+  if (!showDevNav) {
     return null;
   }
   
   return (
-    <nav className={`w-full bg-red-800 text-white px-4 py-3 flex gap-4 items-center shadow fixed top-0 left-0 z-[9999] ${showDevNav ? 'dev-nav-visible' : 'hidden'}`}>
+    <nav className="w-full bg-gray-800 border-b border-gray-700 text-white px-4 py-2 flex gap-4 items-center shadow-sm fixed top-0 left-0 z-[9999] dev-nav-visible" data-component-name="DevNavBar">
       <div className="text-yellow-400 mr-2 text-sm font-bold">DEV NAV →</div>
       <div className="flex gap-4 overflow-x-auto pb-1">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="hover:underline hover:text-blue-400 transition-colors whitespace-nowrap"
-          >
-            {link.label}
-          </Link>
-        ))}
+        {navLinks.map((link) => {
+          // Add dev_bypass=true parameter to dashboard links
+          const href = link.href.includes('dashboard') 
+            ? `${link.href}?dev_bypass=true` 
+            : link.href;
+            
+          return (
+            <Link
+              key={link.href}
+              href={href}
+              className="hover:underline hover:text-blue-400 transition-colors whitespace-nowrap"
+            >
+              {link.label}
+            </Link>
+          );
+        })}
       </div>
+      <button 
+        onClick={() => {
+          setShowDevNav(false);
+          try {
+            localStorage.setItem('devNavVisible', 'false');
+          } catch (e) {
+            console.error('Could not save dev nav preference');
+          }
+        }}
+        className="ml-auto px-2 py-1 bg-red-700 hover:bg-red-600 rounded text-xs"
+        aria-label="Close developer navigation"
+      >
+        Close
+      </button>
     </nav>
   );
 }

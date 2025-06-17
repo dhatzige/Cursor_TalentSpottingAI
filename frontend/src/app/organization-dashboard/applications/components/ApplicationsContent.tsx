@@ -32,7 +32,7 @@ export function ApplicationsContent({
         {applications.length === 0 ? (
           <NoApplicationsState hasJob={!!job} />
         ) : (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md overflow-hidden">
             <ApplicationsList 
               applications={applications}
               selectedApplicationId={selectedApplication?.id}

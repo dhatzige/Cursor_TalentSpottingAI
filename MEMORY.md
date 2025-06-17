@@ -2,6 +2,49 @@
 
 ## Recent Updates
 
+### Dashboard Settings Save Flow & Notification Cleanup (June 2025)
+
+- **Removed SMS Notification toggles** from both Student & Employer settings pages; unified under `weeklySummary` email setting.
+- Introduced **`useSaveSettings` hook** (`frontend/src/lib/hooks/useSaveSettings.ts`): generic persistence util returning `{ saveSettings, saving, saved }`.
+- Added **mock API route** `frontend/src/app/api/settings/route.ts` that logs the incoming settings JSON for now.
+- Integrated hook + **dirty flag UI** into:
+  - `student-dashboard/settings/page.tsx`
+  - `organization-dashboard/settings/page.tsx`
+  Buttons now disabled until changes occur, display "Saving… → Saved!" status.
+- Updated **README.md** with quick-start, dev_bypass explanation and save-flow docs.
+
+
+### Backend TypeScript and Schema Improvements (May 2025)
+
+#### Completed Improvements
+- **Fixed University Route TypeScript Errors**
+  - Resolved critical TypeScript compilation issues in university routes
+  - Applied proper type assertions for route handlers using `RequestHandler` type
+  - Re-enabled authentication and authorization middleware for university routes
+
+- **Enhanced Prisma Schema**
+  - Added missing University-related models to the schema:
+    - `University` model with relationships to users and degrees
+    - `Student` model with placement tracking capabilities
+    - `Degree` model for academic programs
+    - `Education` model linking students to universities and degrees
+    - `Employer` model for tracking employment relationships
+  - Fixed relationship definitions between models
+  - Generated updated Prisma client with new model types
+
+- **Backend Documentation**
+  - Updated backend README.md with comprehensive documentation
+  - Added detailed installation and environment setup instructions
+  - Documented API routes and authentication requirements
+  - Provided clear explanations of database models and relationships
+
+#### Next Steps for Backend
+- Set up PostgreSQL database for development and testing
+- Complete database migrations with real data
+- Remove temporary `@ts-nocheck` directives once IDE recognizes Prisma types
+- Add missing models for talent search functionality (Skill, Language, etc.)
+- Implement unit and integration tests for university routes
+
 ### Job Search System Refactoring (May 2025)
 
 #### Completed Improvements

@@ -1,8 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+'use client';
+
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { AuthService } from '../api';
 
 // User type definition
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;

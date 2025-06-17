@@ -1,8 +1,17 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from './useAuth';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useAuth } from './useAuth'; // Import named exports
+
+// Define user type locally to avoid import issues
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  organizationId?: string;
+}
 
 type AllowedRoles = string[] | 'any';
 
@@ -12,17 +21,40 @@ type AllowedRoles = string[] | 'any';
  * @param redirectPath Path to redirect to if unauthorized
  */
 export const useProtectedRoute = (allowedRoles: AllowedRoles = 'any', redirectPath: string = '/login') => {
-  const { user, loading, isAuthenticated } = useAuth();
+  const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const devBypassParam = searchParams.get('dev_bypass');
+  const isDevBypassActive = process.env.NODE_ENV === 'development' && devBypassParam === 'true';
+
+  let effectiveLoading = auth.loading;
+  let effectiveUser = auth.user;
+  let effectiveIsAuthenticated = auth.isAuthenticated;
+
+  if (isDevBypassActive) {
+    effectiveLoading = false;
+    
+    // If allowedRoles is an array, use the first role as the mock user's role
+    // Otherwise, use a generic 'user' role
+    const mockRole = Array.isArray(allowedRoles) && allowedRoles.length > 0
+      ? allowedRoles[0]
+      : 'user';
+    
+    effectiveUser = { 
+      id: 'dev', 
+      email: 'dev@example.com', 
+      name: 'Dev User', 
+      role: mockRole
+    } as User;
+    effectiveIsAuthenticated = true;
+  }
 
   useEffect(() => {
-    // Skip validation during loading state
-    if (loading) return;
-    
-    // Check if user is authenticated
-    if (!isAuthenticated) {
-      // Store the current path for redirect after login
+    if (effectiveLoading) return;
+
+    if (!effectiveIsAuthenticated) {
       if (typeof window !== 'undefined') {
         localStorage.setItem('redirectAfterLogin', pathname || '/');
       }
@@ -31,12 +63,14 @@ export const useProtectedRoute = (allowedRoles: AllowedRoles = 'any', redirectPa
     }
 
     // User is authenticated, check role if specified
-    if (allowedRoles !== 'any' && user) {
-      const hasPermission = allowedRoles.includes(user.role);
-      
+    if (allowedRoles !== 'any' && effectiveUser) {
+      // Assuming effectiveUser.role is always a string if effectiveUser is not null, based on User type.
+      const userRole = effectiveUser.role;
+      const hasPermission = allowedRoles.includes(userRole);
+
       if (!hasPermission) {
         // Redirect to appropriate dashboard based on role
-        switch(user.role) {
+        switch (userRole) {
           case 'admin':
             router.push('/admin-dashboard');
             break;
@@ -50,13 +84,32 @@ export const useProtectedRoute = (allowedRoles: AllowedRoles = 'any', redirectPa
             router.push('/university-dashboard');
             break;
           default:
+            // If role is 'any' (from dev_bypass) and doesn't match specific allowedRoles,
+            // or if it's an unknown role, redirect to login.
             router.push('/login');
         }
       }
+    } else if (allowedRoles !== 'any' && !effectiveUser && !effectiveLoading && !isDevBypassActive) {
+      // Fallback: specific roles required, no user, not loading, not dev_bypass.
+      // This should ideally be caught by !effectiveIsAuthenticated.
+      router.push(redirectPath);
     }
-  }, [loading, isAuthenticated, user, router, allowedRoles, redirectPath, pathname]);
+  }, [
+    effectiveLoading,
+    effectiveIsAuthenticated,
+    effectiveUser,
+    router,
+    allowedRoles,
+    redirectPath,
+    pathname,
+    isDevBypassActive // Added as its change should re-evaluate the effect
+  ]);
 
-  return { loading, user };
+  return { 
+    loading: effectiveLoading, 
+    user: effectiveUser, 
+    isAuthenticated: effectiveIsAuthenticated 
+  };
 };
 
 export default useProtectedRoute;

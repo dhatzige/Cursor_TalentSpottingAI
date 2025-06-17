@@ -133,7 +133,7 @@ export default function ComparisonView({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg shadow-md p-6">
       <ComparisonHeader 
         applicationsCount={applications.length} 
         selectedCount={selectedApplications.length}
@@ -186,7 +186,7 @@ export default function ComparisonView({
               .map(application => (
                 <div 
                   key={application.id}
-                  className="border border-gray-200 rounded p-3 hover:bg-gray-50 cursor-pointer"
+                  className="border border-gray-200 rounded p-3 hover:bg-gray-100 dark:hover:bg-slate-700/50 cursor-pointer"
                   onClick={() => handleAddToComparison(application)}
                 >
                   <div className="font-medium">{application.studentName}</div>

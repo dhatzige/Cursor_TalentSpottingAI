@@ -23,6 +23,7 @@ export interface Application {
   jobId: string;
   studentId: string;
   studentName: string;
+  candidateEmail?: string; // Added for ApplicationsTable.tsx
   status: ApplicationStatus;
   createdAt: string;
   updatedAt: string;
@@ -35,6 +36,7 @@ export interface Application {
   university?: string;
   matchScore?: number; // Legacy score field
   scores?: CandidateScore; // Enhanced scoring with breakdown
+  jobTitle?: string; // Added for ApplicationsTable.tsx
   // Additional fields for enhanced matching
   experience?: number; // Years of experience
   education?: string; // Education level
