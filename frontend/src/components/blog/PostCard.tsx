@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { format } from 'date-fns';
 import { BlogPost } from '@/types/blog';
 
 interface PostCardProps {
@@ -23,15 +24,15 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       </div>
       <div className="p-6 flex-grow flex flex-col">
         <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{post.title}</h3>
-        <span className="text-gray-400 text-sm">{post.date} · {post.readTime}</span>
+        <span className="text-gray-400 text-sm">{format(new Date(post.createdAt), 'MMMM d, yyyy')} · {post.readTime}</span>
         <p className="text-gray-300 text-sm mb-4 flex-grow">{post.excerpt}</p>
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold mr-2 shadow-sm ring-1 ring-gray-600">
-              {post.author.split(' ').map(n => n[0]).join('')}
+              {post.author.name.split(' ').map((n: string) => n[0]).join('')}
             </div>
             <div>
-              <p className="text-sm font-medium text-white">{post.author}</p>
+              <p className="text-sm font-medium text-white">{post.author.name}</p>
             </div>
           </div>
           <Link

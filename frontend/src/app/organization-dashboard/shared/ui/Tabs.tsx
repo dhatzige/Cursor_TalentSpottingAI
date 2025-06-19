@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 
 interface Tab {
   id: string;
@@ -31,7 +32,7 @@ export default function Tabs({
   className = '',
 }: TabsProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   
   // Get active tab from URL if queryParamName is provided, otherwise use defaultTabId or first tab
   const initialTabId = queryParamName 
@@ -65,7 +66,7 @@ export default function Tabs({
       params.set(queryParamName, tabId);
       
       // Update the URL without refreshing the page
-      router.push(`?${params.toString()}`, { scroll: false });
+      router.push(`?${params.toString()}`);
     }
     
     // Call onChange handler

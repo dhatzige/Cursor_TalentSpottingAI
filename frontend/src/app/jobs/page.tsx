@@ -1,7 +1,10 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import Navbar from '@/components/layout/Navbar';
 import SearchBar from '@/components/home/SearchBar';
 import { filterJobsBySearchTerms, filterJobsByFilters } from '@/lib/utils/job-search';
@@ -11,7 +14,7 @@ import JobsList from '@/components/jobs/JobsList';
 
 export default function JobsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   
   // Get search query from URL if present
   const searchQuery = searchParams.get('q') || '';

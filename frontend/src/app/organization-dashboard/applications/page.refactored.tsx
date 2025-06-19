@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import DashboardLayout from '../../components/DashboardLayout';
 import { EmployerService } from '../../../lib/api';
 import { useProtectedRoute } from '../../../lib/hooks/useProtectedRoute';
@@ -40,7 +41,7 @@ export default function ApplicationReviewPage() {
   const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
   
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   const jobId = searchParams.get('jobId');
   const compareParam = searchParams.get('compare');
   const applicationId = searchParams.get('id');

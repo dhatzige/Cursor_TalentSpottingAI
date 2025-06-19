@@ -1,6 +1,8 @@
 // Reference: Student_dashboard.jpg
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import { StudentService } from '../../lib/api';

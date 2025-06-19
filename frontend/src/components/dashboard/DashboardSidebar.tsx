@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import { getSidebarConfig } from '@/components/dashboard/dashboardConfig';
 
 // Helper component to avoid TypeScript error with Link and key prop
@@ -61,8 +62,10 @@ export default function DashboardSidebar({
 }: DashboardSidebarProps) {
   // Get the correct navigation items and theme color based on user role
   const { navigationItems, themeColor } = getSidebarConfig(userRole);
-  const searchParams = useSearchParams();
-  const devBypassActive = searchParams.get('dev_bypass') === 'true';
+  
+  // Use our safe search params hook
+  const safeSearchParams = useSafeSearchParams();
+  const devBypassActive = safeSearchParams.get('dev_bypass') === 'true';
   
   return (
     <>

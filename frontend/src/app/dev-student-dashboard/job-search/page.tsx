@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import JobsSearch from '../../student-dashboard/jobs/components/JobsSearch';

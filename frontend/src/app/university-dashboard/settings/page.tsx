@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, ChangeEvent } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
@@ -104,7 +106,7 @@ export default function UniversitySettingsPage() {
       {/* --- Appearance --- */}
       <AppearanceSection
         darkMode={settings.account.darkMode}
-        onChange={(val) => {
+        onChange={(val: boolean) => {
           setDirty(true);
           setSettings(prev => ({
             ...prev,

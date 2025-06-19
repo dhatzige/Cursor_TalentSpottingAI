@@ -1,7 +1,9 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import { StudentService } from '@/lib/api';
@@ -18,7 +20,7 @@ import { SearchFilters, JobList, JobFilters, Job } from './components';
 export default function JobSearchPage() {
   // Protect this route - only student can access
   const { loading: authLoading } = useProtectedRoute(['student'], '/login');
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   
   // State
   const [jobs, setJobs] = useState<Job[]>([]);

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
 import { BlogPost } from '@/types/blog';
 
@@ -25,16 +26,15 @@ const FeaturedPostCard: React.FC<FeaturedPostCardProps> = ({ post }) => {
                 />
             </div>
             <div className="p-6 md:p-8 flex flex-col">
-                <span className="text-gray-400 text-sm">{post.date} · {post.readTime}</span>
+                <span className="text-gray-400 text-sm">{format(new Date(post.createdAt), 'MMMM d, yyyy')} · {post.readTime}</span>
                 <h3 className="text-2xl font-bold mt-2 mb-4 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 transition-colors duration-300">{post.title}</h3>
                 <p className="text-gray-300 mb-6 flex-grow">{post.excerpt}</p>
                 <div className="flex items-center mb-6">
                 <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold mr-3 shadow-sm ring-2 ring-gray-600">
-                    {post.author.split(' ').map(n => n[0]).join('')}
+                    {post.author.name.split(' ').map((n: string) => n[0]).join('')}
                 </div>
                 <div>
-                    <p className="font-semibold text-white">{post.author}</p>
-                    <p className="text-sm text-gray-400">{post.authorRole}</p>
+                    <p className="font-semibold text-white">{post.author.name}</p>
                 </div>
                 </div>
                 <div className="mt-auto">

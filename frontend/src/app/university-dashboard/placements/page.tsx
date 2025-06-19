@@ -1,6 +1,8 @@
 // University Placements Page – detailed placement report
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import StudentPlacement from '../StudentPlacement';

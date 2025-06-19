@@ -1,4 +1,6 @@
 "use client";
+
+export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import { UnifiedDashboardLayout } from '@/components/dashboard';

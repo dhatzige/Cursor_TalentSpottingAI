@@ -5,8 +5,21 @@ import FeaturedPostCard from '@/components/blog/FeaturedPostCard';
 import PostCard from '@/components/blog/PostCard';
 import CategorySidebar from '@/components/blog/CategorySidebar';
 import SearchBar from '@/components/blog/SearchBar';
-import { blogPosts, categories } from './data';
-import { BlogPost } from '@/types/blog';
+import { BlogPost, Category } from '@/types/blog';
+
+async function getPosts(): Promise<BlogPost[]> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  const res = await fetch(`${apiUrl}/posts`, { cache: 'no-store' });
+
+  if (!res.ok) {
+    console.error('Failed to fetch blog posts');
+    // In a real app, you'd want to handle this more gracefully.
+    // For now, we'll return an empty array to prevent the page from crashing.
+    return [];
+  }
+
+  return res.json();
+}
 
 export const metadata: Metadata = {
   title: 'Blog | TalentSpottingAI',
@@ -21,10 +34,19 @@ interface BlogPageProps {
     };
 }
 
-export default function BlogPage({ searchParams }: BlogPageProps) {
+export default async function BlogPage({ searchParams }: BlogPageProps) {
     const { category, search } = searchParams;
 
-    const filteredPosts = blogPosts.filter((post: BlogPost) => {
+    const allPosts = await getPosts();
+
+    // Dynamically generate categories from the fetched posts
+    const categories: Category[] = Array.from(new Set(allPosts.map(p => p.category)))
+      .map(cat => ({
+        name: cat,
+        count: allPosts.filter(p => p.category === cat).length
+      }));
+
+    const filteredPosts = allPosts.filter((post: BlogPost) => {
         const matchesCategory = category ? post.category === category : true;
         const matchesSearch = search ? post.title.toLowerCase().includes(search.toLowerCase()) || post.excerpt.toLowerCase().includes(search.toLowerCase()) : true;
         return matchesCategory && matchesSearch;

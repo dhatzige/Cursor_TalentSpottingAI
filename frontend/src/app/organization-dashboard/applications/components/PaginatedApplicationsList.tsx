@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import { Application, ApplicationStatus } from '@/types/application';
 import { EmployerService } from '@/lib/api';
 import { PaginationInfo, SavedApplicationSearch } from './ApplicationsTypes';
@@ -30,7 +31,7 @@ export default function PaginatedApplicationsList({
   onSelectApplication
 }: PaginatedApplicationsListProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   
   // State for applications and loading
   const [applications, setApplications] = useState<Application[]>([]);

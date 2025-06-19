@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useRouter } from 'next/navigation';
 import { UnifiedDashboardLayout } from '../../../../components/dashboard';
 import { useProtectedRoute } from '../../../../lib/hooks/useProtectedRoute';

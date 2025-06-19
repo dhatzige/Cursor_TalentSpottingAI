@@ -1,7 +1,10 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
 import DashboardLayout from '../components/DashboardLayout';
 import Button from '../components/Button';
 import JobApplicationForm from './JobApplicationForm';
@@ -25,7 +28,7 @@ export default function JobApplicationPage() {
   const { loading: authLoading } = useProtectedRoute(['student'], '/login');
   
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
   const jobId = searchParams.get('id');
   
   const [job, setJob] = useState<Job | null>(null);

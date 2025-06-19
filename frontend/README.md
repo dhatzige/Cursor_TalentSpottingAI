@@ -1,4 +1,14 @@
+# Talent Spotting AI Frontend
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Key Features
+
+- **Next.js App Router**: Modern routing system with server and client components
+- **TypeScript**: Type-safe code throughout the application
+- **TailwindCSS**: Utility-first CSS framework for styling
+- **Custom Hooks**: Safe client-side hooks for handling search parameters and protected routes
+- **Dashboard Layouts**: Unified dashboard layouts for different user roles
 
 ## Getting Started
 
@@ -28,6 +38,48 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Client-Side Hooks and Build Optimizations
+
+This project implements a robust solution for handling client-side hooks in Next.js App Router:
+
+### Safe Client-Side Hooks
+
+We've created custom hooks that safely handle client-side functionality:
+
+```typescript
+// Use this instead of useSearchParams from next/navigation
+import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
+
+function MyComponent() {
+  const searchParams = useSafeSearchParams();
+  const query = searchParams.get('q');
+  // Rest of your component
+}
+```
+
+### Force Dynamic Rendering
+
+For pages that use client-side hooks (directly or indirectly):
+
+```typescript
+'use client';
+
+// Add this directive to disable prerendering
+export const dynamic = 'force-dynamic';
+
+// Rest of your page component
+```
+
+### Automatic Script
+
+We've created a script that automatically adds the `dynamic = 'force-dynamic'` directive to client-side pages:
+
+```bash
+node scripts/add-dynamic-directive.js
+```
+
+For more detailed information, see the [CLIENT_SIDE_HOOKS.md](/docs/CLIENT_SIDE_HOOKS.md) documentation.
 
 ## Deploy on Vercel
 

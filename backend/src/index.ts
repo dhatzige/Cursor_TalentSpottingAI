@@ -10,6 +10,7 @@ import studentRoutes from './routes/student.routes';
 import employerRoutes from './routes/employer.routes';
 import universityRoutes from './routes/university.routes';
 import talentSearchRoutes from './routes/talent-search.routes';
+import postRoutes from './routes/post.routes';
 
 // Initialize environment and database
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api/student', studentRoutes);
 app.use('/api/employer', employerRoutes);
 app.use('/api/university', universityRoutes);
 app.use('/api/talent', talentSearchRoutes);
+app.use('/api/posts', postRoutes);
 
 // 404 handler
 app.use((_req, res) => {

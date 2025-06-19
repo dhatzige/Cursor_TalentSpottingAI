@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSafeSearchParams } from './useSafeSearchParams';
 import { useAuth } from './useAuth'; // Import named exports
 
 // Define user type locally to avoid import issues
@@ -24,7 +25,7 @@ export const useProtectedRoute = (allowedRoles: AllowedRoles = 'any', redirectPa
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const searchParams = useSafeSearchParams();
 
   const devBypassParam = searchParams.get('dev_bypass');
   const isDevBypassActive = process.env.NODE_ENV === 'development' && devBypassParam === 'true';

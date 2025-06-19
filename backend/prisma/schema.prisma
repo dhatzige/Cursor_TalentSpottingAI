@@ -32,6 +32,7 @@ model User {
   student       Student?
   jobs          Job[]        @relation("PostedJobs")
   applications  Application[]
+  posts         Post[]       @relation("UserPosts")
 }
 
 enum UserRole {
@@ -79,6 +80,28 @@ enum ApplicationStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model Post {
+  id         String     @id @default(uuid())
+  title      String
+  excerpt    String
+  content    String     @db.Text
+  image      String
+  category   String
+  authorName String
+  readTime   String
+  featured   Boolean    @default(false)
+  status     PostStatus @default(DRAFT)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  author     User       @relation("UserPosts", fields: [authorId], references: [id])
+  authorId   String
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
 }
 
 // --- University Models ---

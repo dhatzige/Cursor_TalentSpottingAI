@@ -1,14 +1,17 @@
 export interface BlogPost {
-    id: number;
-    title: string;
-    excerpt: string;
-    category: string;
-    author: string;
-    authorRole: string;
-    date: string;
-    readTime: string;
-    image: string;
-    featured?: boolean;
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  category: string;
+  readTime: string;
+  featured: boolean;
+  status: 'DRAFT' | 'PUBLISHED';
+  createdAt: string;
+  author: {
+    name: string;
+  };
 }
 
 export interface Category {

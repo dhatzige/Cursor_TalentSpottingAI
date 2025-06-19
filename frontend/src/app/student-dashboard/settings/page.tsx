@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, ChangeEvent } from 'react';
 import { useSaveSettings } from '@/lib/hooks/useSaveSettings';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
@@ -128,7 +130,7 @@ export default function SettingsPage() {
       {/* Appearance */}
       <AppearanceSection
         darkMode={settings.account.darkMode}
-        onChange={(val) => {
+        onChange={(val: boolean) => {
           setDirty(true);
           setSettings(prev => ({
             ...prev,
