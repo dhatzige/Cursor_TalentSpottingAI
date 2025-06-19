@@ -3,6 +3,9 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useSaveSettings } from '@/lib/hooks/useSaveSettings';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
+import { getPreferredTheme } from '@/lib/theme';
+import { useEffect } from 'react';
+import AppearanceSection from '@/components/settings/AppearanceSection';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 // Define types for the settings state to avoid TypeScript errors
@@ -59,13 +62,22 @@ export default function SettingsPage() {
     },
     account: {
       twoFactorAuth: false,
-      darkMode: true,
+      darkMode: false,
       language: 'english'
     }
   });
 
   // Dirty flag & save hook
   const { saveSettings, saving, saved } = useSaveSettings<SettingsState>();
+
+  // sync dark mode
+  useEffect(() => {
+    const prefersDark = getPreferredTheme() === 'dark';
+    setSettings(prev => ({
+      ...prev,
+      account: { ...prev.account, darkMode: prefersDark },
+    }));
+  }, []);
   const [dirty, setDirty] = useState(false);
 
   // Handler for toggle inputs with proper typing
@@ -113,6 +125,18 @@ export default function SettingsPage() {
         </button>
       </div>
       
+      {/* Appearance */}
+      <AppearanceSection
+        darkMode={settings.account.darkMode}
+        onChange={(val) => {
+          setDirty(true);
+          setSettings(prev => ({
+            ...prev,
+            account: { ...prev.account, darkMode: val },
+          }));
+        }}
+      />
+
       {/* Notifications Settings */}
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 dark:text-white mb-4">Notifications</h2>
@@ -277,7 +301,7 @@ export default function SettingsPage() {
           
           <div className="flex items-center justify-between mt-3">
             <div>
-              <p className="text-gray-900 dark:text-gray-100 dark:text-white font-medium">Dark Mode</p>
+              {/* Dark Mode setting removed */}
               <p className="text-sm text-gray-500 dark:text-gray-400">Use dark theme across the platform</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">

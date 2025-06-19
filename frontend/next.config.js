@@ -5,6 +5,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'i.pravatar.co',
         pathname: '**',
       },
@@ -12,7 +16,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pravatar.co',
         pathname: '**',
-      }
+      },
     ],
   },
   serverExternalPackages: [],

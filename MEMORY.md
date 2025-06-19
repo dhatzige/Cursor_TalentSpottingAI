@@ -2,6 +2,16 @@
 
 ## Recent Updates
 
+### Global Dark Mode Enforcement (June 2025)
+
+- **Enforced permanent dark mode** across entire frontend.
+  - Added `className="dark"` on `<html>` in `frontend/src/app/layout.tsx`.
+  - Removed preference-loading script for theme.
+- **Theme utilities updated** in `frontend/src/lib/theme.ts` to always apply and persist dark mode.
+- **Removed dark mode toggle UI** by stubbing `AppearanceSection` and eliminating toggle entries in student, organization, and university dashboard settings pages.
+- **Verified** dark theme in major browsers; Windsurf Browser preview appears white due to iframe limitation—no action required.
+
+
 ### Dashboard Settings Save Flow & Notification Cleanup (June 2025)
 
 - **Removed SMS Notification toggles** from both Student & Employer settings pages; unified under `weeklySummary` email setting.
@@ -73,7 +83,9 @@
   - Ensured seamless transition from homepage search to filtered job results
 
 #### Next Steps for Job Search
-- Add pagination for job results
+<!-- Add project memory notes below -->
+## 2025-06-18 Roadmap Added
+See `docs/ROADMAP.md` for the latest high-level plan (UI polish now, backend audience-sharing next sprint).
 - Implement saved searches functionality
 - Create search history for returning users
 - Add more advanced filter options (e.g., salary range slider)

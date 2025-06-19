@@ -13,8 +13,6 @@ const navLinks = [
   // Dashboards
   { href: "/admin-dashboard", label: "Admin" },
   { href: "/student-dashboard", label: "Student" },
-  { href: "/dev-student-dashboard", label: "Student (No Auth)" },
-  { href: "/dev-student-dashboard/simple", label: "Student (Simple)" },
   { href: "/organization-dashboard", label: "Organization" },
   { href: "/university-dashboard", label: "University" },
   
@@ -23,9 +21,6 @@ const navLinks = [
   { href: "/students", label: "Students" },
   { href: "/universities", label: "Universities" },
   { href: "/blog", label: "Blog" },
-  
-  // Developer resources
-  { href: "/dev-dashboard", label: "UI Showcase" }
 ];
 
 export default function DevNavBar() {

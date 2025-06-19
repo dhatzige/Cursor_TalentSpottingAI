@@ -1,6 +1,53 @@
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
+import Footer from '@/components/layout/Footer';
+import { FeatureCard } from '@/components/ui/FeatureCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { BrainCircuit, BarChart3, FileCheck, GraduationCap, ClipboardList, Users2, LucideIcon } from 'lucide-react';
+
+
+const iconMap: { [key: string]: LucideIcon } = {
+  BrainCircuit,
+  BarChart3,
+  FileCheck,
+  GraduationCap,
+  ClipboardList,
+  Users2,
+};
+
+const EMPLOYER_FEATURES = [
+  {
+    icon: 'BrainCircuit',
+    title: 'Smarter Sourcing with AI',
+    description: 'Our AI-powered engine goes beyond keywords to match candidates based on skills, experience, and cultural fit, delivering you a shortlist of top talent.'
+  },
+  {
+    icon: 'BarChart3',
+    title: 'Data-Driven Decisions',
+    description: 'Leverage real-time analytics to track key hiring metrics, monitor pipeline health, and optimize your recruitment strategy for better outcomes.'
+  },
+  {
+    icon: 'FileCheck',
+    title: 'Streamlined Screening',
+    description: 'Automate resume screening and initial qualification checks to save countless hours and focus your energy on the most promising applicants.'
+  },
+  {
+    icon: 'GraduationCap',
+    title: 'Access Emerging Talent',
+    description: 'Tap into our exclusive network of university partners to connect with high-potential graduates and build your future workforce.'
+  },
+  {
+    icon: 'ClipboardList',
+    title: 'Custom Skills Assessments',
+    description: 'Verify candidate abilities with tailored, role-specific assessments that measure true competency and predict on-the-job success.'
+  },
+  {
+    icon: 'Users2',
+    title: 'Hire Better, Together',
+    description: 'Facilitate team collaboration with shared feedback, streamlined interview scheduling, and centralized decision-making to hire the right fit, faster.'
+  }
+];
 
 export default function EmployersPage() {
   return (
@@ -9,109 +56,60 @@ export default function EmployersPage() {
       
       {/* Hero Section */}
       <header className="py-20 relative">
-        <div className="hero-bg-animation"></div>
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2 mb-10 md:mb-0">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Find The <span className="text-blue-400">Best Talent</span> For Your Team</h1>
-            <p className="text-gray-300 mb-6 text-lg">
-              Our AI-powered platform helps you find, evaluate, and hire the perfect candidates for your organization's needs.
+        <div className="container mx-auto px-4 flex flex-col items-center text-center">
+          <div className="w-full max-w-3xl mb-10 md:mb-0">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Hire Smarter, <span className="animated-gradient-text">Not Harder.</span></h1>
+            <p className="text-gray-300 mb-6 text-lg max-w-2xl mx-auto">
+              Connect with top-tier talent perfectly matched to your roles. Our intelligent platform streamlines your entire hiring process, from sourcing to offer.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
                 href="/create-account?role=employer" 
                 className="px-8 py-3 bg-blue-500 rounded-lg text-white font-medium hover:bg-blue-600 transition-colors text-center shadow-md"
               >
-                Post a Job
+                Get Started for Free
               </Link>
               <Link 
                 href="/contact" 
                 className="px-8 py-3 bg-gray-800/80 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors text-center"
               >
-                Talk to Sales
+                Request a Demo
               </Link>
-            </div>
-          </div>
-          <div className="md:w-1/2 flex justify-center">
-            <div className="w-full max-w-md rounded-lg overflow-hidden bg-gray-800/50 backdrop-blur-sm shadow-xl border border-gray-700">
-              <Image 
-                src="/images/employer-dashboard-preview.jpg" 
-                alt="Employer Dashboard" 
-                width={600} 
-                height={400}
-                className="w-full rounded-t-lg"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Employer Dashboard</h3>
-                <p className="text-gray-300 mb-4">Manage job postings, review applications, and connect with qualified candidates.</p>
-                <Link href="/organization-dashboard" className="text-blue-400 hover:text-blue-300 font-medium">
-                  See how it works →
-                </Link>
-              </div>
             </div>
           </div>
         </div>
       </header>
 
       {/* Features Section */}
-      <section className="py-16 bg-[#0c1122]">
+      <section className="py-16 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-purple-500/10 z-0"></div>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Employer Solutions</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">🤖</div>
-              <h3 className="text-xl font-semibold mb-2">AI Talent Matching</h3>
-              <p className="text-gray-300">
-                Our proprietary algorithm analyzes skills, experience, and cultural fit to find your perfect candidates.
-              </p>
-            </div>
-            
-            {/* Feature 2 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">📈</div>
-              <h3 className="text-xl font-semibold mb-2">Advanced Analytics</h3>
-              <p className="text-gray-300">
-                Track key metrics including applicant quality, time-to-hire, and candidate engagement.
-              </p>
-            </div>
-            
-            {/* Feature 3 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">📝</div>
-              <h3 className="text-xl font-semibold mb-2">Automated Screening</h3>
-              <p className="text-gray-300">
-                Save time with smart resume parsing and automated candidate qualification checking.
-              </p>
-            </div>
-            
-            {/* Feature 4 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">🎓</div>
-              <h3 className="text-xl font-semibold mb-2">University Partnerships</h3>
-              <p className="text-gray-300">
-                Connect directly with top universities and access their graduating talent pools.
-              </p>
-            </div>
-            
-            {/* Feature 5 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">💡</div>
-              <h3 className="text-xl font-semibold mb-2">Skills Assessment</h3>
-              <p className="text-gray-300">
-                Evaluate candidates with customizable skills assessments tailored to your job requirements.
-              </p>
-            </div>
-            
-            {/* Feature 6 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-blue-400 text-2xl mb-4">👥</div>
-              <h3 className="text-xl font-semibold mb-2">Collaborative Hiring</h3>
-              <p className="text-gray-300">
-                Streamline team feedback, schedule interviews, and make better hiring decisions together.
-              </p>
-            </div>
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Top Companies Choose TalentSpottingAI</h2>
+            <p className="text-gray-300 text-lg mb-12">
+                We provide an end-to-end hiring solution designed to help you find, engage, and hire the world's best talent.
+            </p>
           </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-xs sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
+          >
+            <CarouselContent>
+              {EMPLOYER_FEATURES.map((feature, index) => {
+                const Icon = iconMap[feature.icon];
+                return (
+                  <CarouselItem key={index} className="pt-1 md:basis-1/2 lg:basis-1/3 flex">
+                    <FeatureCard icon={Icon} title={feature.title} description={feature.description} />
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2 fill-background hidden md:flex text-blue-400 hover:text-blue-300 border-blue-500/50 hover:border-blue-400 disabled:border-gray-700 disabled:text-gray-500" />
+            <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2 fill-background hidden md:flex text-blue-400 hover:text-blue-300 border-blue-500/50 hover:border-blue-400 disabled:border-gray-700 disabled:text-gray-500" />
+          </Carousel>
         </div>
       </section>
       
@@ -305,26 +303,29 @@ export default function EmployersPage() {
       </section>
       
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600">
+      <section className="py-16 bg-[#0c1122]">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Hiring?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">Join thousands of companies who've already streamlined their recruitment process with TalentSpottingAI.</p>
+          <h2 className="text-3xl font-bold mb-4">Ready to Build Your Dream Team?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-300">
+            Stop searching, start hiring. See how TalentSpottingAI can revolutionize your recruitment strategy and connect you with the talent that matters.
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/create-account?role=employer" 
               className="px-8 py-3 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors font-medium inline-block"
             >
-              Post Your First Job
+              Start Hiring Now
             </Link>
             <Link 
               href="/contact" 
               className="px-8 py-3 border border-white text-white rounded-md hover:bg-white hover:bg-opacity-10 transition-colors font-medium inline-block"
             >
-              Schedule a Demo
+              Learn More
             </Link>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

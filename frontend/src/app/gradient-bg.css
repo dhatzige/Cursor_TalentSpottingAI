@@ -21,6 +21,33 @@
   }
 }
 
+.animated-gradient-text {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-gradient-animation 4s ease infinite;
+}
+
+@keyframes text-gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-bg-icon {
+  background: linear-gradient(270deg, #1d4ed8, #3730a3, #a21caf, #1d4ed8); /* Darker gradient */
+  background-size: 300% 100%;
+  animation: gradient-animation 6s ease infinite;
+}
+
 /* Hero section background animation */
 .hero-bg-animation {
   position: absolute;

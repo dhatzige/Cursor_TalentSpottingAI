@@ -3,6 +3,9 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useSaveSettings } from '@/lib/hooks/useSaveSettings';
 import { UnifiedDashboardLayout } from '@/components/dashboard';
+import { getPreferredTheme } from '@/lib/theme';
+import { useEffect } from 'react';
+import AppearanceSection from '@/components/settings/AppearanceSection';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import { FileUploadInput, PlanCard, DangerZone } from '@/components/settings';
 import { SettingsService, EmployerPlan } from '@/lib/api/employer/settings-service';
@@ -62,7 +65,7 @@ export default function SettingsPage() {
     },
     account: {
       twoFactorAuth: false,
-      darkMode: true,
+      darkMode: false,
       language: 'english',
     },
   });
@@ -146,6 +149,15 @@ export default function SettingsPage() {
 
   // Dirty flag & save hook
   const { saveSettings, saving, saved } = useSaveSettings<SettingsState>();
+
+  // sync initial dark mode to avoid hydration mismatch
+  useEffect(() => {
+    const prefersDark = getPreferredTheme() === 'dark';
+    setSettings(prev => ({
+      ...prev,
+      account: { ...prev.account, darkMode: prefersDark },
+    }));
+  }, []);
   const [dirty, setDirty] = useState(false);
 
   // Save settings handler
@@ -218,6 +230,18 @@ export default function SettingsPage() {
             </div>
           </div>
           
+          {/* Appearance */}
+          <AppearanceSection
+            darkMode={settings.account.darkMode}
+            onChange={(val) => {
+              setDirty(true);
+              setSettings(prev => ({
+                ...prev,
+                account: { ...prev.account, darkMode: val },
+              }));
+            }}
+          />
+
           {/* Privacy Settings */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Privacy & Visibility</h2>

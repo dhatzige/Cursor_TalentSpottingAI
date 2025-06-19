@@ -34,3 +34,31 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+---
+
+## Feature Carousel Component (2025-06-18)
+
+Landing pages now use a reusable horizontally-scrollable carousel to showcase features.
+
+### Usage
+```tsx
+import FeatureCarousel from '@/components/home/FeatureCarousel';
+
+const FEATURES = [
+  { icon: '🤖', title: 'AI Talent Matching', description: 'Find the best candidates automatically.' },
+  { icon: '📈', title: 'Analytics', description: 'Track key hiring metrics.' },
+  // …
+];
+
+<FeatureCarousel features={FEATURES} />
+```
+
+The component accepts an array of objects with the keys `icon`, `title`, and `description` (all required). Icons can be emoji strings or React nodes.
+
+### Styling / Behaviour
+* Built with Tailwind CSS.
+* Uses CSS `scroll-snap` for neat card alignment.
+* Works with mouse wheel, drag, and touch swipe.
+
+Add or adjust Tailwind classes in `FeatureCarousel.tsx` to customize appearance.

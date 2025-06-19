@@ -1,6 +1,60 @@
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
+import Footer from '@/components/layout/Footer';
+import { FeatureCard } from '@/components/ui/FeatureCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import {
+  TrendingUp,
+  Network,
+  Briefcase,
+  Lightbulb,
+  Link2,
+  Award,
+  LucideIcon
+} from 'lucide-react';
+
+const universityIconMap: { [key: string]: LucideIcon } = {
+  TrendingUp,
+  Network,
+  Briefcase,
+  Lightbulb,
+  Link2,
+  Award,
+};
+
+const UNIVERSITY_FEATURES = [
+  {
+    icon: 'TrendingUp',
+    title: 'Boost Graduate Outcomes',
+    description: 'Leverage real-time employment data and analytics to track graduate success, enhance career services, and inform curriculum development.'
+  },
+  {
+    icon: 'Network',
+    title: 'Expand Employer Partnerships',
+    description: 'Connect your institution with a vast network of companies actively seeking diverse talent, opening new doors for your students.'
+  },
+  {
+    icon: 'Briefcase',
+    title: 'Unlock Exclusive Opportunities',
+    description: 'Provide students access to a curated selection of internships, co-op programs, and entry-level roles from leading organizations.'
+  },
+  {
+    icon: 'Lightbulb',
+    title: 'Enhance Curriculum Relevance',
+    description: 'Gain valuable insights from industry trends and employer feedback to ensure your academic programs align with current market demands.'
+  },
+  {
+    icon: 'Link2',
+    title: 'Streamline Career Services',
+    description: 'Seamlessly integrate our platform with your existing career services tools to enhance job matching, reporting, and student support.'
+  },
+  {
+    icon: 'Award',
+    title: 'Elevate Institutional Profile',
+    description: 'Showcase your university\'s commitment to student success and career readiness, attracting top students and prestigious employer partners.'
+  }
+];
 
 export default function UniversitiesPage() {
   return (
@@ -9,14 +63,13 @@ export default function UniversitiesPage() {
       
       {/* Hero Section */}
       <header className="py-20 relative">
-        <div className="hero-bg-animation"></div>
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2 mb-10 md:mb-0">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Connect Your <span className="text-indigo-400">Students</span> With Opportunities</h1>
+        <div className="container mx-auto px-4 flex flex-col items-center text-center">
+          <div className="w-full max-w-3xl mb-10 md:mb-0">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Empower Your Students, <span className="animated-gradient-text">Elevate Your Institution.</span></h1>
             <p className="text-gray-300 mb-6 text-lg">
-              Partner with TalentSpottingAI to help your students find quality employment opportunities and track their career progress.
+              Partner with TalentSpottingAI to bridge the gap between education and employment. Equip your students with premier career opportunities and gain data-driven insights to enhance your university's impact.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
                 href="/create-account?role=university" 
                 className="px-8 py-3 bg-blue-500 rounded-lg text-white font-medium hover:bg-blue-600 transition-colors text-center shadow-md"
@@ -27,91 +80,43 @@ export default function UniversitiesPage() {
                 href="/contact" 
                 className="px-8 py-3 bg-gray-800/80 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors text-center"
               >
-                Request Demo
+                Request a Demo
               </Link>
-            </div>
-          </div>
-          <div className="md:w-1/2 flex justify-center">
-            <div className="w-full max-w-md rounded-lg overflow-hidden bg-gray-800/50 backdrop-blur-sm shadow-xl border border-gray-700">
-              <Image 
-                src="/images/university-dashboard-preview.jpg" 
-                alt="University Partner Dashboard" 
-                width={600} 
-                height={400}
-                className="w-full rounded-t-lg"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">University Partner Dashboard</h3>
-                <p className="text-gray-300 mb-4">Track student engagement, measure employment outcomes, and connect with employer partners.</p>
-                <Link href="/university-dashboard" className="text-indigo-400 hover:text-indigo-300 font-medium">
-                  See how it works →
-                </Link>
-              </div>
             </div>
           </div>
         </div>
       </header>
 
       {/* Benefits Section */}
-      <section className="py-16 bg-[#0c1122]">
+      <section className="py-16 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-purple-500/10 z-0"></div>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Partner Benefits</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Benefit 1 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">📈</div>
-              <h3 className="text-xl font-semibold mb-2">Employment Metrics</h3>
-              <p className="text-gray-300">
-                Track employment rates, salary data, and career trajectories for your graduates with real-time analytics.
-              </p>
-            </div>
-            
-            {/* Benefit 2 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">👥</div>
-              <h3 className="text-xl font-semibold mb-2">Employer Network</h3>
-              <p className="text-gray-300">
-                Connect with our network of 500+ employers looking to hire qualified candidates from partner universities.
-              </p>
-            </div>
-            
-            {/* Benefit 3 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">💰</div>
-              <h3 className="text-xl font-semibold mb-2">Exclusive Opportunities</h3>
-              <p className="text-gray-300">
-                Gain access to exclusive job postings, internships, and co-op programs specifically for your students.
-              </p>
-            </div>
-            
-            {/* Benefit 4 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">📊</div>
-              <h3 className="text-xl font-semibold mb-2">Curriculum Insights</h3>
-              <p className="text-gray-300">
-                Receive industry feedback and market trends to align curriculum with employer needs and student outcomes.
-              </p>
-            </div>
-            
-            {/* Benefit 5 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">💼</div>
-              <h3 className="text-xl font-semibold mb-2">Career Services Integration</h3>
-              <p className="text-gray-300">
-                Integrate with your career services department to streamline job recommendations and application tracking.
-              </p>
-            </div>
-            
-            {/* Benefit 6 */}
-            <div className="bg-[#131b39]/50 p-6 rounded-lg border border-gray-800 backdrop-blur-sm">
-              <div className="text-indigo-400 text-2xl mb-4">🌟</div>
-              <h3 className="text-xl font-semibold mb-2">University Branding</h3>
-              <p className="text-gray-300">
-                Showcase your university's brand and achievements to employers and enhance institutional reputation.
-              </p>
-            </div>
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Key Advantages for Partner Institutions</h2>
+            <p className="text-gray-300 text-lg mb-12">
+                Discover how TalentSpottingAI empowers universities to enhance student career trajectories and gain critical labor market insights.
+            </p>
           </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-xs sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
+          >
+            <CarouselContent>
+              {UNIVERSITY_FEATURES.map((feature, index) => {
+                const Icon = universityIconMap[feature.icon];
+                return (
+                  <CarouselItem key={index} className="pt-1 md:basis-1/2 lg:basis-1/3 flex">
+                    <FeatureCard icon={Icon} title={feature.title} description={feature.description} />
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2 fill-background hidden md:flex text-blue-400 hover:text-blue-300 border-blue-500/50 hover:border-blue-400 disabled:border-gray-700 disabled:text-gray-500" />
+            <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2 fill-background hidden md:flex text-blue-400 hover:text-blue-300 border-blue-500/50 hover:border-blue-400 disabled:border-gray-700 disabled:text-gray-500" />
+          </Carousel>
         </div>
       </section>
       
@@ -195,7 +200,7 @@ export default function UniversitiesPage() {
       </section>
       
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
+      <section className="py-16 bg-[#0c1122]">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Elevate Your Career Services?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Join our university partnership program and provide your students with industry-leading career resources and opportunities.</p>
@@ -215,6 +220,7 @@ export default function UniversitiesPage() {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

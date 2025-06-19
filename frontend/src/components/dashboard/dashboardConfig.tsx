@@ -47,6 +47,11 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
   ),
+  events: (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10m-9 4h10M3 5h18v16a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+    </svg>
+  ),
   profile: (
     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -102,6 +107,7 @@ const employerConfig: SidebarConfig = {
     { name: 'Candidates', href: '/organization-dashboard/candidates', icon: icons.candidates },
     { name: 'Search', href: '/organization-dashboard/search', icon: icons.search },
     { name: 'Analytics', href: '/organization-dashboard/analytics', icon: icons.analytics },
+    { name: 'Events', href: '/organization-dashboard/events', icon: icons.events },
     { name: 'Settings', href: '/organization-dashboard/settings', icon: icons.settings },
   ],
   themeColor: 'bg-slate-800'
@@ -126,6 +132,7 @@ const universityConfig: SidebarConfig = {
     { name: 'Students', href: '/university-dashboard/students', icon: icons.users },
     { name: 'Employers', href: '/university-dashboard/employers', icon: icons.organizations },
     { name: 'Placements', href: '/university-dashboard/placements', icon: icons.jobs },
+    { name: 'Events', href: '/university-dashboard/events', icon: icons.events },
     { name: 'Analytics', href: '/university-dashboard/analytics', icon: icons.analytics },
     { name: 'Settings', href: '/university-dashboard/settings', icon: icons.settings },
   ],

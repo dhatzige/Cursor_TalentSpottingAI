@@ -85,12 +85,12 @@ export default function DashboardHeader({
                       {item.href ? (
                         <Link 
                           href={item.href}
-                          className="text-slate-300 hover:text-white dark:text-blue-300 dark:hover:text-blue-200"
+                          className="text-gray-500 hover:text-gray-900 dark:text-blue-300 dark:hover:text-blue-200"
                         >
                           {item.label}
                         </Link>
                       ) : (
-                        <span className="text-gray-100 dark:text-white">{item.label}</span>
+                        <span className="text-gray-900 dark:text-white">{item.label}</span>
                       )}
                     </div>
                   ))}
@@ -100,11 +100,11 @@ export default function DashboardHeader({
               {/* Title and description */}
               {title && (
                 <div className={`${breadcrumbs && breadcrumbs.length > 0 ? 'mt-1' : ''}`}>
-                  <h1 className="text-xl font-semibold text-white">
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                     {title}
                   </h1>
                   {description && (
-                    <p className="mt-1 text-sm text-slate-300">
+                    <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">
                       {description}
                     </p>
                   )}
@@ -135,7 +135,7 @@ export default function DashboardHeader({
                     userInfo.name.charAt(0)
                   )}
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-100 hidden sm:block">
+                <span className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100 hidden sm:block">
                   {userInfo.name}
                 </span>
               </div>
