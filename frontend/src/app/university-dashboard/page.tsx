@@ -38,7 +38,7 @@ interface PlacementData {
 
 export default function UniversityDashboardPage() {
   // Protect this route - only university can access
-  const { loading: authLoading } = useProtectedRoute(['university'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['university']);
   
   const [metrics, setMetrics] = useState<UniversityMetrics>({
     totalStudents: 0,

@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/login", label: "Login" },
-  { href: "/create-account", label: "Sign Up" },
+  { href: "/sign-in", label: "Login" },
+  { href: "/sign-up", label: "Sign Up" },
   { href: "/role-selector", label: "Roles" },
   
   // Dashboards
@@ -26,34 +26,38 @@ const navLinks = [
 export default function DevNavBar() {
   const pathname = usePathname();
   
-  // State for dev navbar visibility
-  const [showDevNav, setShowDevNav] = useState(false);
-  
-  // Load preference from localStorage if available
+  // DevNav should be visible by default in development
+  const [showDevNav, setShowDevNav] = useState(process.env.NODE_ENV === 'development');
+
+  // Allow toggling and saving preference
   useEffect(() => {
-    // Initial check: URL parameter takes precedence
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.has('dev_nav')) {
-      setShowDevNav(true);
-      // Save preference
-      try {
-        localStorage.setItem('devNavVisible', 'true');
-      } catch (e) {
-        console.error('Could not save dev nav preference to localStorage');
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        setShowDevNav(prev => {
+          const newState = !prev;
+          try {
+            localStorage.setItem('devNavVisible', String(newState));
+          } catch (error) {
+            console.error('Failed to save DevNav visibility to localStorage', error);
+          }
+          return newState;
+        });
       }
-      return;
-    }
-    
-    // Otherwise check localStorage for saved preference
-    try {
-      const savedPreference = localStorage.getItem('devNavVisible');
-      if (savedPreference === 'true') {
-        setShowDevNav(true);
-      }
-    } catch (e) {
-      console.error('Could not read dev nav preference from localStorage');
-    }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Update body class based on visibility
+  useEffect(() => {
+    if (showDevNav) {
+      document.body.classList.add('dev-nav-visible');
+    } else {
+      document.body.classList.remove('dev-nav-visible');
+    }
+  }, [showDevNav]);
   
   // Add keyboard shortcut listener
   useEffect(() => {
@@ -87,15 +91,15 @@ export default function DevNavBar() {
       <div className="text-yellow-400 mr-2 text-sm font-bold">DEV NAV →</div>
       <div className="flex gap-4 overflow-x-auto pb-1">
         {navLinks.map((link) => {
-          // Add dev_bypass=true parameter to dashboard links
-          const href = link.href.includes('dashboard') 
-            ? `${link.href}?dev_bypass=true` 
-            : link.href;
+          let finalHref = link.href;
+          if (link.href.includes('dashboard')) {
+            finalHref = link.href.replace('?dev_bypass=true', '');
+          }
             
           return (
             <Link
               key={link.href}
-              href={href}
+              href={finalHref}
               className="hover:underline hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               {link.label}

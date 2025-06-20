@@ -3,12 +3,12 @@
 export const dynamic = 'force-dynamic';
 
 import { useRouter } from 'next/navigation';
-import { UnifiedDashboardLayout } from '../../../../components/dashboard';
-import { useProtectedRoute } from '../../../../lib/hooks/useProtectedRoute';
+import { UnifiedDashboardLayout } from '@/components/dashboard';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 export default function CreateJobPage() {
   // Protect this route - only employer can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   
   const router = useRouter();
 

@@ -1,31 +1,44 @@
 'use client';
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
+import { ReactNode, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import NewDashboardHeader from '@/components/dashboard/NewDashboardHeader';
 
 interface DashboardLayoutProps {
   children: ReactNode;
-  title: string;
-  description?: string;
 }
 
-export default function DashboardLayout({ 
-  children, 
-  title,
-  description
-}: DashboardLayoutProps) {
+type UserRole = 'student' | 'admin' | 'employer' | 'university';
+const ROLES: UserRole[] = ['student', 'admin', 'employer', 'university'];
+
+function isValidRole(role: any): role is UserRole {
+  return ROLES.includes(role);
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { user } = useUser();
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const roleFromMeta = user?.publicMetadata?.role;
+  const userRole: UserRole = isValidRole(roleFromMeta) ? roleFromMeta : 'student';
+  const currentPath = pathname ?? '';
+
   return (
-    <div className="flex-1">
-      <header className="bg-gray-50 dark:bg-slate-800/50 shadow">
-        <div className="py-4 px-6">
-          <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          {description && (
-            <p className="text-sm text-gray-600 mt-1">{description}</p>
-          )}
-        </div>
-      </header>
-      <div className="p-6">
-        {children}
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <DashboardSidebar
+        userRole={userRole}
+        currentPath={currentPath}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+      <div className="flex flex-col">
+        <NewDashboardHeader />
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

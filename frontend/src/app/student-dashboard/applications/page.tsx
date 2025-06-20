@@ -24,7 +24,7 @@ import type { ApplicationItemType } from './components';
 
 export default function ApplicationsPage() {
   // Protect this route - only students can access
-  const { loading: authLoading } = useProtectedRoute(['student'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['student']);
   
   const [applications, setApplications] = useState<ApplicationItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,7 +157,7 @@ export default function ApplicationsPage() {
             
             {/* Applications Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {['pending', 'interview', 'accepted', 'rejected'].map(status => {
+              {['pending', 'reviewing', 'interview', 'accepted', 'rejected'].map(status => {
                 const count = applications.filter(app => app.status === status).length;
                 return (
                   <div 

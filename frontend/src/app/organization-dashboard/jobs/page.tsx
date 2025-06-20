@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 // Import our unified dashboard layout system
 import { UnifiedDashboardLayout } from '@/components/dashboard';
 import Button from '../shared/ui/Button';
-import { useProtectedRoute } from '../shared/hooks/useProtectedRoute';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import PaginatedJobList from './components/PaginatedJobList';
 
 /**
@@ -19,7 +19,7 @@ import PaginatedJobList from './components/PaginatedJobList';
  */
 export default function JobsPage() {
   // Protect this route - only employer can access
-  const { isAuthorized, loading: authLoading } = useProtectedRoute('employer');
+    const { loading: authLoading } = useProtectedRoute(['employer']);
   const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(true);

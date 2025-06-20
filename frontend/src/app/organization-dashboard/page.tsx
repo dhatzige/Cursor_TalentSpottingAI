@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UnifiedDashboardLayout } from '@/components/dashboard';
-import StatCard from '../components/dashboard/StatCard';
-import { useProtectedRoute } from '../../lib/hooks/useProtectedRoute';
+import StatCard from '@/app/components/dashboard/StatCard';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 // Define interfaces for organizational data
 interface JobPosting {
@@ -36,7 +36,7 @@ interface OrganizationStats {
 
 export default function OrganizationDashboardPage() {
   // Protect this route - only employers can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   const router = useRouter();
   
   const [stats, setStats] = useState<OrganizationStats>({

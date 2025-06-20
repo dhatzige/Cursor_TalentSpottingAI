@@ -40,7 +40,7 @@ interface Note {
 
 export default function ApplicationReviewPage() {
   // Protect this route - only employers can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   
   const router = useRouter();
   const searchParams = useSafeSearchParams();

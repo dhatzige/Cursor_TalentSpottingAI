@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useSearchParams as useNextSearchParams } from 'next/navigation';
+import { useEffect, useState, useMemo } from 'react';
 
 /**
  * A hook that safely uses search parameters in both client and server environments.
  * 
  * This hook solves the Next.js App Router build error: 
  * "useSearchParams() should be wrapped in a suspense boundary" 
- * by only accessing search parameters on the client side through useEffect.
+ * by ensuring that pages using it are dynamically rendered and by providing a
+ * safe fallback during the initial server render.
  * 
- * @returns An object with methods similar to URLSearchParams that safely access search parameters
+ * @returns A URLSearchParams object. It will be empty on the server and during the
+ * initial client render, and will contain the actual search parameters after hydration.
  * 
  * @example
  * ```tsx
@@ -25,47 +27,30 @@ import { useSearchParams as useNextSearchParams } from 'next/navigation';
  * ```
  * 
  * @remarks
- * - Always use this hook instead of useSearchParams from next/navigation
- * - For pages using this hook, add `export const dynamic = 'force-dynamic';` to disable prerendering
- * - This hook returns safe empty values during SSR and updates with real values on the client
+ * - Always use this hook instead of useSearchParams from next/navigation.
+ * - For pages using this hook, add `export const dynamic = 'force-dynamic';` to disable prerendering.
+ * - This hook returns an empty URLSearchParams object during SSR and updates with real values on the client.
  */
 export function useSafeSearchParams() {
-  // Initialize with empty values that will be safe during SSR
-  const [params, setParams] = useState<{
-    get: (key: string) => string | null;
-    getAll: (key: string) => string[];
-    has: (key: string) => boolean;
-    toString: () => string;
-    entries: () => IterableIterator<[string, string]>;
-    keys: () => IterableIterator<string>;
-    values: () => IterableIterator<string>;
-  }>({
-    get: () => null,
-    getAll: () => [],
-    has: () => false,
-    toString: () => '',
-    entries: () => [][Symbol.iterator](),
-    keys: () => [][Symbol.iterator](),
-    values: () => [][Symbol.iterator]()
-  });
+  // useNextSearchParams must be called at the top level of the hook/component.
+  // It will throw an error if the page is not dynamically rendered.
+  // Ensure pages using this hook have `export const dynamic = 'force-dynamic';`
+  const searchParams = useNextSearchParams();
+  const [isClient, setIsClient] = useState(false);
 
-  // Only access useSearchParams on the client side
+  // This effect will run once the component mounts on the client.
   useEffect(() => {
-    // This will only run in the browser, not during SSR
-    const searchParams = useNextSearchParams();
-    
-    if (searchParams) {
-      setParams({
-        get: (key: string) => searchParams.get(key),
-        getAll: (key: string) => searchParams.getAll(key),
-        has: (key: string) => searchParams.has(key),
-        toString: () => searchParams.toString(),
-        entries: () => searchParams.entries(),
-        keys: () => searchParams.keys(),
-        values: () => searchParams.values()
-      });
-    }
+    setIsClient(true);
   }, []);
 
-  return params;
+  // useMemo ensures we return a stable object.
+  // On the server (and initial client render), we return an empty URLSearchParams instance.
+  // After the component has mounted on the client, we return the actual searchParams.
+  return useMemo(() => {
+    if (isClient) {
+      return searchParams;
+    }
+    // Provide a default empty URLSearchParams object for SSR and initial render.
+    return new URLSearchParams();
+  }, [isClient, searchParams]);
 }

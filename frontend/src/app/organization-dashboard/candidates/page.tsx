@@ -9,7 +9,7 @@ import PaginatedCandidatesList from './components/PaginatedCandidatesList';
 
 export default function CandidatesPage() {
   // Protect this route - only employer can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   const router = useRouter();
 
   return (

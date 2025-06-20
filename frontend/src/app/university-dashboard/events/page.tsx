@@ -11,7 +11,7 @@ import { Event } from '@/features/events/types';
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 export default function UniversityEventsPage() {
-  const { loading: authLoading } = useProtectedRoute(['university'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['university']);
   const {
     events,
     addEvent,

@@ -5,7 +5,7 @@ interface ApplicationItem {
   id: string;
   title: string;
   company: string;
-  status: 'pending' | 'interview' | 'accepted' | 'rejected';
+  status: 'pending' | 'reviewing' | 'interview' | 'accepted' | 'rejected';
   timestamp: string;
 }
 
@@ -19,12 +19,14 @@ export default function ApplicationStatus({ applications }: ApplicationStatusPro
     // Generate icon and type based on status
     let type: 'default' | 'success' | 'warning' | 'error' = 'default';
     if (app.status === 'accepted') type = 'success';
+    if (app.status === 'reviewing') type = 'warning';
     if (app.status === 'interview') type = 'warning';
     if (app.status === 'rejected') type = 'error';
 
     // Format status text
     const statusText = {
       pending: 'Application submitted',
+      reviewing: 'Application under review',
       interview: 'Interview scheduled',
       accepted: 'Application accepted',
       rejected: 'Application not selected',

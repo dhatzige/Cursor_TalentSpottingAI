@@ -29,10 +29,20 @@ export function FilterControls({ activeFilter, onFilterChange }: FilterControlsP
         Pending
       </button>
       <button
+        onClick={() => onFilterChange('reviewing')}
+        className={`px-3 py-1 rounded-md text-sm ${
+          activeFilter === 'reviewing' 
+            ? 'bg-blue-100 text-blue-800 dark:bg-blue-600 dark:text-white font-medium' 
+            : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-200 dark:hover:bg-slate-600/70'
+        }`}
+      >
+        Reviewing
+      </button>
+      <button
         onClick={() => onFilterChange('interview')}
         className={`px-3 py-1 rounded-md text-sm ${
           activeFilter === 'interview' 
-            ? 'bg-blue-100 text-blue-800 dark:bg-blue-600 dark:text-white font-medium' 
+            ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-600/70 dark:text-white font-medium' 
             : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-200 dark:hover:bg-slate-600/70'
         }`}
       >

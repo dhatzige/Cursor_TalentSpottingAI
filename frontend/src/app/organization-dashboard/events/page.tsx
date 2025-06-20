@@ -11,7 +11,7 @@ import { Event } from '@/features/events/types';
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 export default function EmployerEventsPage() {
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   const {
     events,
     addEvent,

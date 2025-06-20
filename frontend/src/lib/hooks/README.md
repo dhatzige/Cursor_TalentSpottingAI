@@ -27,7 +27,7 @@ Protects routes based on authentication and user roles. This hook uses `useSafeS
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 function ProtectedPage() {
-  const { loading } = useProtectedRoute(['admin'], '/login');
+  const { loading } = useProtectedRoute(['admin']);
   
   if (loading) {
     return <div>Loading...</div>;

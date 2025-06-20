@@ -191,7 +191,7 @@ export default function CreateAccountForm() {
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:text-blue-800 font-medium">
+                    <Link href="/sign-in" className="text-blue-600 hover:text-blue-800 font-medium">
             Log In
           </Link>
         </p>

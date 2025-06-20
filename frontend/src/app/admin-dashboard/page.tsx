@@ -23,7 +23,7 @@ import { useProtectedRoute } from '../../lib/hooks/useProtectedRoute';
 
 export default function AdminDashboardPage() {
   // Protect this route - only admin can access
-  const { loading: authLoading } = useProtectedRoute(['admin'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['admin']);
   
   const [stats, setStats] = useState({
     totalUsers: 0,

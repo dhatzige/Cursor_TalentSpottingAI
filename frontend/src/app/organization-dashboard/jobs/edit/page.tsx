@@ -5,9 +5,9 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
-import { UnifiedDashboardLayout } from '../../../../components/dashboard';
-import { EmployerService } from '../../../../lib/api';
-import { useProtectedRoute } from '../../../../lib/hooks/useProtectedRoute';
+import { UnifiedDashboardLayout } from '@/components/dashboard';
+import { EmployerService } from '@/lib/api';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 // Import modular components
 import {
@@ -22,7 +22,7 @@ import { JobData, JobFormData, JobStatus } from './components/types';
 
 export default function EditJobPage() {
   // Protect this route - only employer can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+  const { loading: authLoading } = useProtectedRoute(['employer']);
   
   const router = useRouter();
   const searchParams = useSafeSearchParams();

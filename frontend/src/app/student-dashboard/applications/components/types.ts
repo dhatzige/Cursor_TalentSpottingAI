@@ -5,7 +5,7 @@ export interface ApplicationItem {
   title: string;
   company: string;
   location: string;
-  status: 'pending' | 'interview' | 'accepted' | 'rejected';
+  status: 'pending' | 'reviewing' | 'interview' | 'accepted' | 'rejected';
   appliedDate: string;
   lastUpdated: string;
   feedback?: string;

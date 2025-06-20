@@ -71,7 +71,7 @@ export default function UniversitiesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-                href="/create-account?role=university" 
+                href="/sign-up" 
                 className="px-8 py-3 bg-blue-500 rounded-lg text-white font-medium hover:bg-blue-600 transition-colors text-center shadow-md"
               >
                 Become a Partner
@@ -206,7 +206,7 @@ export default function UniversitiesPage() {
           <p className="text-xl mb-8 max-w-2xl mx-auto">Join our university partnership program and provide your students with industry-leading career resources and opportunities.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/create-account?role=university" 
+              href="/sign-up" 
               className="px-8 py-3 bg-white text-indigo-900 rounded-md hover:bg-gray-100 transition-colors font-medium inline-block"
             >
               Partner With Us

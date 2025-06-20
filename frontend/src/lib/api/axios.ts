@@ -29,9 +29,13 @@ api.interceptors.response.use(
   (error) => {
     // Handle 401 unauthorized (token expired)
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      // Clear token and redirect to login
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // In development, if dev bypass is active, suppress automatic redirect
+      const devBypass = localStorage.getItem('devBypassAuth') === 'true';
+      if (!devBypass) {
+        // Clear token and redirect to login
+        localStorage.removeItem('token');
+        window.location.href = '/sign-in';
+      }
     }
     return Promise.reject(error);
   }

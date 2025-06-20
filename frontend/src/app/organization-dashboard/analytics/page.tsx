@@ -6,14 +6,14 @@ import { useState, useEffect } from 'react';
 
 // Import our unified dashboard layout system
 import { UnifiedDashboardLayout } from '@/components/dashboard';
-import { useProtectedRoute } from '../shared/hooks/useProtectedRoute';
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 // Import the analytics dashboard component
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 
 export default function AnalyticsPage() {
   // Protect the route for authenticated users only
-  const { isAuthorized, loading: authLoading } = useProtectedRoute('employer');
+    const { loading: authLoading } = useProtectedRoute(['employer']);
   
   const [isLoading, setIsLoading] = useState(true);
   

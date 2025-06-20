@@ -6,15 +6,15 @@ import { JobListing, JobSearchQuery, PaginationInfo, JobType, SearchFilters } fr
 import { getPaginatedJobResults, saveSearch } from '@/lib/services/jobs-service';
 
 // Import our UI components
-import Card from '../../shared/ui/Card';
-import Button from '../../shared/ui/Button';
-import ChartContainer from '../../shared/ui/ChartContainer';
-import Tabs from '../../shared/ui/Tabs';
-import SearchInput from '../../shared/ui/SearchInput';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import ChartContainer from '@/components/dashboard/shared/ChartContainer';
+import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SearchInput from '@/components/dashboard/shared/SearchInput';
 
 // Import local components
 import JobStatusBadge from '@/app/organization-dashboard/jobs/components/JobStatusBadge';
-import Pagination from '@/app/organization-dashboard/jobs/components/Pagination';
+import Pagination from '@/components/dashboard/shared/Pagination';
 import JobsEmptyState from '@/app/organization-dashboard/jobs/components/JobsEmptyState';
 import JobsLoadingState from '@/app/organization-dashboard/jobs/components/JobsLoadingState';
 import SavedSearches from '@/app/organization-dashboard/jobs/components/SavedSearches';
@@ -133,8 +133,9 @@ export default function PaginatedJobList({ initialFilter = 'all' }: PaginatedJob
   return (
     <div className="space-y-6">
       {/* Search & Filter Header */}
-      <Card className="p-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/* Search input */}
           <div className="w-full sm:w-64">
             <SearchInput
@@ -200,22 +201,27 @@ export default function PaginatedJobList({ initialFilter = 'all' }: PaginatedJob
             }} 
           />
         </div>
+        </CardContent>
       </Card>
       
       {/* Save Search Dialog */}
       {showSaveSearchDialog && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <Card className="p-6 w-96 max-w-full">
-            <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100 dark:text-white">Save this search</h3>
-            <input 
-              type="text" 
-              placeholder="Enter a name for this search" 
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-4 text-gray-900 dark:text-gray-100 dark:text-white"
-              autoFocus
-            />
-            <div className="flex justify-end space-x-2">
+          <Card className="w-96 max-w-full">
+            <CardHeader>
+              <CardTitle>Save this search</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <input 
+                type="text" 
+                placeholder="Enter a name for this search" 
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-gray-100 dark:text-white"
+                autoFocus
+              />
+            </CardContent>
+            <CardFooter className="flex justify-end space-x-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -227,7 +233,7 @@ export default function PaginatedJobList({ initialFilter = 'all' }: PaginatedJob
                 Cancel
               </Button>
               <Button
-                variant="primary"
+                variant="default"
                 size="sm"
                 disabled={!searchName.trim()}
                 onClick={async () => {
@@ -251,18 +257,24 @@ export default function PaginatedJobList({ initialFilter = 'all' }: PaginatedJob
               >
                 Save
               </Button>
-            </div>
+            </CardFooter>
           </Card>
         </div>
       )}
       
       {/* Status Tabs */}
-      <Tabs
-        tabs={statusTabs}
-        defaultTabId={activeFilter}
-        onChange={(tabId) => setActiveFilter(tabId as 'all' | 'open' | 'closed' | 'draft')}
-        variant="underline"
-      />
+      <TabsList>
+        {statusTabs.map((tab) => (
+          <TabsTrigger
+            key={tab.id}
+            value={tab.id}
+            active={activeFilter === tab.id}
+            onClick={() => setActiveFilter(tab.id as 'all' | 'open' | 'closed' | 'draft')}
+          >
+            {tab.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
 
       {/* Jobs Table in Chart Container */}
       <ChartContainer

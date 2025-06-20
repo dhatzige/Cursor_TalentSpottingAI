@@ -67,7 +67,7 @@ export default function StudentsPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-                href="/create-account?role=student" 
+                href="/sign-up" 
                 className="px-8 py-3 bg-blue-500 rounded-lg text-white font-medium hover:bg-blue-600 transition-colors text-center shadow-md"
               >
                 Get Started
@@ -177,7 +177,7 @@ export default function StudentsPage() {
           <h2 className="text-3xl font-bold mb-4">Ready to Land Your Dream Job?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Join thousands of students who've found their perfect career match through TalentSpottingAI.</p>
           <Link 
-            href="/create-account?role=student" 
+            href="/sign-up" 
             className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium inline-block shadow-md"
           >
             Create Your Free Account

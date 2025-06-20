@@ -8,7 +8,7 @@ import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 
 export default function ProfilePage() {
   // Protect this route - only students can access
-  const { loading: authLoading } = useProtectedRoute(['student'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['student']);
   
   // Mock user info - In a real application, this would come from auth context
   const userInfo = {

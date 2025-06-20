@@ -57,12 +57,17 @@ export const applyForJob = async (req: Request, res: Response) => {
     }
     
     const { jobId } = req.params;
-    // const coverLetter = req.body.coverLetter || ''; // Field does not exist on Application model
-    // const additionalInfo = req.body.additionalInfo || ''; // Field does not exist on Application model
+    const coverLetter: string = (req.body.coverLetter || '').trim();
+    const additionalInfo: string = (req.body.additionalInfo || '').trim();
     
     // Validate resume file is uploaded
     if (!req.file) {
       return res.status(400).json({ message: 'Resume file is required' });
+    }
+
+    // Validate cover-letter length (50 – 4000 chars)
+    if (coverLetter.length < 50 || coverLetter.length > 4000) {
+      return res.status(400).json({ message: 'Cover letter must be between 50 and 4000 characters' });
     }
     
     // Check if job exists
@@ -93,6 +98,9 @@ export const applyForJob = async (req: Request, res: Response) => {
     const application = await prisma.application.create({
       data: {
         status: 'PENDING',
+        resumePath: req.file.path,
+        coverLetter,
+        additionalInfo,
         user: {
           connect: { id: req.user.id }
         },
@@ -149,7 +157,10 @@ export const getApplicationDetails = async (req: Request, res: Response) => {
     const formattedApplication = {
       id: application.id,
       status: application.status.toLowerCase(),
-      lastUpdated: application.createdAt,
+      lastUpdated: application.updatedAt,
+      coverLetter: application.coverLetter,
+      resumePath: application.resumePath,
+      additionalInfo: application.additionalInfo,
       job: {
         id: application.job.id,
         title: application.job.title,

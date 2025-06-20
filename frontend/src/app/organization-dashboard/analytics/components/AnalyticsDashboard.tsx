@@ -88,11 +88,11 @@ import ApplicationsChart from './ApplicationsChart';
 // import JobPerformance from './JobPerformance';
 
 // New UI Components
-import Tabs from '../../shared/ui/Tabs';
-import Card from '../../shared/ui/Card';
-import ChartContainer from '../../shared/ui/ChartContainer';
-import DateRangePicker, { DateRange } from '../../shared/ui/DateRangePicker';
-import MetricGrid from '../../shared/ui/MetricGrid';
+import { TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+import ChartContainer from '@/components/dashboard/shared/ChartContainer';
+import DateRangePicker, { DateRange } from '@/components/dashboard/shared/DateRangePicker';
+import MetricGrid from '@/components/dashboard/shared/MetricGrid';
 
 // Define analytics tabs
 const analyticsTabs = [
@@ -159,18 +159,22 @@ export default function AnalyticsDashboard({ isLoading = false }: AnalyticsDashb
         />
       </div>
       
-      <Tabs
-        tabs={analyticsTabs}
-        defaultTabId="overview"
-        onChange={handleTabChange}
-        variant="underline"
-        fullWidth
-        className="mb-6"
-      />
+      <TabsList className="mb-6">
+        {analyticsTabs.map((tab) => (
+          <TabsTrigger
+            key={tab.id}
+            value={tab.id}
+            active={activeTab === tab.id}
+            onClick={() => handleTabChange(tab.id)}
+          >
+            {tab.label}
+            {tab.count && <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{tab.count}</span>}
+          </TabsTrigger>
+        ))}
+      </TabsList>
       
       {/* Overview Tab Content */}
-      {activeTab === 'overview' && (
-        <>
+      <TabsContent value="overview" activeValue={activeTab}>
           <ChartContainer 
             loading={isLoading || dataLoading}
             error={!analyticsData ? 'Failed to load analytics data' : undefined}
@@ -226,11 +230,10 @@ export default function AnalyticsDashboard({ isLoading = false }: AnalyticsDashb
               </div>
             )}
           </ChartContainer>
-        </>
-      )}
+        </TabsContent>
       
       {/* Applications Tab Content */}
-      {activeTab === 'applications' && (
+      <TabsContent value="applications" activeValue={activeTab}>
         <ChartContainer
           loading={isLoading || dataLoading}
           error={!analyticsData ? 'Failed to load analytics data' : undefined}
@@ -246,7 +249,7 @@ export default function AnalyticsDashboard({ isLoading = false }: AnalyticsDashb
             </div>
           )}
         </ChartContainer>
-      )}
+        </TabsContent>
       
       {/* Candidates Tab Content */}
       {activeTab === 'candidates' && (

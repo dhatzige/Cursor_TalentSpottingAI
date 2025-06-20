@@ -70,6 +70,37 @@ We've created a script (`scripts/add-dynamic-directive.js`) that automatically a
 node scripts/add-dynamic-directive.js
 ```
 
+## Protected Routes with Clerk
+
+Route protection is handled by the `useProtectedRoute` hook located in `src/lib/hooks`. This hook is powered by [Clerk](https://clerk.com/) and ensures a consistent and secure authentication flow.
+
+### Usage
+
+```typescript
+// In a page or layout component
+import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
+
+export default function DashboardPage() {
+  // Protect this route, only allowing users with the 'admin' role.
+  const { loading } = useProtectedRoute(['admin']);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Render page content for authorized users
+  return <h1>Admin Dashboard</h1>;
+}
+```
+
+### How it Works
+
+1.  **Authentication Check**: The hook first checks if the user is signed in using Clerk's `useAuth()` hook. If not, it redirects them to the sign-in page.
+2.  **Role-Based Authorization**: If `allowedRoles` are specified, the hook checks the user's role (stored in `user.unsafeMetadata.role`). If the user's role is not in the allowed list, they are redirected to their default dashboard.
+3.  **Loading State**: The hook returns a `loading` state, which is true while Clerk is initializing and checking the user's session. This can be used to show a loading indicator and prevent content from flashing.
+
+With the move to Clerk, the previous development authentication bypass (`?dev_bypass=true`) has been removed. Developers should now use Clerk's user management features for testing different roles.
+
 ## Troubleshooting
 
 If you encounter build errors related to client-side hooks:

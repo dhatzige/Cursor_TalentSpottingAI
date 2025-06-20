@@ -8,7 +8,7 @@ export interface ApplicationItem {
   id: string;
   title: string;
   company: string;
-  status: 'pending' | 'interview' | 'accepted' | 'rejected';
+  status: 'pending' | 'reviewing' | 'interview' | 'accepted' | 'rejected';
   timestamp: string;
 }
 
@@ -30,6 +30,7 @@ export default function ApplicationsCard({
   // Status badge configuration
   const statusConfig = {
     pending: { text: 'Pending', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' },
+    reviewing: { text: 'Reviewing', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300' },
     interview: { text: 'Interview', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' },
     accepted: { text: 'Accepted', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
     rejected: { text: 'Rejected', color: 'bg-gray-100 text-gray-800 dark:text-gray-200 dark:bg-gray-800 dark:text-gray-400' },

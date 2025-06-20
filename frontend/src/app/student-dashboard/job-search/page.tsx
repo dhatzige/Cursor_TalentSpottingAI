@@ -19,7 +19,7 @@ import { SearchFilters, JobList, JobFilters, Job } from './components';
  */
 export default function JobSearchPage() {
   // Protect this route - only student can access
-  const { loading: authLoading } = useProtectedRoute(['student'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['student']);
   const searchParams = useSafeSearchParams();
   
   // State

@@ -137,7 +137,7 @@ export default function LoginForm() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link href="/create-account" className="text-blue-600 hover:text-blue-800 font-medium">
+            <Link href="/sign-up" className="text-blue-600 hover:text-blue-800 font-medium">
               Create Account
             </Link>
           </p>
@@ -147,7 +147,7 @@ export default function LoginForm() {
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link href="/create-account" className="text-blue-600 hover:text-blue-800 font-medium">
+          <Link href="/sign-up" className="text-blue-600 hover:text-blue-800 font-medium">
             Create Account
           </Link>
         </p>

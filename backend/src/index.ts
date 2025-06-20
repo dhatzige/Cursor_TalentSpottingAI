@@ -1,35 +1,22 @@
-import express, { Request, Response, NextFunction } from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import app from './app';
 
-// Import routes
-import authRoutes from './routes/auth.routes';
-import adminRoutes from './routes/admin.routes';
-import studentRoutes from './routes/student.routes';
-import employerRoutes from './routes/employer.routes';
-import universityRoutes from './routes/university.routes';
-import talentSearchRoutes from './routes/talent-search.routes';
-import postRoutes from './routes/post.routes';
-
-// Initialize environment and database
+// Initialize environment variables and Prisma
 dotenv.config();
 const prisma = new PrismaClient();
 
-// Create Express app
-const app = express();
-
-// Middleware
+// --- server start ---
 app.use(cors());
 app.use(express.json());
 
 // Health check route
-app.get('/api/health', (_req, res) => {
+, (_req, res) => {
   res.json({ status: 'ok', message: 'TalentSpottingAI backend is running.' });
 });
 
-// Register API routes
-app.use('/api/auth', authRoutes);
+
+, authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/employer', employerRoutes);
@@ -37,13 +24,13 @@ app.use('/api/university', universityRoutes);
 app.use('/api/talent', talentSearchRoutes);
 app.use('/api/posts', postRoutes);
 
-// 404 handler
-app.use((_req, res) => {
+
+, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Error handling middleware
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+
+ Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Global error handler:', err);
   res.status(500).json({ 
     message: 'Internal server error', 
@@ -51,9 +38,13 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Start server
+
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 4000;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+}); = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 

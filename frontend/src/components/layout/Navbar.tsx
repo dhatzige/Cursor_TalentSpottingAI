@@ -60,13 +60,13 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         {/* Auth Buttons */}
         <div className="hidden md:flex space-x-3">
           <Link 
-            href="/login" 
+            href="/sign-in" 
             className="px-4 py-2 rounded-md hover:bg-gray-800/50 transition-colors font-medium"
           >
             Sign In
           </Link>
           <Link 
-            href="/create-account" 
+            href="/sign-up" 
             className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors shadow-md font-medium"
           >
             Sign Up
@@ -106,13 +106,13 @@ export default function Navbar({ transparent = false }: NavbarProps) {
 
             <div className="flex flex-col sm:flex-row gap-3 pt-3">
               <Link 
-                href="/login" 
+                href="/sign-in" 
                 className="px-4 py-3 rounded-md border border-gray-700 hover:bg-gray-800 transition-colors w-full sm:w-auto text-center font-medium"
               >
                 Sign In
               </Link>
               <Link 
-                href="/create-account" 
+                href="/sign-up" 
                 className="px-4 py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors w-full sm:w-auto text-center font-medium"
               >
                 Sign Up

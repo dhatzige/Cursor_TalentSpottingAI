@@ -25,7 +25,7 @@ interface PlacementData {
 }
 
 export default function UniversityAnalyticsPage() {
-  const { loading: authLoading } = useProtectedRoute(['university'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['university']);
 
   const [metrics, setMetrics] = useState<UniversityMetrics | null>(null);
   const [placements, setPlacements] = useState<PlacementData[]>([]);

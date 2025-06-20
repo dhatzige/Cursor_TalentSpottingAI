@@ -25,7 +25,7 @@ export default function CreateAccountPage() {
               
               <div className="mt-8 pt-6 border-t border-gray-800 text-center">
                 <p className="text-gray-400">
-                  Already have an account? <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium">Log in</Link>
+                                    Already have an account? <Link href="/sign-in" className="text-blue-400 hover:text-blue-300 font-medium">Log in</Link>
                 </p>
               </div>
             </div>

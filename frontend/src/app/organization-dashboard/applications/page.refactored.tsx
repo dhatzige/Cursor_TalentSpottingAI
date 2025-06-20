@@ -38,7 +38,7 @@ interface Note {
 
 export default function ApplicationReviewPage() {
   // Protect this route - only employers can access
-  const { loading: authLoading } = useProtectedRoute(['employer'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['employer']);
   
   const router = useRouter();
   const searchParams = useSafeSearchParams();
@@ -234,10 +234,17 @@ export default function ApplicationReviewPage() {
     
     try {
       // Call the API
-      const newNote = await EmployerService.addApplicationNote(applicationId, content);
+      await EmployerService.addApplicationNote(applicationId, content);
       
-      // Update the selected application if it's the one being modified
+      // Optimistically update the UI with the new note
       if (selectedApplication && selectedApplication.id === applicationId) {
+        const newNote: Note = {
+          id: new Date().toISOString(), // Temporary unique ID
+          content,
+          createdAt: new Date().toISOString(),
+          createdBy: 'Me' // Placeholder for current user
+        };
+
         setSelectedApplication({
           ...selectedApplication,
           notes: [...(selectedApplication.notes || []), newNote]
@@ -291,8 +298,8 @@ export default function ApplicationReviewPage() {
           {/* Status filter */}
           <div className="mb-6">
             <StatusFilter 
-              currentFilter={statusFilter} 
-              onFilterChange={setStatusFilter} 
+              selectedStatus={statusFilter} 
+              onStatusChange={setStatusFilter} 
             />
           </div>
           

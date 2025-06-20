@@ -39,6 +39,21 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## UI Components and Authentication (2025-06-20)
+
+This project has undergone a significant refactoring to standardize its UI components and authentication mechanisms.
+
+### UI Component Strategy
+
+- **`shadcn/ui` Components**: We have migrated from legacy, custom-built UI components to the modern, accessible, and composable components from [`shadcn/ui`](https://ui.shadcn.com/). This includes core elements like `Button`, `Card`, and `Tabs`.
+- **Centralized Dashboard Components**: All shared components used across the various dashboards (e.g., `ChartContainer`, `Pagination`) are now located in `src/components/dashboard/shared`. This improves modularity and removes duplicated code.
+
+### Authentication
+
+- **Clerk-Powered Protected Routes**: All route protection is now handled by a single, canonical hook: `useProtectedRoute`. This hook is located in `src/lib/hooks` and is powered by [Clerk](https://clerk.com/) to ensure a consistent and secure authentication flow across the entire application. Legacy and mock authentication hooks have been removed.
+
+---
+
 ## Client-Side Hooks and Build Optimizations
 
 This project implements a robust solution for handling client-side hooks in Next.js App Router:

@@ -16,19 +16,27 @@ The Talent Spotting AI frontend is built with a modular, component-based archite
 ```
 frontend/
 ├── src/
-│   ├── app/                    # Application pages and components
-│   │   ├── components/         # Shared UI components
-│   │   │   ├── ui/             # Basic UI elements
-│   │   │   └── layout/         # Layout components
-│   │   ├── [feature]/          # Feature-specific pages
-│   │       └── components/     # Feature-specific components
-│   ├── lib/                    # Shared utilities and services
-│   │   ├── api/                # API service modules
-│   │   ├── hooks/              # Custom React hooks
-│   │   └── utils/              # Utility functions
-│   ├── test/                   # Test setup and utilities
-│   └── types/                  # Global TypeScript type definitions
-└── docs/                       # Project documentation
+│   ├── app/                    # Next.js App Router: Pages, layouts, and route handlers.
+│   │   ├── (dashboards)/       # Route groups for different user dashboards.
+│   │   │   ├── admin-dashboard/
+│   │   │   ├── organization-dashboard/
+│   │   │   └── ...
+│   │   ├── (marketing)/        # Route group for public-facing pages.
+│   │   │   ├── page.tsx        # Homepage
+│   │   │   └── ...
+│   │   └── api/                # API route handlers.
+│   ├── components/             # Shared React components.
+│   │   ├── ui/                 # Core UI components from shadcn/ui (Button, Card, etc.).
+│   │   ├── dashboard/          # Components shared across multiple dashboards.
+│   │   │   └── shared/         # e.g., ChartContainer, Pagination.
+│   │   └── layout/             # Global layout components (Navbar, Footer).
+│   ├── lib/                    # Core logic, services, and utilities.
+│   │   ├── services/           # Business logic and data fetching (e.g., jobs-service.ts).
+│   │   ├── hooks/              # Custom React hooks (e.g., useProtectedRoute).
+│   │   └── utils/              # General utility functions.
+│   ├── styles/                 # Global CSS files.
+│   └── types/                  # Global TypeScript type definitions.
+└── docs/                       # Project documentation.
 ```
 
 ## React 19 Compatibility
@@ -100,28 +108,41 @@ The application uses Jest and React Testing Library for comprehensive testing:
 
 ## Component Patterns
 
-### UI Components
+### UI Components with shadcn/ui
 
-Basic UI components follow a consistent pattern:
-- Clear TypeScript interfaces for props
-- Default exports for simpler imports
-- Minimal dependencies on other components
-- Designed for reusability across features
+The project has standardized on [`shadcn/ui`](https://ui.shadcn.com/) for its core UI components. These are not a traditional component library; instead, they are reusable components that are copied directly into our codebase at `src/components/ui`. This allows for full control over their code and styling.
+
+- **Location**: All base UI components like `Button`, `Card`, `Input`, and `Tabs` are located in `src/components/ui`.
+- **Composition**: They are built using [Radix UI](https://www.radix-ui.com/) for accessibility and unstyled primitives, and styled with [Tailwind CSS](https://tailwindcss.com/).
+- **Usage**: Components should be imported directly from their path within the `@/components/ui` alias.
 
 ```tsx
-interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-export function Button({ variant = 'primary', size = 'md', children, onClick, disabled }: ButtonProps) {
-  // Component implementation
+function ExampleComponent() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <CardDescription>Card Description</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>Card content goes here.</p>
+      </CardContent>
+      <CardFooter>
+        <Button>Action</Button>
+      </CardFooter>
+    </Card>
+  );
 }
-
-export default Button;
 ```
 
 ### Feature Components
@@ -248,22 +269,38 @@ test('JobEditForm submits data correctly', async () => {
 
 ## API Integration
 
-Services are organized by domain and use TypeScript for request/response typing:
+The frontend communicates with the backend via a modular service layer located in `src/lib/services`. This layer abstracts away the data fetching logic (e.g., `fetch` calls, Axios instances) and provides a clean, typed interface for components to use.
+
+### Modular Service Architecture
+
+Services are organized by domain to maintain a clear separation of concerns.
+
+- **Domain-Specific Files**: Each primary domain has its own service file (e.g., `jobs-service.ts`, `applications-service.ts`).
+- **Centralized Exports**: A central `index.ts` file in the service directory may be used to export all service functions, providing a single entry point for the rest of the application.
+- **Type Safety**: All service methods are fully typed using TypeScript, with clear interfaces for request payloads and API responses.
 
 ```typescript
-export const EmployerService = {
-  async getJobs(): Promise<JobsResponse> {
-    const response = await fetch('/api/employer/jobs');
-    return response.json();
-  },
+// Example from src/lib/services/jobs-service.ts
+
+import { JobListing, JobSearchQuery, PaginatedResponse } from '@/types/jobs';
+
+/**
+ * Fetches a paginated list of job results based on a search query.
+ */
+export async function getPaginatedJobResults(
+  query: JobSearchQuery
+): Promise<PaginatedResponse<JobListing>> {
+  // In a real implementation, this would make an API call.
+  // For now, it returns mock data.
+  console.log('Fetching jobs with query:', query);
   
-  async createJob(data: JobPostRequest): Promise<JobResponse> {
-    const response = await fetch('/api/employer/jobs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return response.json();
-  }
-};
+  // ... logic to fetch and filter mock data ...
+
+  return {
+    results: paginatedJobs,
+    pagination: {
+      // ... pagination info ...
+    },
+  };
+}
 ```

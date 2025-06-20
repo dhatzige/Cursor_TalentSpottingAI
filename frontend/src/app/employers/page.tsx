@@ -64,7 +64,7 @@ export default function EmployersPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-                href="/create-account?role=employer" 
+                href="/sign-up" 
                 className="px-8 py-3 bg-blue-500 rounded-lg text-white font-medium hover:bg-blue-600 transition-colors text-center shadow-md"
               >
                 Get Started for Free
@@ -150,7 +150,7 @@ export default function EmployersPage() {
                 </ul>
                 <div className="mt-6">
                   <Link 
-                    href="/create-account?role=employer&plan=starter" 
+                    href="/sign-up" 
                     className="w-full py-2 bg-blue-600 text-white rounded-md text-center block hover:bg-blue-700 transition-colors"
                   >
                     Get Started
@@ -192,7 +192,7 @@ export default function EmployersPage() {
                 </ul>
                 <div className="mt-6">
                   <Link 
-                    href="/create-account?role=employer&plan=professional" 
+                    href="/sign-up" 
                     className="w-full py-2 bg-white text-blue-900 rounded-md text-center block hover:bg-gray-100 transition-colors font-medium"
                   >
                     Get Started
@@ -311,7 +311,7 @@ export default function EmployersPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/create-account?role=employer" 
+              href="/sign-up" 
               className="px-8 py-3 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors font-medium inline-block"
             >
               Start Hiring Now

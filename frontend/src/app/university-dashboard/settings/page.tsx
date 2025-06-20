@@ -6,7 +6,8 @@ import React, { useState, ChangeEvent } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import { useSaveSettings } from '@/lib/hooks/useSaveSettings';
-import Button from '@/app/organization-dashboard/shared/ui/Button';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { getPreferredTheme } from '@/lib/theme';
 import { useEffect } from 'react';
 import AppearanceSection from '@/components/settings/AppearanceSection';
@@ -40,7 +41,7 @@ interface SettingsState {
 
 export default function UniversitySettingsPage() {
   // Restrict access to university role
-  const { loading: authLoading } = useProtectedRoute(['university'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['university']);
 
   // Local state
   const [settings, setSettings] = useState<SettingsState>({
@@ -222,7 +223,8 @@ export default function UniversitySettingsPage() {
 
       {/* --- Save --- */}
       <div className="flex justify-end">
-        <Button variant="primary" size="md" disabled={!dirty || saving} loading={saving} onClick={save}>
+        <Button variant="default" size="md" disabled={!dirty || saving} onClick={save}>
+          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {saving ? 'Saving…' : saved ? 'Saved!' : 'Save Changes'}
         </Button>
       </div>

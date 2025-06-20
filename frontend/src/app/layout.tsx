@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import './globals.css';
+import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
 import '../styles/gradient-bg.css';
 
 // Import the client component wrapper
 import ClientLayout from '../components/ClientLayout';
-import { AuthProvider } from '../lib/hooks/useAuth';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased text-gray-900 bg-white dark:text-gray-100 dark:bg-gray-900`}
       >
-        <AuthProvider>
+        <ClerkProvider>
+          
           <ClientLayout>
             {children}
           </ClientLayout>
-        </AuthProvider>
+          
+        </ClerkProvider>
       </body>
     </html>
   );

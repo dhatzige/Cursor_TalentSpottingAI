@@ -134,7 +134,7 @@ export default function DashboardSidebar({
               let finalItemHref = item.href;
               if (devBypassActive) {
                 // Ensure dev_bypass is appended correctly
-                finalItemHref = item.href.includes('?') ? `${item.href}&dev_bypass=true` : `${item.href}?dev_bypass=true`;
+                finalItemHref = item.href;
               }
                 
               return (

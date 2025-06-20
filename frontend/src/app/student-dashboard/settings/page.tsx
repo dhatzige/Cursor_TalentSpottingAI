@@ -39,7 +39,7 @@ type SettingsState = {
 
 export default function SettingsPage() {
   // Protect this route - only students can access
-  const { loading: authLoading } = useProtectedRoute(['student'], '/login');
+    const { loading: authLoading } = useProtectedRoute(['student']);
   
   // Mock user info - In a real application, this would come from auth context
   const userInfo = {

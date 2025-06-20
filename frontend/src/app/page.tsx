@@ -1,11 +1,9 @@
-import Navbar from '@/components/layout/Navbar';
 import SearchBar from '@/components/home/SearchBar';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white pt-16">
-      <Navbar transparent={true} />
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       
       <section className="min-h-[95vh] flex items-center justify-center relative py-24 mt-[-1px]">
         {/* Separator line to distinguish from navbar */}
@@ -36,7 +34,7 @@ export default function HomePage() {
                 Find Jobs
               </Link>
               <Link 
-                href="/create-account" 
+                href="/sign-up" 
                 className="bg-gray-800/80 border border-gray-700 hover:bg-gray-700 text-white px-8 py-3 rounded-lg transition-colors font-medium"
               >
                 Get Started
@@ -153,7 +151,7 @@ export default function HomePage() {
           <p className="text-xl text-gray-400 mb-8">Join the future of talent acquisition with TalentSpottingAI</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/create-account" 
+              href="/sign-up" 
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors font-medium"
             >
               Start Free Trial

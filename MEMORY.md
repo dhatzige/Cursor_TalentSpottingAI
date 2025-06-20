@@ -2,6 +2,77 @@
 
 ## Recent Updates
 
+### Student Email Verification (In Progress - June 2025)
+
+- **Objective**: To ensure users selecting the 'Student' role have a valid university-affiliated email address.
+- **Current Status**: Partially implemented. The feature is not yet complete and should not be considered production-ready.
+- **Components Created**:
+  - `frontend/src/lib/university-domains.ts`: A utility file containing a list of valid university email domains and a helper function to check emails against it.
+  - `frontend/src/app/api/verify-email/route.ts`: A server-side API endpoint to securely verify the logged-in user's primary email address.
+- **Components Modified**:
+  - `frontend/src/app/onboarding/page.tsx`: The onboarding page was updated to call the new verification API when the student role is selected. It includes basic error handling to display feedback to the user.
+- **Known Issues**:
+  - The API route (`verify-email/route.ts`) currently has TypeScript errors related to incorrect usage of the Clerk server-side SDK, which prevent it from functioning correctly.
+  - The feature requires finishing and testing before it can be merged.
+
+### Student Email Verification (In Progress - June 2025)
+
+- **Objective**: To ensure users selecting the 'Student' role have a valid university-affiliated email address.
+- **Current Status**: Partially implemented. The feature is not yet complete and should not be considered production-ready.
+- **Components Created**:
+  - `frontend/src/lib/university-domains.ts`: A utility file containing a list of valid university email domains and a helper function to check emails against it.
+  - `frontend/src/app/api/verify-email/route.ts`: A server-side API endpoint to securely verify the logged-in user's primary email address.
+- **Components Modified**:
+  - `frontend/src/app/onboarding/page.tsx`: The onboarding page was updated to call the new verification API when the student role is selected. It includes basic error handling to display feedback to the user.
+- **Known Issues**:
+  - The API route (`verify-email/route.ts`) currently has TypeScript errors related to incorrect usage of the Clerk server-side SDK, which prevent it from functioning correctly.
+  - The feature requires finishing and testing before it can be merged.
+
+### Authentication & Onboarding Overhaul (June 2025)
+
+- **Server-Side Authentication with Clerk Middleware**:
+  - Implemented a robust, `async` server-side middleware (`src/middleware.ts`) using Clerk v4's `clerkMiddleware`.
+  - Resolved persistent TypeScript and runtime errors by correctly using `await auth()` to handle the asynchronous nature of session retrieval.
+  - The middleware now reliably protects routes and enforces role-based access control across the entire application.
+
+- **Intelligent Role-Based Redirects**:
+  - The middleware correctly redirects authenticated users to their respective dashboards (`/student-dashboard`, `/organization-dashboard`, etc.) based on the `role` stored in their Clerk user metadata.
+  - Users without a role are automatically sent to the `/onboarding` page to complete their registration.
+  - Logged-in users are prevented from accessing public-only pages like `/sign-in` or `/sign-up`.
+
+- **Onboarding Redirect Loop Fix**:
+  - Refactored the onboarding page (`src/app/onboarding/page.tsx`) to eliminate a critical bug where users were repeatedly sent back to select a role.
+  - Implemented a `useEffect` hook that checks for an existing role on page load. If a role is present, the user is automatically redirected to their dashboard, completely bypassing the role selection UI.
+  - This ensures a seamless user experience, where role selection is a one-time action.
+
+
+### UI Component & Auth Refactoring (June 2025)
+
+- **UI Component Migration**:
+  - Replaced legacy UI components (`Button`, `Card`, `Tabs`) with modern `shadcn/ui` equivalents across the application.
+  - Refactored JSX to use compound components (`CardHeader`, `CardContent`, etc.) for improved modularity and maintainability.
+- **Shared UI Components Centralization**:
+  - Migrated all shared dashboard components (e.g., `ChartContainer`, `Pagination`) to a new centralized directory: `src/components/dashboard/shared`.
+  - Removed the deprecated legacy `src/app/organization-dashboard/shared` directory structure.
+- **Authentication Hook Consolidation**:
+  - Consolidated all route protection logic into a single, canonical `useProtectedRoute` hook powered by Clerk, located at `src/lib/hooks/useProtectedRoute.tsx`.
+  - Deleted legacy and mock authentication hooks to reduce technical debt and unify the auth flow.
+- **Documentation Overhaul**:
+  - Updated `README.md`, `CLIENT_SIDE_HOOKS.md`, and `ARCHITECTURE.md` to reflect the new component architecture, centralized shared components, and the unified Clerk-based authentication strategy.
+
+
+### Automated Backend Testing Setup (June 2025)
+
+- **Testing scaffold added** using Jest, ts-jest and SuperTest.
+  - Config files: `backend/jest.config.ts`, `backend/tests/setupTests.ts`.
+  - Dev-dependencies added to `backend/package.json`.
+- **Refactor**: Express app split into `src/app.ts` (pure app) and `src/server.ts` (bootstrap + graceful shutdown). NPM scripts updated.
+- **Initial test suites**:
+  - `tests/health.test.ts` – checks `/api/health` returns 200.
+  - `tests/student/applyForJob.test.ts` – validates cover-letter length, duplicate prevention, and success path (Prisma mocked).
+- **Result**: `npm test` now passes (2 suites, 4 tests) and baseline unit-test coverage raised.
+
+
 ### Global Dark Mode Enforcement (June 2025)
 
 - **Enforced permanent dark mode** across entire frontend.
@@ -148,7 +219,7 @@ See `docs/ROADMAP.md` for the latest high-level plan (UI polish now, backend aud
   - Relationships: 40%
   - Performance: 10%
 
-- **Testing: ~10% complete**
+- **Testing: ~15% complete**
   - Unit tests: 5%
   - Integration tests: 2%
   - E2E tests: 0%
@@ -165,7 +236,7 @@ A modern platform for connecting employers with talent, using AI to improve matc
 - **Styling:** TailwindCSS, Shadcn UI
 - **Backend:** Node.js (Express, TypeScript)
 - **Database:** PostgreSQL (via Prisma ORM)
-- **Authentication:** Custom JWT-based (no Supabase), with secure session management
+- **Authentication:** Clerk (v4) for user management, session handling, and middleware
 - **Testing:** Jest (unit/integration), Playwright (e2e)
 - **CI/CD:** GitHub Actions
 - **Deployment:** Vercel (frontend), Render.com or Railway (backend), Docker-ready
