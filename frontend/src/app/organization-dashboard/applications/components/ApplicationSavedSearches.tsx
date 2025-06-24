@@ -79,7 +79,7 @@ export default function ApplicationSavedSearches({
                     </div>
                   </div>
                   <button
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       onDeleteSearch(search.id);
                     }}

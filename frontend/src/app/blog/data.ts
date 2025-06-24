@@ -2,71 +2,94 @@ import { BlogPost } from '@/types/blog';
 
 export const blogPosts: BlogPost[] = [
   {
-    id: 1,
+    id: '1',
     title: 'The Future of AI in Talent Acquisition',
     excerpt: 'Explore how artificial intelligence is transforming the recruitment process and what it means for employers and candidates.',
+    content: 'Full content would go here...',
     category: 'AI Technology',
-    author: 'Dr. Sarah Chen',
-    authorRole: 'Chief AI Officer',
-    date: 'May 10, 2025',
+    author: {
+      name: 'Dr. Sarah Chen'
+    },
+    createdAt: '2025-05-10T00:00:00Z',
     readTime: '8 min read',
     image: 'https://images.unsplash.com/photo-1677756119517-756a188d2d94?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    featured: true
+    featured: true,
+    status: 'PUBLISHED' as const
   },
   {
-    id: 2,
+    id: '2',
     title: 'How to Create a Standout Resume That Gets You Noticed',
     excerpt: 'Learn the key elements of a powerful resume that will help you stand out in a competitive job market.',
+    content: 'Full content would go here...',
     category: 'Career Advice',
-    author: 'Michael Torres',
-    authorRole: 'Career Development Specialist',
-    date: 'May 2, 2025',
+    author: {
+      name: 'Michael Torres'
+    },
+    createdAt: '2025-05-02T00:00:00Z',
     readTime: '6 min read',
-    image: '/images/blog/resume-tips.jpg'
+    image: '/images/blog/resume-tips.jpg',
+    featured: false,
+    status: 'PUBLISHED' as const
   },
   {
-    id: 3,
+    id: '3',
     title: 'Remote Work Hiring Strategies for 2025',
     excerpt: 'Best practices for finding and retaining top remote talent in an increasingly distributed workplace.',
+    content: 'Full content would go here...',
     category: 'Hiring Trends',
-    author: 'Jessica Wang',
-    authorRole: 'Head of Talent Acquisition',
-    date: 'April 28, 2025',
+    author: {
+      name: 'Jessica Wang'
+    },
+    createdAt: '2025-04-28T00:00:00Z',
     readTime: '9 min read',
-    image: '/images/blog/remote-work.jpg'
+    image: '/images/blog/remote-work.jpg',
+    featured: false,
+    status: 'PUBLISHED' as const
   },
   {
-    id: 4,
+    id: '4',
     title: 'The Impact of Skills-Based Hiring',
     excerpt: 'Why more companies are moving away from traditional credentials and focusing on skills and abilities.',
+    content: 'Full content would go here...',
     category: 'Hiring Trends',
-    author: 'David Johnson',
-    authorRole: 'Industry Analyst',
-    date: 'April 21, 2025',
+    author: {
+      name: 'David Johnson'
+    },
+    createdAt: '2025-04-21T00:00:00Z',
     readTime: '7 min read',
-    image: '/images/blog/skills-hiring.jpg'
+    image: '/images/blog/skills-hiring.jpg',
+    featured: false,
+    status: 'PUBLISHED' as const
   },
   {
-    id: 5,
+    id: '5',
     title: 'University Partnerships: Bridging the Education-Employment Gap',
     excerpt: 'How universities and employers can work together to prepare students for the modern workforce.',
+    content: 'Full content would go here...',
     category: 'Education',
-    author: 'Dr. Emily Rodriguez',
-    authorRole: 'University Relations Director',
-    date: 'April 15, 2025',
+    author: {
+      name: 'Dr. Emily Rodriguez'
+    },
+    createdAt: '2025-04-15T00:00:00Z',
     readTime: '10 min read',
-    image: '/images/blog/university-partnerships.jpg'
+    image: '/images/blog/university-partnerships.jpg',
+    featured: false,
+    status: 'PUBLISHED' as const
   },
   {
-    id: 6,
+    id: '6',
     title: 'Diversity and Inclusion in Tech Recruitment',
     excerpt: 'Strategies for building more diverse technical teams and creating inclusive hiring processes.',
+    content: 'Full content would go here...',
     category: 'Diversity',
-    author: 'Aisha Patel',
-    authorRole: 'D&I Consultant',
-    date: 'April 8, 2025',
+    author: {
+      name: 'Aisha Patel'
+    },
+    createdAt: '2025-04-08T00:00:00Z',
     readTime: '11 min read',
-    image: '/images/blog/diversity-tech.jpg'
+    image: '/images/blog/diversity-tech.jpg',
+    featured: false,
+    status: 'PUBLISHED' as const
   }
 ];
 

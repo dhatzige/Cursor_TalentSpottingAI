@@ -20,7 +20,7 @@ const SearchBar = () => {
                 <input
                     type="text"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     placeholder="Search articles..."
                     className="w-full px-4 py-3 pr-12 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-colors"
                 />

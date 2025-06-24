@@ -76,14 +76,15 @@ export default function MetricsGrid({ metrics }: MetricsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {metrics.map((metric) => (
-        <MetricCard
-          key={metric.id}
-          title={metric.title}
-          value={metric.value}
-          icon={metric.icon}
-          description={metric.description}
-          trend={metric.trend}
-        />
+        <div key={metric.id}>
+          <MetricCard
+            title={metric.title}
+            value={metric.value}
+            icon={metric.icon}
+            description={metric.description}
+            trend={metric.trend}
+          />
+        </div>
       ))}
     </div>
   );

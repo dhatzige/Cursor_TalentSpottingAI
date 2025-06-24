@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { EmployerService } from '@/lib/api';
-import Pagination from '../../shared/Pagination';
+import Pagination from '@/components/dashboard/shared/Pagination';
 
 // Import modular components
 import CandidateEmptyState from './CandidateEmptyState';

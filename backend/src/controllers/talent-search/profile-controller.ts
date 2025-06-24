@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
  */
 export const viewCandidateProfile = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
 
@@ -63,7 +63,7 @@ export const viewCandidateProfile = async (req: Request, res: Response) => {
     // Record this view for analytics
     await prisma.profileView.create({
       data: {
-        viewerId: req.user.id,
+        viewerId: (req as any).user.id,
         profileId: student.userId,
         viewerType: 'EMPLOYER'
       }

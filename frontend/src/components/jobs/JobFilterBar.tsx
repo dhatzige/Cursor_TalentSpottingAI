@@ -127,7 +127,7 @@ export default function JobFilterBar({
                 className="w-full px-4 py-3 bg-[#0d1424] border border-gray-700 rounded-md text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shadow-inner"
                 placeholder="Enter search terms (e.g. 'developer +react -junior')"
                 value={filterState.searchTerm}
-                onChange={(e) => handleTextInputChange('searchTerm', e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('searchTerm', e.target.value)}
               />
               <div className="mt-1.5 flex flex-wrap gap-2">
                 <div className="text-xs text-gray-400 bg-[#0d1424]/70 px-2 py-1 rounded-md">"exact phrase"</div>
@@ -147,14 +147,14 @@ export default function JobFilterBar({
                   className="w-full px-4 py-3 bg-[#0d1424] border border-gray-700 rounded-md text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shadow-inner"
                   placeholder="e.g. San Francisco, New York"
                   value={filterState.location}
-                  onChange={(e) => handleTextInputChange('location', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('location', e.target.value)}
                 />
                 <label className="flex items-center mt-2">
                   <input 
                     type="checkbox" 
                     className="mr-2 h-4 w-4 accent-blue-500 cursor-pointer"
                     checked={filterState.remote}
-                    onChange={(e) => handleTextInputChange('remote', e.target.checked)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('remote', e.target.checked)}
                   />
                   <span className="text-sm text-white">Remote Only</span>
                 </label>
@@ -169,14 +169,14 @@ export default function JobFilterBar({
                     className="w-full px-3 py-2 bg-[#0d1424] border border-gray-700 rounded-md text-white text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shadow-inner"
                     placeholder="Min ($)"
                     value={filterState.salaryMin}
-                    onChange={(e) => handleTextInputChange('salaryMin', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('salaryMin', e.target.value)}
                   />
                   <input
                     type="text"
                     className="w-full px-3 py-2 bg-[#0d1424] border border-gray-700 rounded-md text-white text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shadow-inner"
                     placeholder="Max ($)"
                     value={filterState.salaryMax}
-                    onChange={(e) => handleTextInputChange('salaryMax', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('salaryMax', e.target.value)}
                   />
                 </div>
               </div>
@@ -187,7 +187,7 @@ export default function JobFilterBar({
                 <select
                   className="w-full px-4 py-3 bg-[#0d1424] border border-gray-700 rounded-md text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 appearance-none shadow-inner"
                   value={filterState.postedWithin}
-                  onChange={(e) => handleTextInputChange('postedWithin', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTextInputChange('postedWithin', e.target.value)}
                 >
                   <option value="">Any Time</option>
                   {POSTED_TIMES.map(option => (

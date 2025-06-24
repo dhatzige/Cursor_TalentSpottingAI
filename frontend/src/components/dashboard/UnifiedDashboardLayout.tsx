@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
@@ -16,13 +16,38 @@ function isValidRole(role: any): role is UserRole {
   return ROLES.includes(role);
 }
 
+function getRoleFromPathname(pathname: string): UserRole {
+  if (pathname.includes('student')) return 'student';
+  if (pathname.includes('organization') || pathname.includes('employer')) return 'employer';
+  if (pathname.includes('university')) return 'university';
+  if (pathname.includes('admin')) return 'admin';
+  return 'student'; // default fallback
+}
+
 export default function UnifiedDashboardLayout({ children }: UnifiedDashboardLayoutProps) {
   const { user } = useUser();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
 
-  const roleFromMeta = user?.publicMetadata?.role;
-  const userRole: UserRole = isValidRole(roleFromMeta) ? roleFromMeta : 'student';
+  // Check for development bypass
+  const isDevMode = process.env.NODE_ENV === 'development';
+  const devBypass = searchParams.get('dev_bypass') === 'true';
+  const shouldBypass = isDevMode && devBypass;
+
+  // Determine user role
+  let userRole: UserRole;
+  
+  if (shouldBypass) {
+    // In dev bypass mode, determine role from pathname
+    userRole = getRoleFromPathname(pathname ?? '');
+    console.log('Dev bypass active, determined role from pathname:', userRole);
+  } else {
+    // Normal mode: get role from Clerk user metadata
+    const roleFromMeta = user?.publicMetadata?.role;
+    userRole = isValidRole(roleFromMeta) ? roleFromMeta : 'student';
+  }
+
   const currentPath = pathname ?? '';
 
   return (

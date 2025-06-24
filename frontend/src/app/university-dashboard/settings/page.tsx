@@ -234,14 +234,6 @@ export default function UniversitySettingsPage() {
   const isDev = process.env.NODE_ENV === 'development';
 
   return (
-    <UnifiedDashboardLayout
-      title=""
-      userRole="university"
-      breadcrumbs={[
-        { label: 'Dashboard', href: isDev ? '/university-dashboard' : '/university-dashboard' },
-        { label: 'Settings' },
-      ]}
-      children={content}
-    />
+    <UnifiedDashboardLayout children={content} />
   );
 }

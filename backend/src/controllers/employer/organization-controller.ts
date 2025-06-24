@@ -10,13 +10,13 @@ const prisma = new PrismaClient();
 // Get employer/organization dashboard stats
 export const getOrganizationStats = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
     
     // Find the organization this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { organization: true }
     });
     

@@ -38,11 +38,7 @@ export default function UniversityPlacementsPage() {
   }, []);
 
   return (
-    <UnifiedDashboardLayout
-      title=""
-      userRole="university"
-      breadcrumbs={[{ label: 'Placements' }]}
-    >
+    <UnifiedDashboardLayout>
       <div className="space-y-6">
         {error && (
           <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">

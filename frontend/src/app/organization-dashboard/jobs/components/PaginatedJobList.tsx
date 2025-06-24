@@ -216,7 +216,7 @@ export default function PaginatedJobList({ initialFilter = 'all' }: PaginatedJob
                 type="text" 
                 placeholder="Enter a name for this search" 
                 value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-gray-100 dark:text-white"
                 autoFocus
               />

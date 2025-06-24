@@ -3,22 +3,24 @@
  * 
  * API endpoints for employers to search for available talent
  */
-import express, { Router } from 'express';
-import { searchTalent, getSearchFilters, viewCandidateProfile } from '../controllers/talent-search.controller';
-import { authenticateToken, authorizeRoles } from '../middleware/auth';
+import express from 'express';
+import {
+  searchProfiles,
+  getFilters,
+  getProfile,
+  saveSearch
+} from '../controllers/talent-search.controller';
+import { clerkAuth } from '../middleware/clerkAuth';
 
-const router = Router();
+const router = express.Router();
 
-// All routes require authentication and employer role
-router.use(authenticateToken as express.RequestHandler, authorizeRoles(['employer']) as express.RequestHandler);
+// All routes require Clerk authentication
+router.use(clerkAuth);
 
-// Search for talent based on criteria
-router.post('/search', searchTalent as express.RequestHandler);
-
-// Get filter options (universities, cities, skills)
-router.get('/filters', getSearchFilters as express.RequestHandler);
-
-// View a specific candidate's profile
-router.get('/candidates/:candidateId', viewCandidateProfile as express.RequestHandler);
+// Talent search routes
+router.get('/profiles', searchProfiles as express.RequestHandler);
+router.get('/filters', getFilters as express.RequestHandler);
+router.get('/profiles/:id', getProfile as express.RequestHandler);
+router.post('/saved-searches', saveSearch as express.RequestHandler);
 
 export default router;

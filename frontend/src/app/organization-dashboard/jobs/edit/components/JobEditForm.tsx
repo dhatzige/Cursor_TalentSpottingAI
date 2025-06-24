@@ -98,7 +98,7 @@ export function JobEditForm({
           id="title"
           className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           placeholder="e.g. Frontend Developer"
           required
         />
@@ -112,7 +112,7 @@ export function JobEditForm({
           id="description"
           className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[120px]"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
           placeholder="Describe the responsibilities, qualifications, and benefits..."
           rows={5}
         />
@@ -127,7 +127,7 @@ export function JobEditForm({
           id="location"
           className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
           placeholder="e.g. San Francisco, CA or Remote"
         />
       </div>
@@ -141,7 +141,7 @@ export function JobEditForm({
           id="skills"
           className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={skillsInput}
-          onChange={(e) => setSkillsInput(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillsInput(e.target.value)}
           placeholder="e.g. JavaScript, React, TypeScript (comma separated)"
         />
         <p className="mt-1 text-xs text-gray-500">

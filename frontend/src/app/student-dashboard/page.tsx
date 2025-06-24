@@ -5,9 +5,9 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
-import { StudentService } from '../../lib/api';
+import { StudentService } from '../../lib/api/student.service';
 import { useProtectedRoute } from '../../lib/hooks/useProtectedRoute';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useAuth } from '@clerk/nextjs';
 
 // Import new modular components
 import { 
@@ -66,6 +66,7 @@ interface StudentStats {
 export default function StudentDashboardPage() {
   // Protect this route - only student can access
       const { user } = useUser();
+  const { getToken } = useAuth();
   const { loading: authLoading } = useProtectedRoute(['student']);
   
   const [stats, setStats] = useState<StudentStats>({
@@ -76,6 +77,7 @@ export default function StudentDashboardPage() {
   
   const [recommendedJobs, setRecommendedJobs] = useState<JobItem[]>([]);
   const [applications, setApplications] = useState<ApplicationItem[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,13 +92,17 @@ export default function StudentDashboardPage() {
       
       try {
         // Fetch all student data in parallel
-        const [dashboardStats, apiJobs, apiApplications] = await Promise.all([
-          StudentService.getDashboardStats(),
-          StudentService.getRecommendedJobs(),
-          StudentService.getApplicationStatus(),
+        const [dashboardStats, apiJobs, apiApplications, profileData] = await Promise.all([
+          StudentService.getDashboardStats(getToken),
+          StudentService.getRecommendedJobs(getToken),
+          StudentService.getApplicationStatus(getToken),
+          StudentService.getProfile(getToken),
         ]);
         
         setStats(dashboardStats);
+        if (profileData?.user) {
+          setUserProfile(profileData.user);
+        }
         
         // Map API job responses to component format
         const mappedJobs: JobItem[] = apiJobs.map(job => ({
@@ -136,7 +142,9 @@ export default function StudentDashboardPage() {
     };
     
     fetchStudentData();
-  }, [authLoading]);
+  }, [authLoading, getToken]);
+
+
 
   
 
@@ -150,8 +158,7 @@ export default function StudentDashboardPage() {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
         </svg>
-      ),
-      trend: { value: 5, isPositive: true }
+      )
     },
     {
       id: 'applications',
@@ -173,8 +180,7 @@ export default function StudentDashboardPage() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-      ),
-      trend: { value: 12, isPositive: true }
+      )
     },
     {
       id: 'interviews',
@@ -200,11 +206,103 @@ export default function StudentDashboardPage() {
 
   return (
     <UnifiedDashboardLayout>
-
       <div className="space-y-6">
         {error && (
           <div className="p-4 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400 rounded-lg">
             {error}
+          </div>
+        )}
+        
+        {/* Fix Role Issue - Show when user has no role in Clerk */}
+        {!user?.unsafeMetadata?.role && (
+          <div className="p-6 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-red-900 dark:text-red-100">
+                  Authentication Issue Detected
+                </h3>
+                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                  Your account is missing role information. Click the button to fix this issue.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/fix-user-role', { method: 'POST' });
+                    if (response.ok) {
+                      window.location.reload();
+                    } else {
+                      alert('Failed to fix role. Please try again.');
+                    }
+                  } catch (error) {
+                    alert('Error fixing role. Please try again.');
+                  }
+                }}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Fix Authentication
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Real Profile Setup - Show when user has mock data */}
+        {stats.profileCompletion === 72 && (
+          <div className="p-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-orange-900 dark:text-orange-100">
+                  You're seeing demo data
+                </h3>
+                <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
+                  Create your real profile to see your actual data and get personalized job recommendations.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/quick-setup', { method: 'POST' });
+                    if (response.ok) {
+                      window.location.reload();
+                    } else {
+                      alert('Failed to create profile. Please try again.');
+                    }
+                  } catch (error) {
+                    alert('Error creating profile. Please try again.');
+                  }
+                }}
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Create Real Profile
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Profile Completion Encouragement - Show when profile is incomplete but real */}
+        {stats.profileCompletion < 100 && stats.profileCompletion !== 72 && (
+          <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                  Complete Your Profile ({stats.profileCompletion}%)
+                </h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                  {stats.profileCompletion < 50 
+                    ? "Add more details to your profile to get better job recommendations."
+                    : stats.profileCompletion < 80
+                    ? "You're almost there! Complete your profile to unlock all features."
+                    : "Great job! Just a few more details to reach 100% completion."
+                  }
+                </p>
+              </div>
+              <button
+                onClick={() => window.location.href = '/student-dashboard/profile'}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Complete Profile
+              </button>
+            </div>
           </div>
         )}
         
@@ -216,11 +314,14 @@ export default function StudentDashboardPage() {
         ) : (
           <div className="space-y-8">
             {/* Profile Summary */}
-                        <ProfileSummary
-              name={user?.fullName || 'Student'}
-              major={user?.publicMetadata?.major as string || 'Undeclared'}
-              graduationYear={user?.publicMetadata?.graduationYear as number || new Date().getFullYear()}
-              status="seeking"
+            <ProfileSummary
+              name={userProfile?.studentProfile ? 
+                `${userProfile.studentProfile.firstName} ${userProfile.studentProfile.lastName}` : 
+                user?.fullName || 'Student'}
+              major={userProfile?.studentProfile?.studyField ? 
+                userProfile.studentProfile.studyField.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : 
+                'Computer Science'}
+              graduationYear={userProfile?.studentProfile?.graduationYear || new Date().getFullYear() + 1}
               profileCompletionPercentage={stats.profileCompletion}
             />
             

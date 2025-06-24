@@ -3,15 +3,15 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-slate-950 text-white">
       
-      <section className="min-h-[95vh] flex items-center justify-center relative py-24 mt-[-1px]">
+      <section className="min-h-[95vh] flex items-center justify-center relative py-24 mt-[-1px] bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
         {/* Separator line to distinguish from navbar */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
         
         {/* Background Elements */}
         <div className="hero-bg-animation"></div>
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-blue-900/10 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="w-full max-w-6xl mx-auto text-center">
@@ -45,8 +45,8 @@ export default function HomePage() {
       </section>
       
       {/* Features Section */}
-      <div className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-purple-500/10 z-0"></div>
+      <div className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-800 to-gray-900">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/8 to-purple-500/8 z-0"></div>
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl font-bold mb-12 text-center">Our Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -120,7 +120,7 @@ export default function HomePage() {
       </div>
       
       {/* Stats Section */}
-      <section className="py-16 bg-gray-800/50">
+      <section className="py-16 bg-slate-900/80">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="p-6">
@@ -144,8 +144,8 @@ export default function HomePage() {
       </section>
       
       {/* Call to Action Section */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-purple-500/10 z-0"></div>
+      <section className="py-20 relative bg-gradient-to-r from-slate-950 via-blue-950/20 to-slate-950">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/8 to-purple-500/8 z-0"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Hiring Process?</h2>
           <p className="text-xl text-gray-400 mb-8">Join the future of talent acquisition with TalentSpottingAI</p>
@@ -167,7 +167,7 @@ export default function HomePage() {
       </section>
       
       {/* Footer */}
-      <footer className="py-10 border-t border-gray-800 bg-gray-900">
+      <footer className="py-10 border-t border-slate-700 bg-slate-950">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">

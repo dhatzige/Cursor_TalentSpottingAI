@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import Card from './Card';
+import { Card } from '@/components/ui/card';
 
 interface ChartContainerProps {
   children: ReactNode;
@@ -79,11 +79,8 @@ export default function ChartContainer({
     if (loading) return renderLoading();
     if (error) return renderError();
     
-    // If the children is a React element and has a type, check if it's a falsy value (null, undefined, false)
-    // This is a way to detect if the chart has no data to display
-    const hasData = React.isValidElement(children) && children !== null && children !== undefined && children !== false;
-    
-    if (!hasData) return renderEmptyState();
+    // Check if children is truthy
+    if (!children) return renderEmptyState();
     
     return (
       <div className={height}>

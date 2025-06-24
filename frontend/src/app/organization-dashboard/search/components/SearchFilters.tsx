@@ -129,7 +129,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="Search candidates by name, skill, or keyword..."
               value={criteria.query}
-              onChange={(e) => handleChange('query', e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('query', e.target.value)}
             />
           </div>
         </div>
@@ -282,7 +282,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
                   min="0"
                   max={criteria.experience.max}
                   value={criteria.experience.min}
-                  onChange={(e) => handleExperienceChange('min', Number(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleExperienceChange('min', Number(e.target.value))}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
                 <span className="text-gray-500">to</span>
@@ -290,7 +290,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
                   type="number"
                   min={criteria.experience.min}
                   value={criteria.experience.max}
-                  onChange={(e) => handleExperienceChange('max', Number(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleExperienceChange('max', Number(e.target.value))}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
                 <span className="text-gray-500">years</span>
@@ -309,7 +309,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
                 min="0"
                 max="100"
                 value={criteria.matchScore.min}
-                onChange={(e) => handleMatchScoreChange('min', Number(e.target.value))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleMatchScoreChange('min', Number(e.target.value))}
                 className="block w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <input
@@ -317,7 +317,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
                 min="0"
                 max="100"
                 value={criteria.matchScore.max}
-                onChange={(e) => handleMatchScoreChange('max', Number(e.target.value))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleMatchScoreChange('max', Number(e.target.value))}
                 className="block w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
             </div>
@@ -344,7 +344,7 @@ export default function SearchFilters({ criteria, onChange, onSearch, onSave }: 
                         className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         placeholder="Enter a name for this search"
                         value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchName(e.target.value)}
                       />
                     </div>
                   </div>

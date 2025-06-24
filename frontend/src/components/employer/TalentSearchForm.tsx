@@ -52,7 +52,7 @@ interface TalentSearchFormProps {
   onSearch: (criteria: SearchCriteria) => void;
 }
 
-const TalentSearchForm = ({ filters, onSearch }: TalentSearchFormProps): React.ReactElement => {
+const TalentSearchForm = ({ filters, onSearch }: TalentSearchFormProps) => {
   const [locationInput, setLocationInput] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<Array<{ id: string; name: string }>>([]);
   const [selectedUniversities, setSelectedUniversities] = useState<Array<{ id: string; name: string }>>([]);

@@ -2,13 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/dist/client/components/not-found';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import Navbar from '@/components/layout/Navbar';
+
 import { BlogPost } from '@/types/blog';
 
 // Define explicit type for the page props
 interface PostPageProps {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 async function getPost(id: string): Promise<BlogPost> {
@@ -23,7 +23,8 @@ async function getPost(id: string): Promise<BlogPost> {
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
 
   return {
     title: `${post.title} | TalentSpottingAI Blog`,
@@ -32,11 +33,11 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-16">
-      <Navbar transparent={false} />
+    <div className="min-h-screen bg-gray-900 text-white">
 
       <article className="container mx-auto px-4 py-12 md:py-20 max-w-4xl">
         <header className="mb-8 md:mb-12 text-center">

@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
-import DataGrid, { Column } from '@/app/organization-dashboard/shared/ui/DataGrid';
+import DataGrid, { Column } from '@/components/dashboard/shared/DataGrid';
 import { UniversityService } from '@/lib/api';
 
 interface Employer {
@@ -47,11 +47,7 @@ export default function UniversityEmployersPage() {
   ];
 
   return (
-    <UnifiedDashboardLayout
-      title=""
-      userRole="university"
-      breadcrumbs={[{ label: 'Employers' }]}
-    >
+    <UnifiedDashboardLayout>
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
         {error && (
           <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
@@ -64,7 +60,7 @@ export default function UniversityEmployersPage() {
           columns={columns}
           keyField="id"
           loading={loading}
-          emptyState={<p className="py-4 text-center text-gray-500 dark:text-gray-400">No employer partners found.</p>}
+          emptyState={<p className="py-4 text-center text-gray-500 dark:text-gray-400"></p>}
         />
       </div>
     </UnifiedDashboardLayout>

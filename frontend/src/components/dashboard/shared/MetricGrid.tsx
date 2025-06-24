@@ -51,19 +51,20 @@ export default function MetricGrid({
   return (
     <div className={`grid ${getGridClass()} gap-4 ${className}`}>
       {metrics.map((metric) => (
-        <StatCard
-          key={metric.id}
-          title={metric.label}
-          value={formatValue(metric)}
-          trend={metric.change}
-          trendLabel={metric.changeLabel}
-          icon={metric.icon}
-          color={metric.color}
-          tooltip={metric.tooltip}
-          loading={metric.loading}
-          onClick={onClick ? () => onClick(metric) : undefined}
-          className={onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}
-        />
+        <div key={metric.id}>
+          <StatCard
+            title={metric.label}
+            value={formatValue(metric)}
+            trend={metric.change}
+            trendLabel={metric.changeLabel}
+            icon={metric.icon}
+            color={metric.color}
+            tooltip={metric.tooltip}
+            loading={metric.loading}
+            onClick={onClick ? () => onClick(metric) : undefined}
+            className={onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}
+          />
+        </div>
       ))}
     </div>
   );

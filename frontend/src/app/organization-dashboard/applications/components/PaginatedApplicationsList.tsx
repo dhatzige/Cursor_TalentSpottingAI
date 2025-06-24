@@ -11,7 +11,7 @@ import ApplicationsTable from './ApplicationsTable';
 import ApplicationsFilterBar from './ApplicationsFilterBar';
 import ApplicationSavedSearches from './ApplicationSavedSearches';
 import SaveSearchDialog from './SaveSearchDialog';
-import Pagination from '../../shared/Pagination';
+import Pagination from '@/components/dashboard/shared/Pagination';
 
 // Using existing components from the project
 const LoadingState = require('./loading/LoadingState').default;

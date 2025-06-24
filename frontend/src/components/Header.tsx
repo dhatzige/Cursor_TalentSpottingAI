@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useUser();
 
   // Public navigation links (shown to signed-out users)
   const publicNavLinks = [
@@ -21,6 +22,23 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/blog", label: "Blog" },
   ];
+
+  // Determine dashboard URL based on user role
+  const getDashboardUrl = () => {
+    const role = user?.publicMetadata?.role || user?.unsafeMetadata?.role;
+    switch (role) {
+      case 'student':
+        return '/student-dashboard';
+      case 'employer':
+        return '/organization-dashboard';
+      case 'university':
+        return '/university-dashboard';
+      case 'admin':
+        return '/admin-dashboard';
+      default:
+        return '/student-dashboard'; // Default to student dashboard
+    }
+  };
 
   return (
     <header className='w-full fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-sm bg-black/10 text-white transition-all duration-300'>
@@ -50,7 +68,20 @@ export default function Header() {
 
         <div className="hidden md:flex items-center space-x-3">
           <SignedIn>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton afterSignOutUrl="/">
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Visit Dashboard"
+                  labelIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  }
+                  href={getDashboardUrl()}
+                />
+                <UserButton.Action label="manageAccount" />
+              </UserButton.MenuItems>
+            </UserButton>
           </SignedIn>
           <SignedOut>
             <Link href="/sign-in" className="px-4 py-2 rounded-md hover:bg-gray-800/50 transition-colors font-medium">

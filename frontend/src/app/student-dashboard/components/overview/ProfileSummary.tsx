@@ -24,15 +24,7 @@ export default function ProfileSummary({
   status = 'student',
   profileCompletionPercentage = 0,
 }: ProfileSummaryProps) {
-  // Status text and color mapping
-  const statusConfig = {
-    seeking: { text: 'Seeking Full-time', color: 'bg-blue-100 text-blue-800' },
-    employed: { text: 'Employed', color: 'bg-green-100 text-green-800' },
-    internship: { text: 'Seeking Internship', color: 'bg-purple-100 text-purple-800' },
-    student: { text: 'Current Student', color: 'bg-gray-100 text-gray-800' },
-  };
-
-  const currentStatus = statusConfig[status];
+  // Remove status tags completely - we don't want to show these
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
@@ -57,13 +49,11 @@ export default function ProfileSummary({
         
         {/* Profile info */}
         <div className="flex-1 text-center sm:text-left">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 dark:text-white">{name}</h2>
-          <p className="text-gray-600 dark:text-gray-300">{major}{graduationYear ? ` • Class of ${graduationYear}` : ''}</p>
-          
-          <div className="mt-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentStatus.color}`}>
-              {currentStatus.text}
-            </span>
+          <div className="mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 dark:text-white mb-1">
+              Welcome back, {name}!
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">{major}{graduationYear ? ` • Class of ${graduationYear}` : ''}</p>
           </div>
           
           {/* Profile completion */}

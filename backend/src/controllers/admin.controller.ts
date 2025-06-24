@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 // Get admin dashboard stats
 export const getDashboardStats = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'admin') {
+    if (!(req as any).user || (req as any).user.role !== 'admin') {
       res.status(403).json({ message: 'Unauthorized access to admin dashboard' });
       return;
     }
@@ -45,7 +45,7 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
 // Get recent activity
 export const getRecentActivity = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'admin') {
+    if (!(req as any).user || (req as any).user.role !== 'admin') {
       res.status(403).json({ message: 'Unauthorized access to admin activity' });
       return;
     }

@@ -8,44 +8,39 @@
  * the project's strict modularity principles.
  */
 
-// Import all controllers from modular implementation
+import { Request, Response } from 'express';
+
+// Import all employer controller functions from the modular implementation
 import {
+  // Organization functions
   getOrganizationStats,
+  
+  // Jobs functions
   getActiveJobs,
-  getAllJobs, 
+  getAllJobs,
   getJobById,
   createJob,
-  getJobApplications,
-  getApplicationDetails,
+  
+  // Applications functions (Fixed names)
+  getApplications,
+  getApplicationById,
   updateApplicationStatus,
-  addApplicationNote,
-  getTopCandidates,
-  // Types
-  Skill,
-  StudentProfile,
-  Job
+  getApplicationStats,
+  
+  // Candidates functions
+  getTopCandidates
 } from './employer';
 
-// Re-export everything for backward compatibility
+// Re-export all functions for backwards compatibility
 export {
   getOrganizationStats,
   getActiveJobs,
   getAllJobs,
   getJobById,
   createJob,
-  getJobApplications,
-  getApplicationDetails,
+  getApplications,
+  getApplicationById,
   updateApplicationStatus,
-  addApplicationNote,
-  getTopCandidates,
-  Skill,
-  StudentProfile,
-  Job
-};
-
-// For compatibility with existing code
-export const calculateMatchScore = (studentProfile: StudentProfile | null | undefined, job: Job | null | undefined): number => {
-  // Import and use the function from the modular implementation
-  const { calculateMatchScore } = require('./employer/utils');
-  return calculateMatchScore(studentProfile, job);
+  getApplicationStats,
+  getTopCandidates
 };

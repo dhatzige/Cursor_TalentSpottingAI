@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import SearchBar from './SearchBar';
-import '@/pages/HomeDynamicHero.css';
+import '@/styles/HomeDynamicHero.css';
 
 interface HeroProps {
   className?: string;
@@ -29,7 +29,7 @@ export default function Hero({ className = '' }: HeroProps) {
             Find Jobs
           </Link>
           <Link
-            href="/register"
+            href="/sign-up"
             className="px-5 py-2 bg-white text-gray-800 rounded-md text-sm font-medium"
           >
             Get Started

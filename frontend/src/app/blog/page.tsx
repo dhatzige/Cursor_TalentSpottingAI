@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import Navbar from '@/components/layout/Navbar';
+
 import Link from 'next/link';
 import FeaturedPostCard from '@/components/blog/FeaturedPostCard';
 import PostCard from '@/components/blog/PostCard';
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
 };
 
 interface BlogPageProps {
-    searchParams: {
+    searchParams: Promise<{
         category?: string;
         search?: string;
-    };
+    }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-    const { category, search } = searchParams;
+    const { category, search } = await searchParams;
 
     const allPosts = await getPosts();
 
@@ -56,8 +56,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     const regularPosts = filteredPosts.filter((post: BlogPost) => !post.featured);
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white pt-16">
-            <Navbar transparent={false} />
+        <div className="min-h-screen bg-gray-900 text-white">
 
             <header className="py-20 relative text-center">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-gray-900 z-0"></div>

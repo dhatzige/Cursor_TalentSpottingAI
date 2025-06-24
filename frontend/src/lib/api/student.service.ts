@@ -1,5 +1,6 @@
 import api from './axios';
 import { STUDENT_MOCK_DATA } from './student/mock-data';
+import axios from 'axios';
 
 interface StudentStats {
   profileCompletion: number;
@@ -39,6 +40,27 @@ interface ApplicationsResponse {
 }
 
 /**
+ * Create authenticated axios instance with Clerk token
+ */
+const createAuthenticatedRequest = async (getToken: () => Promise<string | null>) => {
+  const token = await getToken();
+  const isDev = process.env.NODE_ENV === 'development';
+  
+  // Check if we're in dev bypass mode (from URL params)
+  const urlParams = new URLSearchParams(window.location.search);
+  const devBypass = urlParams.get('dev_bypass') === 'true';
+  
+  return axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(isDev && devBypass && { 'x-dev-bypass': 'true' }),
+    },
+  });
+};
+
+/**
  * Student service for handling student-specific API calls
  */
 const isDev = process.env.NODE_ENV === 'development';
@@ -47,13 +69,59 @@ export const StudentService = {
   /**
    * Get student dashboard statistics
    */
-  getDashboardStats: async (): Promise<StudentStats> => {
+  getDashboardStats: async (getToken: () => Promise<string | null>): Promise<StudentStats> => {
     try {
-      const response = await api.get<StatsResponse>('/student/dashboard/stats');
-      return response.data.stats;
-    } catch (err) {
+      const token = await getToken();
+      console.log('🔑 Token available:', !!token);
+      
+      const axios = await createAuthenticatedRequest(getToken);
+      console.log('📡 Making API call to /student/dashboard/stats');
+      
+      const response = await axios.get<StatsResponse>('/student/dashboard/stats');
+      
+      // If we get real data (not mock), return it
+      const stats = response.data.stats;
+      console.log('📊 Dashboard stats received:', stats);
+      
+      // Check if this is real data vs mock data
+      if (stats.profileCompletion !== 72) {
+        console.log('✅ Using REAL profile data from API');
+      } else {
+        console.log('⚠️ Received data that looks like mock data');
+      }
+      
+      return stats;
+    } catch (err: any) {
+      // Capture error in Sentry with full context
+      const errorContext = {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+        url: err.config?.url,
+        code: err.code,
+        name: err.name,
+        endpoint: '/api/student/dashboard/stats'
+      };
+      
+      console.error('❌ API Error details:', errorContext);
+      
+      // Send to Sentry for tracking
+      import('@sentry/nextjs').then((Sentry) => {
+        Sentry.captureException(err, {
+          tags: {
+            component: 'StudentService',
+            method: 'getDashboardStats',
+            api_endpoint: '/api/student/dashboard/stats'
+          },
+          extra: errorContext
+        });
+      }).catch(sentryErr => {
+        console.warn('Failed to send error to Sentry:', sentryErr);
+      });
+      
       if (isDev) {
-        console.warn('[StudentService] Using mock stats due to API error:', err);
+        console.warn('[StudentService] Using mock stats due to API error:', err.message);
         return { ...STUDENT_MOCK_DATA.stats };
       }
       throw err;
@@ -63,9 +131,10 @@ export const StudentService = {
   /**
    * Get recommended jobs for student
    */
-  getRecommendedJobs: async (): Promise<JobItem[]> => {
+  getRecommendedJobs: async (getToken: () => Promise<string | null>): Promise<JobItem[]> => {
     try {
-      const response = await api.get<JobsResponse>('/student/recommended-jobs');
+      const axios = await createAuthenticatedRequest(getToken);
+      const response = await axios.get<JobsResponse>('/student/recommended-jobs');
       return response.data.jobs;
     } catch (err) {
       if (isDev) {
@@ -79,15 +148,13 @@ export const StudentService = {
   /**
    * Get student's applications status
    */
-  getApplicationStatus: async (): Promise<ApplicationItem[]> => {
+  getApplicationStatus: async (getToken: () => Promise<string | null>): Promise<ApplicationItem[]> => {
     try {
-      const response = await api.get<ApplicationsResponse>('/student/applications');
+      const axios = await createAuthenticatedRequest(getToken);
+      const response = await axios.get<ApplicationsResponse>('/student/applications');
       return response.data.applications;
     } catch (err) {
-      if (isDev) {
-        console.warn('[StudentService] Using mock applications due to API error:', err);
-        return STUDENT_MOCK_DATA.applications.map((a) => ({ ...a }));
-      }
+      console.error('[StudentService] Error fetching applications:', err);
       throw err;
     }
   },
@@ -97,10 +164,13 @@ export const StudentService = {
    * @param jobId - ID of the job to apply for
    * @param applicationData - FormData containing resume file and other application data
    */
-  applyForJob: async (jobId: string, applicationData: FormData): Promise<{ message: string; applicationId: string }> => {
-    const response = await api.post(`/student/jobs/${jobId}/apply`, applicationData, {
+  applyForJob: async (jobId: string, applicationData: FormData, getToken: () => Promise<string | null>): Promise<{ message: string; applicationId: string }> => {
+    const token = await getToken();
+    const axios = await createAuthenticatedRequest(getToken);
+    const response = await axios.post(`/student/jobs/${jobId}/apply`, applicationData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        ...(token && { Authorization: `Bearer ${token}` }),
       }
     });
     return response.data;
@@ -110,26 +180,47 @@ export const StudentService = {
    * Get application details
    * @param applicationId - ID of the application to get
    */
-  getApplicationDetails: async (applicationId: string) => {
-    const response = await api.get(`/student/applications/${applicationId}`);
+  getApplicationDetails: async (applicationId: string, getToken: () => Promise<string | null>) => {
+    const axios = await createAuthenticatedRequest(getToken);
+    const response = await axios.get(`/student/applications/${applicationId}`);
     return response.data;
   },
   
   /**
    * Update application status (for testing purposes, normally done by employers)
    */
-  updateApplicationStatus: async (applicationId: string, status: string) => {
-    const response = await api.patch(`/student/applications/${applicationId}`, { status });
+  updateApplicationStatus: async (applicationId: string, status: string, getToken: () => Promise<string | null>) => {
+    const axios = await createAuthenticatedRequest(getToken);
+    const response = await axios.patch(`/student/applications/${applicationId}`, { status });
     return response.data;
   },
 
+  /**
+   * Get student profile data
+   */
+  getProfile: async (getToken: () => Promise<string | null>): Promise<any> => {
+    try {
+      const axios = await createAuthenticatedRequest(getToken);
+      const response = await axios.get('/student/profile');
+      return response.data;
+    } catch (err) {
+      console.error('[StudentService] Error fetching profile:', err);
+      throw err;
+    }
+  },
+
   /** Upload profile photo */
-  uploadPhoto: async (file: File): Promise<string> => {
+  uploadPhoto: async (file: File, getToken: () => Promise<string | null>): Promise<string> => {
     const formData = new FormData();
     formData.append('photo', file);
     try {
-      const res = await api.post<{ url: string }>('/student/settings/photo', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const token = await getToken();
+      const axios = await createAuthenticatedRequest(getToken);
+      const res = await axios.post<{ url: string }>('/student/settings/photo', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        }
       });
       return res.data.url;
     } catch (err) {
@@ -142,12 +233,17 @@ export const StudentService = {
   },
 
   /** Upload resume file */
-  uploadResume: async (file: File): Promise<string> => {
+  uploadResume: async (file: File, getToken: () => Promise<string | null>): Promise<string> => {
     const formData = new FormData();
     formData.append('resume', file);
     try {
-      const res = await api.post<{ url: string }>('/student/settings/resume', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const token = await getToken();
+      const axios = await createAuthenticatedRequest(getToken);
+      const res = await axios.post<{ url: string }>('/student/settings/resume', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        }
       });
       return res.data.url;
     } catch (err) {
@@ -160,9 +256,10 @@ export const StudentService = {
   },
 
   /** Manage subscription plan */
-  getPlan: async (): Promise<any> => {
+  getPlan: async (getToken: () => Promise<string | null>): Promise<any> => {
     try {
-      const res = await api.get('/student/settings/plan');
+      const axios = await createAuthenticatedRequest(getToken);
+      const res = await axios.get('/student/settings/plan');
       return res.data;
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
@@ -173,9 +270,10 @@ export const StudentService = {
     }
   },
 
-  upgradePlan: async (planId: string): Promise<void> => {
+  upgradePlan: async (planId: string, getToken: () => Promise<string | null>): Promise<void> => {
     try {
-      await api.post('/student/settings/plan', { planId });
+      const axios = await createAuthenticatedRequest(getToken);
+      await axios.post('/student/settings/plan', { planId });
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[StudentService] Mock upgrade plan', err);
@@ -185,9 +283,10 @@ export const StudentService = {
     }
   },
 
-  deleteAccount: async (): Promise<void> => {
+  deleteAccount: async (getToken: () => Promise<string | null>): Promise<void> => {
     try {
-      await api.delete('/student/settings');
+      const axios = await createAuthenticatedRequest(getToken);
+      await axios.delete('/student/settings');
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[StudentService] Mock delete', err);

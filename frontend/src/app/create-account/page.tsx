@@ -4,12 +4,11 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import CreateAccountForm from './CreateAccountForm';
-import Navbar from '@/components/layout/Navbar';
+
 
 export default function CreateAccountPage() {
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
-      <Navbar transparent={false} />
       
       <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:gap-16 items-start">

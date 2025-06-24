@@ -105,9 +105,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ candidate, formatDate }
         <h3 className="font-medium mb-2">Skills</h3>
         <div className="flex flex-wrap gap-1">
           {candidate.skills.map((skill, index) => (
-            <Badge key={index} variant="default" className="mb-1 mr-1">
-              {skill}
-            </Badge>
+            <div key={index}>
+              <Badge variant="default" className="mb-1 mr-1" children={skill} />
+            </div>
           ))}
         </div>
       </div>

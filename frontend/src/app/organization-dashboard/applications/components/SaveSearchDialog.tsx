@@ -23,7 +23,7 @@ export default function SaveSearchDialog({
           type="text"
           placeholder="Enter a name for this search"
           value={searchName}
-          onChange={(e) => onSearchNameChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchNameChange(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           autoFocus
         />

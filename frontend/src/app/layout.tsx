@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
-import '../styles/gradient-bg.css';
 
 // Import the client component wrapper
 import ClientLayout from '../components/ClientLayout';

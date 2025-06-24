@@ -10,13 +10,13 @@ const prisma = new PrismaClient();
 // Get active jobs for the organization
 export const getActiveJobs = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
     
     // Find the organization this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { organization: true }
     });
     
@@ -62,13 +62,13 @@ export const getActiveJobs = async (req: Request, res: Response) => {
 // Get all jobs for the organization
 export const getAllJobs = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
     
     // Find the organization this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { organization: true }
     });
     
@@ -116,7 +116,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
 // Get job by ID
 export const getJobById = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
     
@@ -136,7 +136,7 @@ export const getJobById = async (req: Request, res: Response) => {
     
     // Check if job belongs to user's organization
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { organization: true }
     });
     
@@ -164,7 +164,7 @@ export const getJobById = async (req: Request, res: Response) => {
 // Create job
 export const createJob = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
     
@@ -176,7 +176,7 @@ export const createJob = async (req: Request, res: Response) => {
     
     // Find the organization this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { organization: true }
     });
     

@@ -31,9 +31,20 @@ model User {
   university    University?   @relation(fields: [universityId], references: [id])
   universityId  String?
   student       Student?
+  studentProfile StudentProfile?
   jobs          Job[]        @relation("PostedJobs")
   applications  Application[]
   posts         Post[]       @relation("UserPosts")
+  
+  // New verification fields
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedAt         DateTime?
+  adminRole          AdminRole?
+  
+  // Relations for verification system
+  verificationDocuments VerificationDocument[]
+  organizationMemberships OrganizationMember[] @relation("UserMemberships")
+  invitedMembers OrganizationMember[] @relation("InvitedBy")
 }
 
 enum UserRole {
@@ -43,6 +54,18 @@ enum UserRole {
   UNIVERSITY
 }
 
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  NOT_REQUIRED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  MODERATOR
+}
+
 model Organization {
   id          String     @id @default(uuid())
   name        String
@@ -50,6 +73,16 @@ model Organization {
   users       User[]
   jobs        Job[]
   createdAt   DateTime   @default(now())
+  
+  // New verification fields
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedAt         DateTime?
+  registrationNumber String?
+  website            String?
+  
+  // Relations for multi-user system
+  members     OrganizationMember[]
+  invites     OrganizationInvite[]
 }
 
 model Job {
@@ -125,7 +158,14 @@ enum PostStatus {
 model University {
   id          String      @id @default(uuid())
   name        String
+  nameEn      String
   location    String?
+  type        String      // 'public' or 'private'
+  city        String
+  emailDomains String[]   // Array of allowed email domains
+  website     String?
+  established Int?
+  isActive    Boolean     @default(true)
   users       User[]
   degrees     Degree[]
   education   Education[]
@@ -158,6 +198,32 @@ model Student {
   updatedAt   DateTime    @updatedAt
 }
 
+// Detailed student profile for comprehensive information
+model StudentProfile {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String   @unique
+  firstName      String
+  lastName       String
+  phone          String?
+  bio            String?
+  studyField     String
+  studyLevel     String
+  graduationYear Int
+  skills         String[] // Array of skills
+  locationId     String?  // Greek location ID
+  locationName   String?  // Cached location name for performance
+  address        String?  // Full street address
+  resumeUrl      String?  // Cloudinary URL for resume
+  resumeFileName String?  // Original filename
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([studyField])
+  @@index([studyLevel])
+  @@index([locationId])
+}
+
 model Education {
   id            String      @id @default(uuid())
   student       Student     @relation(fields: [studentId], references: [id])
@@ -183,3 +249,62 @@ model Employer {
 }
 
 // --- End University Models ---
+
+// --- Verification Models ---
+model VerificationDocument {
+  id            String   @id @default(uuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  type          String   // 'student_id', 'business_license', 'accreditation', etc.
+  fileUrl       String
+  fileName      String
+  fileSize      Int
+  mimeType      String
+  status        DocumentStatus @default(PENDING)
+  reviewNotes   String?
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([userId, status])
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model OrganizationMember {
+  id            String   @id @default(uuid())
+  user          User     @relation("UserMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  invitedBy     User?    @relation("InvitedBy", fields: [invitedById], references: [id])
+  invitedById   String?
+  invitedAt     DateTime @default(now())
+  acceptedAt    DateTime?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([userId, organizationId])
+  @@index([organizationId, isActive])
+}
+
+model OrganizationInvite {
+  id            String   @id @default(uuid())
+  email         String
+  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  token         String   @unique
+  invitedBy     String
+  expiresAt     DateTime
+  acceptedAt    DateTime?
+  createdAt     DateTime @default(now())
+  
+  @@index([token])
+  @@index([organizationId, email])
+}

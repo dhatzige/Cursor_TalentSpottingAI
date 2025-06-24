@@ -33,13 +33,13 @@ export default function RoleCard({
 }: RoleCardProps) {
   const content = (
     <div
-      className={`${bgColor} p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center h-full`}
+      className={`${bgColor} p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center h-full border-2 border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 hover:scale-105`}
     >
-      <div className="w-20 h-20 relative mb-4">
+      <div className="w-24 h-24 relative mb-6">
         <Image src={icon} alt={title} fill className="object-contain" />
       </div>
-      <h3 className="text-xl font-bold mb-2 text-gray-800">{title}</h3>
-      <p className="text-gray-600 flex-grow">{description}</p>
+      <h3 className="text-2xl font-bold mb-3 text-black dark:text-white drop-shadow-sm">{title}</h3>
+      <p className="text-gray-900 dark:text-gray-100 flex-grow font-bold text-base leading-relaxed drop-shadow-sm">{description}</p>
     </div>
   );
 

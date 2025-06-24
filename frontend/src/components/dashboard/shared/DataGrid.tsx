@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState } from 'react';
-import Button from './Button';
+import { Button } from '@/components/ui/button';
 
 export interface Column<T> {
   header: string;

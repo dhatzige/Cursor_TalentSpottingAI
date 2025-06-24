@@ -6,17 +6,20 @@
  */
 
 import dynamic from 'next/dynamic';
-import React from 'react';
-import { createLoadingComponent } from '../../../../../lib/utils/react-compat';
 
-// Create a loading component for use with dynamic imports
-const LoadingFallback = createLoadingComponent(true);
+// Simple loading component
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center p-8">
+    <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+    <span className="sr-only">Loading...</span>
+  </div>
+);
 
 // Dynamically import the JobEditForm with loading fallback
 export const DynamicJobEditForm = dynamic(
   () => import('./JobEditForm'),
   { 
-    loading: () => React.createElement(LoadingFallback),
+    loading: () => <LoadingFallback />,
     ssr: false // Skip server-side rendering for this form component
   }
 );
@@ -24,7 +27,7 @@ export const DynamicJobEditForm = dynamic(
 // Dynamically import the JobStatusControl with loading fallback
 export const DynamicJobStatusControl = dynamic(
   () => import('./JobStatusControl'),
-  { loading: () => React.createElement(LoadingFallback) }
+  { loading: () => <LoadingFallback /> }
 );
 
 // Add more dynamic imports as needed for other large components

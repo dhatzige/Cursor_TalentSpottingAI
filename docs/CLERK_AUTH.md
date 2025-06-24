@@ -1,53 +1,146 @@
-# Authentication Overhaul with Clerk
-
-_Last updated: 2025-06-20_
+# Clerk Authentication System
 
 ## Overview
-The legacy JWT/localStorage authentication has been fully replaced by **Clerk** across the TalentSpottingAI monorepo.  This document captures the high-level design, environment requirements, and integration touch-points.
+TalentSpottingAI uses **Clerk v4** for complete authentication and user management across both frontend and backend systems.
 
-## 1. Packages
-| Workspace | Package | Version |
-|-----------|---------|---------|
-| `frontend` | `@clerk/nextjs` | ^5.x |
-| `backend`  | `@clerk/clerk-sdk-node` | ^5.x |
+## Environment Variables
+Required environment variables for Clerk integration:
 
-Run `pnpm i` (root-level) to ensure the workspaces pick up the new deps.
+```env
+# Frontend (.env.local)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
 
-## 2. Environment Variables
-Add the following keys to your local `.env` / `.env.local` (examples exist in version control):
-```
-CLERK_PUBLISHABLE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxx
-CLERK_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}
-NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+# Backend (.env)
+CLERK_SECRET_KEY=sk_test_...
 ```
 
-Back-end `.env` now only needs:
+## Architecture
+
+### Frontend Authentication
+- **Middleware**: `src/middleware.ts` handles basic authentication redirects server-side
+- **Hook**: `useProtectedRoute` manages client-side role validation and permissions
+- **Development Bypass**: `?dev_bypass=true` parameter allows skipping auth in development
+
+### Backend Authentication
+- **Middleware**: `clerkAuth` validates Clerk tokens on all protected routes
+- **Token Validation**: Uses `@clerk/clerk-sdk-node` to verify JWT tokens from Clerk
+- **Routes**: All API routes now use `clerkAuth` instead of legacy JWT `authenticateToken`
+
+## API Authentication Flow
+
+### Frontend API Calls
+```typescript
+// Services now accept getToken function from useAuth()
+const { getToken } = useAuth();
+const stats = await StudentService.getDashboardStats(getToken);
 ```
-DATABASE_URL=postgres://postgres:postgres@localhost:5433/talentspotting
+
+### Backend Route Protection
+```typescript
+// All routes use clerkAuth middleware
+import { clerkAuth } from '../middleware/clerkAuth';
+router.use(clerkAuth);
 ```
 
-## 3. Frontend Integration
-1. **Provider** – The root `app/layout.tsx` wraps the HTML body in `<ClerkProvider>`.  The former custom `AuthProvider` has been removed.
-2. **Middleware** – `src/middleware.ts` exports `clerkMiddleware()` to protect all routes under `/student-dashboard`, `/organization-dashboard`, etc.
-3. **Hooks**
-   * `useAuth`, `useUser` – Provided by Clerk for session & profile data.
-   * `useProtectedRoute` – Unified wrapper (`src/lib/hooks/useProtectedRoute.tsx`) that:
-     - Redirects unauthenticated users to `/sign-in`.
-     - Guards role-restricted pages (admin, student, employer, university).
-     - Supports `?dev_bypass=true` in **development** for quick UI testing.
-4. **Onboarding** – First-time users are redirected to `/onboarding` to choose a role.  The role + generated `dashboardCode` are stored in `user.unsafeMetadata` then synced to Postgres via `/api/clerk/sync`.
+## User Onboarding Flow
 
-## 4. Backend Integration
-* `middleware/clerkAuth.ts` validates Clerk JWTs.
-* `controllers/user/syncClerkUser.ts` upserts user/role/dashboardCode into Postgres.
-* All private routes should wrap handler logic with `clerkAuth()`.
+1. **Sign Up/Sign In**: Users authenticate via Clerk
+2. **Role Selection**: New users redirected to `/onboarding` to select role
+3. **Metadata Storage**: Role stored in `user.unsafeMetadata.role`
+4. **Dashboard Redirect**: Users redirected to appropriate role-based dashboard
 
-## 5. Removing Legacy Auth
-* `src/app/login`, `src/app/create-account`, `lib/hooks/useAuth.tsx`, and any `/login` redirects are deprecated.  They will be deleted after downstream pages update their imports (tracked in ROADMAP).
+## Role-Based Dashboards
 
-## 6. Dev Bypass
-Append `?dev_bypass=true` to any protected page URL while `NODE_ENV=development` to inject a mock user with the first allowed role.  Useful for local design reviews.
+| Role | Dashboard Route |
+|------|----------------|
+| Student | `/student-dashboard` |
+| Employer | `/organization-dashboard` |
+| University | `/university-dashboard` |
+| Admin | `/admin-dashboard` |
+
+## Middleware Logic
+
+### Server-Side (`src/middleware.ts`)
+- Redirects unauthenticated users from protected routes to `/sign-in`
+- Allows all users to access public routes (/, /blog, /jobs, etc.)
+- Minimal logic to avoid conflicts with client-side handling
+
+### Client-Side (`useProtectedRoute`)
+- Validates user roles and permissions
+- Handles role-based redirects after authentication
+- Manages loading states during auth checks
+
+## Recent Fixes (2025-06-21)
+
+### Problem Resolved
+- **Issue**: Redirect loops between `/sign-in`, `/onboarding`, and dashboards
+- **Root Cause**: Frontend (Clerk tokens) and backend (JWT tokens) authentication mismatch
+- **Solution**: Unified all routes to use Clerk authentication
+
+### Files Updated
+- `backend/src/routes/*.ts` - All routes now use `clerkAuth` middleware
+- `frontend/src/lib/api/*.service.ts` - Services accept `getToken` parameter
+- `frontend/src/app/student-dashboard/page.tsx` - Passes `getToken` to API calls
+
+## Development Guidelines
+
+### Testing Authentication
+- Use `?dev_bypass=true` for UI development without authentication
+- Test role-based access by switching user roles in Clerk dashboard
+- Verify API calls include proper Authorization headers
+
+### Adding New Protected Routes
+
+#### Frontend
+```typescript
+// Add to middleware.ts protected routes
+const isProtectedRoute = createRouteMatcher([
+  '/your-new-route(.*)',
+]);
+```
+
+#### Backend
+```typescript
+// Use clerkAuth middleware
+import { clerkAuth } from '../middleware/clerkAuth';
+router.use(clerkAuth);
+```
+
+### API Service Pattern
+```typescript
+// Accept getToken parameter
+export const YourService = {
+  getData: async (getToken: () => Promise<string | null>) => {
+    const axios = await createAuthenticatedRequest(getToken);
+    return axios.get('/your-endpoint');
+  }
+};
+
+// Use in components
+const { getToken } = useAuth();
+const data = await YourService.getData(getToken);
+```
+
+## Security Notes
+
+- **Token Expiration**: Clerk handles token refresh automatically
+- **Role Validation**: Both client and server validate user roles
+- **Public Routes**: Accessible without authentication
+- **Development Mode**: `dev_bypass` only works in `NODE_ENV=development`
+
+## Troubleshooting
+
+### Common Issues
+1. **401 Unauthorized**: Check if route uses `clerkAuth` and API call includes token
+2. **Redirect Loops**: Verify middleware and client-side logic don't conflict
+3. **Role Access**: Ensure user has correct role in Clerk metadata
+
+### Debug Steps
+1. Check browser console for authentication errors
+2. Verify Clerk environment variables are set
+3. Test API endpoints with proper Authorization headers
+4. Use Clerk dashboard to inspect user metadata
 
 ---
-_For detailed call-flow diagrams see `docs/ARCHITECTURE.md#authentication`._
+*Last updated: 2025-06-21*

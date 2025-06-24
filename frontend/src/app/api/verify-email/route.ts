@@ -4,13 +4,13 @@ import { isUniversityEmail } from '@/lib/university-domains';
 
 export async function GET() {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const user = await clerkClient.users.getUser(userId);
+    const user = await (await clerkClient()).users.getUser(userId);
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

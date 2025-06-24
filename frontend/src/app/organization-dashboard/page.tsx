@@ -148,17 +148,8 @@ export default function OrganizationDashboardPage() {
   }, [authLoading]);
 
   return (
-    <UnifiedDashboardLayout
-      title=""
-      userRole="employer"
-      breadcrumbs={[{ label: 'Dashboard' }]}
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      
-    >
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">
+    <UnifiedDashboardLayout>
+      <div>
         
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">

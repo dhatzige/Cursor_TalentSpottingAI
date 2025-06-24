@@ -188,15 +188,6 @@ export default function SettingsPage() {
   );
 
   return (
-    <UnifiedDashboardLayout 
-      title="Settings" 
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dev-student-dashboard' },
-        { label: 'Settings' }
-      ]}
-      children={settingsContent}
-    />
+    <UnifiedDashboardLayout children={settingsContent} />
   );
 }

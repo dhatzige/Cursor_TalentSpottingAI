@@ -3,8 +3,8 @@
  * 
  * Handles extraction of text from different document formats (PDF, Word)
  */
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Handle non-ESM modules with require()
 const pdfParse = require('pdf-parse');

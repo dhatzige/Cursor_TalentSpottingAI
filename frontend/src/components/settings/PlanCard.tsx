@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Button from "@/app/organization-dashboard/shared/ui/Button";
+import { Button } from '@/components/ui/button';
 
 interface Plan {
   id: string;

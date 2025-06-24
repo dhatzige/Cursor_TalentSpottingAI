@@ -210,7 +210,7 @@ export default function JobApplicationForm({
               className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="Explain why you're interested in this position and what makes you a good fit..."
               value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCoverLetter(e.target.value)}
               required
             />
             <p className="mt-1 text-sm text-gray-500">
@@ -230,7 +230,7 @@ export default function JobApplicationForm({
               className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="Anything else you'd like to share with the employer..."
               value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAdditionalInfo(e.target.value)}
             />
           </div>
           

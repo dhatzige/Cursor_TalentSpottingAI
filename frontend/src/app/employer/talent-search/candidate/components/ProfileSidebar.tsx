@@ -104,9 +104,9 @@ export function ProfileSidebar({ candidate, formatDate }: ProfileSidebarProps) {
         <h3 className="font-medium mb-2">Skills</h3>
         <div className="flex flex-wrap gap-1">
           {candidate.skills.map((skill, index) => (
-            <Badge key={index} className="mb-1 mr-1">
-              {skill}
-            </Badge>
+            <div key={index} className="inline-block">
+              <Badge className="mb-1 mr-1" children={skill} />
+            </div>
           ))}
         </div>
       </div>

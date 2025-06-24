@@ -56,6 +56,17 @@ All university routes require authentication with university role.
 | GET | `/university/placements` | Get student placement data by degree |
 | GET | `/university/employer-partners` | Get university's employer partners |
 
+### Organization Team Management Routes
+All team management routes require authentication with organization member role. **Note: All team members have equal access - no role hierarchy.**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/organization/invite` | Invite new team member (any member can invite) |
+| GET | `/organization/members` | Get all team members (any member can view) |
+| DELETE | `/organization/members/:id` | Remove team member (any member can remove others) |
+| GET | `/organization/invitations` | Get pending invitations (any member can view) |
+| POST | `/organization/invitations/:token/accept` | Accept team invitation |
+
 ## Request/Response Examples
 
 ### Authentication
@@ -116,5 +127,67 @@ Response (200 OK):
     "updatedAt": "2023-05-17T14:30:00.000Z"
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Organization Team Management
+
+#### Invite Team Member
+```
+POST /api/organization/invite
+```
+
+Request:
+```json
+{
+  "email": "newmember@company.com"
+}
+```
+
+Response (201 Created):
+```json
+{
+  "message": "Invitation sent successfully",
+  "invitation": {
+    "id": "inv_123456",
+    "email": "newmember@company.com",
+    "token": "abc123def456",
+    "expiresAt": "2023-05-24T14:30:00.000Z",
+    "createdAt": "2023-05-17T14:30:00.000Z"
+  }
+}
+```
+
+#### Get Team Members
+```
+GET /api/organization/members
+```
+
+Response (200 OK):
+```json
+{
+  "members": [
+    {
+      "id": "member_123",
+      "user": {
+        "name": "John Doe",
+        "email": "john@company.com"
+      },
+      "joinedAt": "2023-05-01T10:00:00.000Z",
+      "lastActiveAt": "2023-05-17T14:30:00.000Z"
+    }
+  ]
+}
+```
+
+#### Remove Team Member
+```
+DELETE /api/organization/members/member_123
+```
+
+Response (200 OK):
+```json
+{
+  "message": "Team member removed successfully"
 }
 ```

@@ -29,7 +29,7 @@ interface CandidateCardProps {
   candidate: Candidate;
 }
 
-const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
+const CandidateCard = ({ candidate }: CandidateCardProps) => {
   // Get the latest education entry
   const latestEducation = candidate.education.length > 0 ? candidate.education[0] : null;
   
@@ -110,14 +110,12 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
           {/* Skills */}
           <div className="flex flex-wrap gap-1 mt-2">
             {displaySkills.map((skill, index) => (
-              <Badge key={index} variant="default" className="mr-1 mb-1">
-                {skill}
-              </Badge>
+              <div key={index} className="inline-block">
+                <Badge variant="default" className="mr-1 mb-1" children={skill} />
+              </div>
             ))}
             {additionalSkillsCount > 0 && (
-              <Badge variant="outline" className="mb-1">
-                +{additionalSkillsCount} more
-              </Badge>
+              <Badge variant="outline" className="mb-1" children={`+${additionalSkillsCount} more`} />
             )}
           </div>
           

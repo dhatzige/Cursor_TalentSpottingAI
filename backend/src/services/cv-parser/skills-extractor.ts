@@ -4,7 +4,7 @@
  * Extracts skills from resume text content using keyword matching,
  * section analysis, and NLP techniques
  */
-import natural from 'natural';
+import * as natural from 'natural';
 
 // Collections of known skills for matching
 const COMMON_SKILLS = [

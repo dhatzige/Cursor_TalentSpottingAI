@@ -27,21 +27,7 @@ export default function AnalyticsPage() {
   }, []);
   
   return (
-    <UnifiedDashboardLayout 
-      // Removing title and description from the header to prevent duplication
-      title="" 
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/organization-dashboard' },
-        { label: 'Analytics' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-    >
+    <UnifiedDashboardLayout>
       {/* Adding negative margin to pull content up */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 -mt-2">
         {authLoading || isLoading ? (

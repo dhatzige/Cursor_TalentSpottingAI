@@ -21,3 +21,13 @@ export {
   getSearchFilters,
   viewCandidateProfile
 };
+
+// Aliases for route compatibility
+export const searchProfiles = searchTalent;
+export const getFilters = getSearchFilters;
+export const getProfile = viewCandidateProfile;
+
+// Placeholder for missing functionality
+export const saveSearch = async (req: any, res: any) => {
+  res.status(501).json({ message: 'Save search functionality not implemented yet' });
+};

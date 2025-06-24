@@ -106,13 +106,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user) {
+    // Type assertion for user from auth middleware
+    const userId = (req as any).user?.id || (req as any).userId;
+    
+    if (!userId) {
       res.status(401).json({ message: 'User not authenticated' });
       return;
     }
     
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: userId },
       select: {
         id: true,
         email: true,

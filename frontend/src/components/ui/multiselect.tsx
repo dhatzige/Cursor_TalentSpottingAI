@@ -85,21 +85,29 @@ export function MultiSelect({
         }}
       >
         {value.map((option) => (
-          <Badge key={option.value} variant="default" className="flex items-center gap-1 mr-1 mb-1">
-            <span>{option.label}</span>
-            {!disabled && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemove(option.value);
-                }}
-                className="ml-1 hover:text-gray-700 focus:outline-none"
-              >
-                ×
-              </button>
-            )}
-          </Badge>
+          <div key={option.value} className="inline-block">
+            <Badge 
+              variant="default" 
+              className="flex items-center gap-1 mr-1 mb-1"
+              children={
+                <>
+                  <span>{option.label}</span>
+                  {!disabled && (
+                    <button
+                      type="button"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        handleRemove(option.value);
+                      }}
+                      className="ml-1 hover:text-gray-700 focus:outline-none"
+                    >
+                      ×
+                    </button>
+                  )}
+                </>
+              }
+            />
+          </div>
         ))}
         
         {/* Input field */}
@@ -107,7 +115,7 @@ export function MultiSelect({
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
             onFocus={() => setIsOpen(true)}
             placeholder={value.length === 0 ? placeholder : ''}
             className="flex-1 outline-none min-w-[8rem] bg-transparent disabled:cursor-not-allowed"

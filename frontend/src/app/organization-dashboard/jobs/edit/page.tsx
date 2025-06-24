@@ -113,17 +113,7 @@ export default function EditJobPage() {
   };
 
   return (
-    <UnifiedDashboardLayout
-      // Removing title to prevent duplication
-      title=""
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      className="pt-0 mt-0" // Removing padding at the top
-    >
+    <UnifiedDashboardLayout>
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header with back button and title */}
         <PageHeader isEditing={!!jobId} />

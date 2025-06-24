@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import Card from './Card';
+import { Card } from '@/components/ui/card';
 
 export interface StatCardProps {
   title: string;

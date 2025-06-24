@@ -4,6 +4,8 @@ declare module 'react' {
   export interface FunctionComponent<P = {}> {
     (props: P & { children?: ReactNode | undefined }, context?: any): ReactElement<any, any> | null;
   }
+  export const Fragment: FC<{ children?: ReactNode; key?: Key | null }>;
+  export type PropsWithChildren<P = unknown> = P & { children?: ReactNode | undefined };
   export type ReactNode = 
     | ReactElement 
     | string 
@@ -30,6 +32,15 @@ declare module 'react' {
   export type SetStateAction<S> = S | ((prevState: S) => S);
   export function useEffect(effect: EffectCallback, deps?: DependencyList): void;
   export function useMemo<T>(factory: () => T, deps: DependencyList): T;
+  export function useRef<T>(initialValue: T): MutableRefObject<T>;
+  export function useRef<T>(initialValue: T | null): RefObject<T>;
+  export function useRef<T = undefined>(): MutableRefObject<T | undefined>;
+  export interface RefObject<T> {
+    readonly current: T | null;
+  }
+  export interface MutableRefObject<T> {
+    current: T;
+  }
   export type EffectCallback = () => (void | (() => void | undefined));
   export type DependencyList = ReadonlyArray<unknown>;
   

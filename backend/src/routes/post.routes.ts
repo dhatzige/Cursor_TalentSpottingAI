@@ -1,55 +1,30 @@
-import { Router } from 'express';
+import express from 'express';
 import {
-  createPostHandler,
-  getAllPostsHandler,
-  getPublishedPostsHandler,
-  getPostByIdHandler,
-  updatePostHandler,
-  deletePostHandler,
+  getAllPosts,
+  getPostById,
+  createPost,
+  updatePost,
+  deletePost,
+  likePost,
+  unlikePost,
+  addComment,
+  getComments
 } from '../controllers/post.controller';
-import { authenticateToken, authorizeRoles } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
 
-const router = Router();
+const router = express.Router();
 
-// --- Public Routes ---
-// Get all published posts
-router.get('/', getPublishedPostsHandler);
+// Public routes
+router.get('/', getAllPosts);
+router.get('/:id', getPostById);
+router.get('/:id/comments', getComments);
 
-// Get a single post by ID
-router.get('/:id', getPostByIdHandler);
-
-
-// --- Admin-Only Routes ---
-// Get all posts (including drafts)
-router.get(
-  '/all',
-  authenticateToken,
-  authorizeRoles(['ADMIN']),
-  getAllPostsHandler
-);
-
-// Create a new post
-router.post(
-  '/',
-  authenticateToken,
-  authorizeRoles(['ADMIN']),
-  createPostHandler
-);
-
-// Update a post
-router.put(
-  '/:id',
-  authenticateToken,
-  authorizeRoles(['ADMIN']),
-  updatePostHandler
-);
-
-// Delete a post
-router.delete(
-  '/:id',
-  authenticateToken,
-  authorizeRoles(['ADMIN']),
-  deletePostHandler
-);
+// Protected routes - require Clerk authentication
+router.post('/', clerkAuth, createPost);
+router.put('/:id', clerkAuth, updatePost);
+router.delete('/:id', clerkAuth, deletePost);
+router.post('/:id/like', clerkAuth, likePost);
+router.delete('/:id/like', clerkAuth, unlikePost);
+router.post('/:id/comments', clerkAuth, addComment);
 
 export default router;

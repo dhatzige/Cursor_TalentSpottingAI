@@ -1,29 +1,30 @@
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import {
-  getOrganizationStats,
+  getAllJobs,
+  createJob,
   getActiveJobs,
-  getTopCandidates,
-  getJobApplications,
-  getApplicationDetails,
-  updateApplicationStatus,
-  addApplicationNote
-} from '../controllers/employer.controller';
-import { authenticateToken, authorizeRoles } from '../middleware/auth';
+  getOrganizationStats,
+  updateApplicationStatus
+} from '../controllers/employer';
+import { clerkAuth } from '../middleware/clerkAuth';
 
 const router = express.Router();
 
-// All routes require authentication and employer role
-router.use(authenticateToken as express.RequestHandler, authorizeRoles(['employer']) as express.RequestHandler);
+// All routes require authentication
+router.use(clerkAuth);
 
-// Dashboard routes
-router.get('/dashboard/stats', getOrganizationStats as express.RequestHandler);
-router.get('/jobs/active', getActiveJobs as express.RequestHandler);
-router.get('/candidates/top', getTopCandidates as express.RequestHandler);
+// Job management routes
+router.get('/jobs', getAllJobs as RequestHandler);
+router.post('/jobs', createJob as RequestHandler);
+// router.put('/jobs/:id', updateJob); // Not implemented yet
+// router.delete('/jobs/:id', deleteJob); // Not implemented yet
 
 // Application management routes
-router.get('/jobs/:jobId/applications', getJobApplications as express.RequestHandler);
-router.get('/applications/:applicationId', getApplicationDetails as express.RequestHandler);
-router.patch('/applications/:applicationId/status', updateApplicationStatus as express.RequestHandler);
-router.post('/applications/:applicationId/notes', addApplicationNote as express.RequestHandler);
+// router.get('/jobs/:jobId/applications', getApplications as RequestHandler); // Temporarily disabled
+router.put('/applications/:id/status', updateApplicationStatus as RequestHandler);
+
+// Dashboard routes
+router.get('/dashboard/stats', getOrganizationStats as RequestHandler);
+router.get('/dashboard/active-jobs', getActiveJobs as RequestHandler);
 
 export default router;

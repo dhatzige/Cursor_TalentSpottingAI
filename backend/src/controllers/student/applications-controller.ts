@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { parseCV, ExtractedCV } from '../../services/cv-parser.service';
-import path from 'path';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -10,16 +10,22 @@ const prisma = new PrismaClient();
  */
 
 // Get application status for a student
-export const getApplicationStatus = async (req: Request, res: Response) => {
+export const getApplicationStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'student') {
-      return res.status(403).json({ message: 'Unauthorized access to student resources' });
+    // Get user ID from Clerk auth middleware
+    const userId = (req as any).clerkUserId;
+    
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized access' });
+      return;
     }
+    
+    console.log('🔍 Fetching applications for user:', userId);
     
     // Get student applications with job details
     const applications = await prisma.application.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'desc' }, // Changed from updatedAt
+      where: { userId: userId },
+      orderBy: { createdAt: 'desc' },
       include: {
         job: {
           include: {
@@ -33,13 +39,15 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
       }
     });
     
+    console.log('📝 Found applications:', applications.length);
+    
     // Format applications for the UI
     const formattedApplications = applications.map((app: any) => ({
       id: app.id,
       title: app.job.title,
       company: app.job.organization.name,
       status: app.status.toLowerCase(),
-      timestamp: app.createdAt // Changed from updatedAt
+      timestamp: app.createdAt.toISOString()
     }));
     
     res.status(200).json({ applications: formattedApplications });
@@ -50,10 +58,11 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
 };
 
 // Apply for a job
-export const applyForJob = async (req: Request, res: Response) => {
+export const applyForJob = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'student') {
-      return res.status(403).json({ message: 'Unauthorized access to student resources' });
+    if (!(req as any).user || (req as any).user.role !== 'STUDENT') {
+      res.status(403).json({ message: 'Unauthorized access to student resources' });
+      return;
     }
     
     const { jobId } = req.params;
@@ -62,12 +71,14 @@ export const applyForJob = async (req: Request, res: Response) => {
     
     // Validate resume file is uploaded
     if (!req.file) {
-      return res.status(400).json({ message: 'Resume file is required' });
+      res.status(400).json({ message: 'Resume file is required' });
+      return;
     }
 
     // Validate cover-letter length (50 – 4000 chars)
     if (coverLetter.length < 50 || coverLetter.length > 4000) {
-      return res.status(400).json({ message: 'Cover letter must be between 50 and 4000 characters' });
+      res.status(400).json({ message: 'Cover letter must be between 50 and 4000 characters' });
+      return;
     }
     
     // Check if job exists
@@ -76,22 +87,24 @@ export const applyForJob = async (req: Request, res: Response) => {
     });
     
     if (!job) {
-      return res.status(404).json({ message: 'Job not found' });
+      res.status(404).json({ message: 'Job not found' });
+      return;
     }
     
     // Check if user already applied for this job
     const existingApplication = await prisma.application.findFirst({
       where: {
-        userId: req.user.id,
+        userId: (req as any).user.id,
         jobId: jobId
       }
     });
     
     if (existingApplication) {
-      return res.status(409).json({ 
+      res.status(409).json({ 
         message: 'You have already applied for this job',
         applicationId: existingApplication.id
       });
+      return;
     }
     
     // Save the application
@@ -102,7 +115,7 @@ export const applyForJob = async (req: Request, res: Response) => {
         coverLetter,
         additionalInfo,
         user: {
-          connect: { id: req.user.id }
+          connect: { id: (req as any).user.id }
         },
         job: {
           connect: { id: jobId }
@@ -121,10 +134,11 @@ export const applyForJob = async (req: Request, res: Response) => {
 };
 
 // Get single application details
-export const getApplicationDetails = async (req: Request, res: Response) => {
+export const getApplicationDetails = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'student') {
-      return res.status(403).json({ message: 'Unauthorized access to student resources' });
+    if (!(req as any).user || (req as any).user.role !== 'STUDENT') {
+      res.status(403).json({ message: 'Unauthorized access to student resources' });
+      return;
     }
     
     const { id } = req.params;
@@ -145,12 +159,14 @@ export const getApplicationDetails = async (req: Request, res: Response) => {
     });
     
     if (!application) {
-      return res.status(404).json({ message: 'Application not found' });
+      res.status(404).json({ message: 'Application not found' });
+      return;
     }
     
     // Verify application belongs to the current user
-    if (application.userId !== req.user.id) {
-      return res.status(403).json({ message: 'You do not have permission to view this application' });
+    if (application.userId !== (req as any).user.id) {
+      res.status(403).json({ message: 'You do not have permission to view this application' });
+      return;
     }
     
     // Format application data for the frontend

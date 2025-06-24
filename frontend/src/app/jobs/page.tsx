@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSafeSearchParams } from '@/lib/hooks/useSafeSearchParams';
-import Navbar from '@/components/layout/Navbar';
 import SearchBar from '@/components/home/SearchBar';
 import { filterJobsBySearchTerms, filterJobsByFilters } from '@/lib/utils/job-search';
 import { mockJobs } from '@/lib/data/mockJobs';
@@ -256,7 +255,6 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
-      <Navbar />
       
       <div className="container mx-auto px-4 py-10">
         <div className="mb-10">

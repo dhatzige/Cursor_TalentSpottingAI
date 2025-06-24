@@ -33,7 +33,47 @@ Examples:
 > **Note:** `dev_bypass` is ignored outside `NODE_ENV=development`.
 
 
-## 3. Dashboard Settings – New Save Flow (June 2025)
+## 3. Student Onboarding System
+
+### Profile Completion Step (January 2025)
+
+The final onboarding step features a comprehensive skills selection system designed to help students build complete profiles:
+
+#### Skills Database
+- **500+ Skills** across 18 professional categories
+- **Intelligent Recommendations** based on academic level (Bachelor's/Master's/PhD) and field of study
+- **Real-time Autocomplete** with smart search and filtering
+- **Tag-based Selection** with visual feedback
+
+#### Key Features
+```typescript
+// Example skill recommendations for Computer Science Bachelor's students
+const recommendations = [
+  'Programming Fundamentals', 'JavaScript', 'Python', 'Java', 
+  'Data Structures', 'Algorithms', 'Version Control (Git)'
+];
+
+// General skills for all Bachelor's students
+const generalSkills = [
+  'Communication Skills', 'Teamwork', 'Problem Solving', 
+  'Time Management', 'Critical Thinking'
+];
+```
+
+#### Profile Summary
+- **Accurate Data Display**: Shows actual university name, city, and user information
+- **Real-time Updates**: Profile preview updates as users modify their details
+- **Comprehensive Validation**: Ensures data accuracy before submission
+
+### Usage in Development
+```bash
+# Test the onboarding flow
+cd frontend && npm run dev
+# Navigate to: http://localhost:3000/onboarding?dev_bypass=true
+```
+
+
+## 4. Dashboard Settings – New Save Flow (June 2025)
 
 Both Student & Employer dashboards now feature real **Save Settings** buttons with visual feedback.
 
@@ -56,7 +96,7 @@ const [dirty, setDirty] = useState(false);
 ```
 
 
-## 4. Lint & Formatting
+## 5. Lint & Formatting
 
 ```bash
 pnpm lint -F frontend   # ESLint (Next.js preset + project rules)
@@ -66,7 +106,7 @@ pnpm format             # Prettier
 Common warnings (`no-explicit-any`) will be addressed incrementally.
 
 
-## 5. Testing
+## 6. Testing
 
 | Command | Description |
 |---------|-------------|
@@ -74,7 +114,7 @@ Common warnings (`no-explicit-any`) will be addressed incrementally.
 | `pnpm playwright` | E2E (frontend) – scripts WIP |
 
 
-## 6. Deployment
+## 7. Deployment
 
 The repo is Netlify/Vercel-ready. CI/CD pipelines will build the workspace graph and deploy independently:
 - **Frontend:** Vercel (preview + prod)
@@ -83,7 +123,7 @@ The repo is Netlify/Vercel-ready. CI/CD pipelines will build the workspace graph
 See `.github/workflows/*` for pipeline templates.
 
 
-## 7. Contributing
+## 8. Contributing
 
 1. Follow the **modular code** principle – keep files < 400 lines.
 2. Before coding, scan for existing utils/components to avoid duplication.

@@ -28,11 +28,7 @@ export default function UniversityEventsPage() {
   const filteredEvents = events.filter((e) => e.status === filter);
 
   return (
-    <UnifiedDashboardLayout
-      title="Events"
-      userRole="university"
-      breadcrumbs={[{ label: 'Dashboard', href: '/university-dashboard' }, { label: 'Events' }]}
-    >
+    <UnifiedDashboardLayout>
       <div className="space-y-6">
         {/* Tabs */}
         <div className="flex items-center justify-between">

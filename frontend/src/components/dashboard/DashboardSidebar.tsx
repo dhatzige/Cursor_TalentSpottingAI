@@ -72,14 +72,14 @@ export default function DashboardSidebar({
       {/* Mobile sidebar overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
+          className="fixed inset-0 z-30 bg-gray-600 bg-opacity-75 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       {/* Mobile sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 flex flex-col z-40 w-64 
+        fixed inset-y-0 left-0 flex flex-col z-30 w-64 
         transition duration-300 ease-in-out transform 
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0 md:static md:inset-0
@@ -134,7 +134,8 @@ export default function DashboardSidebar({
               let finalItemHref = item.href;
               if (devBypassActive) {
                 // Ensure dev_bypass is appended correctly
-                finalItemHref = item.href;
+                const separator = item.href.includes('?') ? '&' : '?';
+                finalItemHref = `${item.href}${separator}dev_bypass=true`;
               }
                 
               return (

@@ -13,21 +13,7 @@ export default function CandidatesPage() {
   const router = useRouter();
 
   return (
-    <UnifiedDashboardLayout
-      // Removing title to prevent duplication
-      title=""
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/organization-dashboard' },
-        { label: 'Candidates' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-    >
+    <UnifiedDashboardLayout>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <div className="flex justify-between items-center mb-6">
           <div>

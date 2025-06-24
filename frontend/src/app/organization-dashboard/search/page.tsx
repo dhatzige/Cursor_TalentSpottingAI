@@ -27,21 +27,7 @@ export default function SearchPage() {
   }, []);
   
   return (
-    <UnifiedDashboardLayout 
-      // Removing title from the header to prevent duplication
-      title="" 
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/organization-dashboard' },
-        { label: 'Advanced Search' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-    >
+    <UnifiedDashboardLayout>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         {authLoading || isLoading ? (
           <div className="animate-pulse flex flex-col space-y-4 w-full p-6">

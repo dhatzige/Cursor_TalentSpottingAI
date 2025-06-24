@@ -22,9 +22,9 @@ interface SavedSearch {
   id: string;
   name: string;
   query: JobSearchQuery;
-  dateCreated: string;
+  createdAt: string;
   lastUsed: string;
-  useCount: number;
+  useCount?: number;
 }
 
 // Export the SavedSearch type
@@ -239,7 +239,7 @@ let savedSearches: SavedSearch[] = [
         jobType: ['full-time']
       }
     },
-    dateCreated: '2023-08-15T10:30:00Z',
+    createdAt: '2023-08-15T10:30:00Z',
     lastUsed: '2023-08-20T14:45:00Z',
     useCount: 5
   },
@@ -252,7 +252,7 @@ let savedSearches: SavedSearch[] = [
         jobType: ['contract']
       }
     },
-    dateCreated: '2023-08-10T09:15:00Z',
+    createdAt: '2023-08-10T09:15:00Z',
     lastUsed: '2023-08-19T16:20:00Z',
     useCount: 3
   }
@@ -287,7 +287,7 @@ export async function saveSearch(name: string, query: JobSearchQuery): Promise<S
     id: Date.now().toString(), // Use timestamp as ID
     name,
     query,
-    dateCreated: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     lastUsed: new Date().toISOString(),
     useCount: 1
   };
@@ -315,7 +315,7 @@ export async function updateSavedSearchUsage(id: string): Promise<SavedSearch | 
   savedSearches[index] = {
     ...savedSearches[index],
     lastUsed: new Date().toISOString(),
-    useCount: savedSearches[index].useCount + 1
+    useCount: (savedSearches[index].useCount || 0) + 1
   };
   
   // Simulate API delay

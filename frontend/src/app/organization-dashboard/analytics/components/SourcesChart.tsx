@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import * as React from 'react';
 import { SourceDataPoint } from './types';
 
 interface SourcesChartProps {
@@ -8,11 +8,11 @@ interface SourcesChartProps {
 }
 
 export default function SourcesChart({ data }: SourcesChartProps) {
-  const chartRef = useRef<HTMLCanvasElement>(null);
-  const [chartInstance, setChartInstance] = useState<any>(null);
+  const [canvasElement, setCanvasElement] = React.useState<HTMLCanvasElement | null>(null);
+  const [chartInstance, setChartInstance] = React.useState<any>(null);
 
-  useEffect(() => {
-    if (!chartRef.current) return;
+  React.useEffect(() => {
+    if (!canvasElement) return;
     
     const loadChart = async () => {
       try {
@@ -40,7 +40,7 @@ export default function SourcesChart({ data }: SourcesChartProps) {
         }
         
         // Create new chart
-        const ctx = chartRef.current.getContext('2d');
+        const ctx = canvasElement.getContext('2d');
         if (!ctx) return;
         
         const newChartInstance = new Chart(ctx, {
@@ -102,11 +102,11 @@ export default function SourcesChart({ data }: SourcesChartProps) {
         chartInstance.destroy();
       }
     };
-  }, [data, chartInstance]);
+  }, [data, canvasElement, chartInstance]);
 
   return (
     <div className="w-full h-60">
-      <canvas ref={chartRef}></canvas>
+      <canvas ref={setCanvasElement}></canvas>
     </div>
   );
 }

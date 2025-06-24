@@ -38,7 +38,7 @@ export function JobForm({ job, isEditMode, isLoading, error, onSubmit, onCancel 
         </div>
       )}
       
-      <form onSubmit={(e) => {
+      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const jobData = {

@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react';
-import UnifiedDashboardLayout from '@/components/dashboard/UnifiedDashboardLayout';
+import { UnifiedDashboardLayout } from '@/components/dashboard';
 
 /**
  * Applications page for the student dashboard (dev mode)
@@ -181,16 +181,5 @@ export default function ApplicationsPage() {
     </div>
   );
 
-  return (
-    <UnifiedDashboardLayout 
-      title="My Applications" 
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dev-student-dashboard' },
-        { label: 'Applications' }
-      ]}
-      children={applicationsContent}
-    />
-  );
+  return <UnifiedDashboardLayout children={applicationsContent} />;
 }

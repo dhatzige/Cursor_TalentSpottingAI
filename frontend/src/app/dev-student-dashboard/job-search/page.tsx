@@ -23,15 +23,6 @@ export default function DevStudentJobsPage() {
   };
 
   return (
-    <UnifiedDashboardLayout 
-      title="Find Jobs" 
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dev-student-dashboard' },
-        { label: 'Find Jobs' }
-      ]}
-      children={jobsContent}
-    />
+    <UnifiedDashboardLayout children={jobsContent} />
   );
 }

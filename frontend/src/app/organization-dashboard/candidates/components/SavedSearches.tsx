@@ -141,7 +141,7 @@ export default function SavedSearches({ onApplySearch }: SavedSearchesProps) {
                     </div>
                   </div>
                   <button
-                    onClick={(e) => handleDeleteSearch(e, search.id)}
+                    onClick={(e: React.MouseEvent) => handleDeleteSearch(e, search.id)}
                     className="text-gray-400 hover:text-red-500"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,7 +164,7 @@ export default function SavedSearches({ onApplySearch }: SavedSearchesProps) {
               type="text"
               placeholder="Enter a name for this search"
               value={newSearchName}
-              onChange={(e) => setNewSearchName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSearchName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />

@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
  */
 export const getSearchFilters = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'employer') {
+    if (!(req as any).user || (req as any).user.role !== 'employer') {
       return res.status(403).json({ message: 'Unauthorized access to employer resources' });
     }
 

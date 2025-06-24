@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { EmployerService } from '@/lib/api/employer.service';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { ArrowLeft } from 'lucide-react';
 
 // Import modular components
@@ -70,7 +70,7 @@ interface CandidateProfile {
 const CandidateProfilePage = () => {
   const params = useParams();
   const router = useRouter();
-  const { id } = params;
+  const id = params?.id as string;
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -132,34 +132,31 @@ const CandidateProfilePage = () => {
         
         {/* Main content */}
         <div className="md:col-span-2">
-          <Tabs defaultValue="experience">
-            <TabsList className="mb-4 w-full">
-              <TabsTrigger value="experience" className="flex-1">Experience</TabsTrigger>
-              <TabsTrigger value="education" className="flex-1">Education</TabsTrigger>
-              <TabsTrigger value="projects" className="flex-1">Projects</TabsTrigger>
-              <TabsTrigger value="certificates" className="flex-1">Certificates</TabsTrigger>
-            </TabsList>
-            
-            {/* Experience Tab */}
-            <TabsContent value="experience">
-              <ExperienceTab experiences={candidate.experience} formatDate={formatDate} />
-            </TabsContent>
-            
-            {/* Education Tab */}
-            <TabsContent value="education">
-              <EducationTab educations={candidate.education} />
-            </TabsContent>
-            
-            {/* Projects Tab */}
-            <TabsContent value="projects">
-              <ProjectsTab projects={candidate.projects} />
-            </TabsContent>
-            
-            {/* Certificates Tab */}
-            <TabsContent value="certificates">
-              <CertificatesTab certificates={candidate.certificates} formatDate={formatDate} />
-            </TabsContent>
-          </Tabs>
+          <Tabs
+            defaultTab="experience"
+            tabs={[
+              {
+                id: 'experience',
+                label: 'Experience',
+                content: <ExperienceTab experiences={candidate.experience} formatDate={formatDate} />
+              },
+              {
+                id: 'education',
+                label: 'Education',
+                content: <EducationTab educations={candidate.education} />
+              },
+              {
+                id: 'projects',
+                label: 'Projects',
+                content: <ProjectsTab projects={candidate.projects} />
+              },
+              {
+                id: 'certificates',
+                label: 'Certificates',
+                content: <CertificatesTab certificates={candidate.certificates} formatDate={formatDate} />
+              }
+            ]}
+          />
         </div>
       </div>
     </div>

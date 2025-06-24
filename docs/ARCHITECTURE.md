@@ -1,4 +1,193 @@
-# TalentSpottingAI Architecture Documentation
+# TalentSpottingAI - Architecture Documentation
+
+## Onboarding System Architecture
+
+### Profile Completion Step Enhancement (January 2025)
+
+The final step of the student onboarding process has been completely rebuilt to provide a comprehensive skills selection system and accurate profile summary display.
+
+#### Skills System Architecture
+
+**Data Layer** (`frontend/src/lib/data/comprehensive-skills.ts`):
+- **18 Skill Categories**: Organized taxonomy covering all academic and professional domains
+- **500+ Skills Database**: Comprehensive collection including programming, business, healthcare, arts, etc.
+- **Intelligent Recommendations**: Academic level and field-specific skill suggestions
+- **Search & Filtering**: Optimized algorithms for real-time skill discovery
+
+**Component Architecture**:
+```typescript
+ProfileStep.tsx
+├── Skills Input System
+│   ├── Real-time autocomplete with suggestions dropdown
+│   ├── Tag-based skill management (add/remove)
+│   ├── Keyboard navigation and accessibility
+│   └── Smart search with prioritized matching
+├── Recommendation Engine
+│   ├── Academic level detection (bachelor/master/phd)
+│   ├── Field-specific mappings (CS → programming skills)
+│   ├── One-click skill addition from recommendations
+│   └── Visual feedback for selected vs available skills
+└── Profile Summary Display
+    ├── Real university data integration
+    ├── Complete user information preview
+    ├── Bio truncation and formatting
+    └── Skills count and validation status
+```
+
+#### Recommendation System Logic
+
+The skills recommendation system uses a multi-tiered approach:
+
+1. **Academic Level Detection**:
+   ```typescript
+   const level = studyLevel.toLowerCase().includes('bachelor') ? 'bachelor' :
+                studyLevel.toLowerCase().includes('master') ? 'master' :
+                studyLevel.toLowerCase().includes('phd') ? 'phd' : 'bachelor';
+   ```
+
+2. **Field Mapping**:
+   ```typescript
+   const fieldMapping = {
+     'computer-science': 'computer-science',
+     'business-administration': 'business',
+     'medicine': 'medicine',
+     // ... comprehensive mapping
+   };
+   ```
+
+3. **Recommendation Prioritization**:
+   - General skills for academic level (always shown)
+   - Field-specific skills (when applicable)
+   - Contextual descriptions explaining why skills are relevant
+
+#### Data Flow Integration
+
+**University Data Flow**:
+```
+OnboardingPage → University Fetching → Selected University Object → ProfileStep
+                                                                  ↓
+                                      Profile Summary with Actual Data
+```
+
+**Skills Data Flow**:
+```
+User Input → Real-time Search → Filtered Suggestions → Selection → Tag Display
+                                      ↓
+Recommendations Engine → Academic Level + Field → Suggested Skills → One-click Add
+```
+
+#### Performance Optimizations
+
+- **Search Performance**: Early termination algorithms with result limits
+- **Memory Management**: Efficient Set operations for duplicate prevention
+- **React Optimization**: useEffect dependencies and state batching
+- **UI Responsiveness**: Debounced search with instant visual feedback
+
+### Academic Step Enhancement System
+
+**Location**: `frontend/src/lib/data/study-fields.ts` & `frontend/src/components/onboarding/AcademicStep.tsx`
+
+**Features**:
+- 70+ study fields across 13 professional categories
+- Bilingual support (English/Greek titles)
+- Autocomplete search with real-time filtering
+- Professional dropdown interface
+- Graduation year validation with smart defaults
+- Keyboard navigation and accessibility
+- Responsive design patterns
+
+**Enhanced User Experience**:
+- Smart search functionality
+- Category-based organization
+- Visual feedback systems
+- Form validation and error handling
+- Consistent design language integration
+
+---
+
+## Team Management System Architecture
+
+### Equal Access Pattern
+
+The team management system implements a democratic approach where all team members have equal access and permissions. This architectural decision simplifies the codebase and eliminates complex role-based permission systems.
+
+#### Design Principles
+
+1. **Democratic Access** - All team members have identical capabilities
+2. **Simplified Permissions** - No role hierarchy or permission checks
+3. **Clean Data Model** - Minimal database schema without role complexity
+4. **Unified UI** - Single interface for all team members
+
+#### Database Schema
+
+```typescript
+// Simplified team membership model
+model OrganizationMember {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String
+  joinedAt       DateTime @default(now())
+  lastActiveAt   DateTime @default(now())
+  // Note: No role field - all members are equal
+}
+
+model OrganizationInvite {
+  id             String   @id @default(cuid())
+  email          String
+  organizationId String
+  invitedBy      String
+  token          String   @unique
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  // Note: No role field - invites are for equal membership
+}
+```
+
+#### Backend Controller Pattern
+
+The team management controller follows a simplified pattern:
+
+```typescript
+// Equal access - any team member can perform any action
+export const inviteMember = async (req: Request, res: Response) => {
+  // No role checks - any member can invite
+  const { email } = req.body;
+  // Simple invitation logic
+};
+
+export const removeMember = async (req: Request, res: Response) => {
+  // No role checks - any member can remove others
+  const { memberId } = req.params;
+  // Simple removal logic
+};
+```
+
+#### Frontend Component Architecture
+
+```
+organization-dashboard/team/
+├── page.tsx                   # Main team management page
+├── components/
+│   ├── InviteMemberForm.tsx   # Simple email invitation form
+│   ├── TeamMemberCard.tsx     # Equal member display
+│   ├── PendingInvites.tsx     # Invitation status tracking
+│   └── types.ts               # Shared type definitions
+```
+
+#### API Endpoints (Equal Access)
+
+- `POST /api/organization/invite` - Any member can invite new members
+- `GET /api/organization/members` - Any member can view the team
+- `DELETE /api/organization/members/:id` - Any member can remove others
+- `GET /api/organization/invitations` - Any member can view pending invites
+
+#### Benefits of Equal Access Pattern
+
+1. **Reduced Complexity** - No permission logic or role validation
+2. **Faster Development** - Simple CRUD operations without authorization layers
+3. **Better UX** - No confusing role selection or permission restrictions
+4. **Easier Testing** - Fewer edge cases and permission scenarios
+5. **Democratic Culture** - Promotes team equality and shared responsibility
 
 ## Frontend Architecture
 

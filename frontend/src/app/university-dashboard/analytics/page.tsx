@@ -57,11 +57,7 @@ export default function UniversityAnalyticsPage() {
   }, [authLoading]);
 
   return (
-    <UnifiedDashboardLayout
-      title=""
-      userRole="university"
-      breadcrumbs={[{ label: 'Analytics' }]}
-    >
+    <UnifiedDashboardLayout>
       {error && (
         <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
           {error}
@@ -71,7 +67,7 @@ export default function UniversityAnalyticsPage() {
       {loading ? (
         <div className="flex flex-col gap-4 items-center justify-center py-12">
           <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-          <p className="text-gray-500">Loading analytics...</p>
+          <p className="text-gray-500"></p>
         </div>
       ) : (
         <div className="space-y-8">

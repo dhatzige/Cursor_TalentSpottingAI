@@ -52,7 +52,7 @@ export default function ChartLegend({
               ? 'opacity-40'
               : ''
           }`}
-          onClick={isClickable ? () => onClick(item, index) : undefined}
+          onClick={isClickable && onClick ? () => onClick(item, index) : undefined}
         >
           {/* Color indicator */}
           {showDots && !showBoxes && (

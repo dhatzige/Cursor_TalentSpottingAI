@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
+
 import Link from 'next/link';
 
 export default function ContactPage() {
@@ -51,7 +51,6 @@ export default function ContactPage() {
   
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
-      <Navbar transparent={false} />
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">

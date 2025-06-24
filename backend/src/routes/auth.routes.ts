@@ -1,14 +1,23 @@
 import express from 'express';
-import { register, login, getUserProfile } from '../controllers/auth.controller';
-import { authenticateToken } from '../middleware/auth';
+import { clerkAuth } from '../middleware/clerkAuth';
+import { getUserProfile } from '../controllers/auth.controller';
 
 const router = express.Router();
 
-// Public routes
-router.post('/register', register);
-router.post('/login', login);
+// Authentication routes
+router.post('/login', (req, res) => {
+  res.status(410).json({ 
+    message: 'Legacy JWT login deprecated. Please use Clerk authentication.' 
+  });
+});
 
-// Protected routes
-router.get('/profile', authenticateToken, getUserProfile);
+router.post('/register', (req, res) => {
+  res.status(410).json({ 
+    message: 'Legacy JWT registration deprecated. Please use Clerk authentication.' 
+  });
+});
+
+// Protected profile route
+router.get('/profile', clerkAuth, getUserProfile);
 
 export default router;

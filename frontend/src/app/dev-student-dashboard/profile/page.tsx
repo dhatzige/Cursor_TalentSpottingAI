@@ -119,15 +119,6 @@ export default function ProfilePage() {
   );
 
   return (
-    <UnifiedDashboardLayout 
-      title="My Profile" 
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dev-student-dashboard' },
-        { label: 'Profile' }
-      ]}
-      children={profileContent}
-    />
+    <UnifiedDashboardLayout children={profileContent} />
   );
 }

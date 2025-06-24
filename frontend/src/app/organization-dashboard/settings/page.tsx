@@ -382,21 +382,6 @@ export default function SettingsPage() {
   const settingsContent = renderSettingsContent();
   
   return (
-    <UnifiedDashboardLayout
-      // Removing title to prevent duplication
-      title=""
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/organization-dashboard' },
-        { label: 'Settings' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-      children={settingsContent}
-    />
+    <UnifiedDashboardLayout children={settingsContent} />
   );
 }

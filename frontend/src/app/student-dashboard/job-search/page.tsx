@@ -200,18 +200,6 @@ export default function JobSearchPage() {
   );
 
   return (
-    <UnifiedDashboardLayout 
-      // Removing title to prevent duplication
-      title="" 
-      description=""
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/student-dashboard' },
-        { label: 'Job Search' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-      children={dashboardContent}
-    />
+    <UnifiedDashboardLayout children={dashboardContent} />
   );
 }

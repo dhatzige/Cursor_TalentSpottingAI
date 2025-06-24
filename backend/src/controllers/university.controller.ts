@@ -56,13 +56,13 @@ const prisma = new PrismaClient();
 // Get university dashboard stats
 export const getUniversityStats = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'university') {
+    if (!(req as any).user || (req as any).user.role !== 'university') {
       return res.status(403).json({ message: 'Unauthorized access to university resources' });
     }
     
     // Find the university this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { university: true }
     });
     
@@ -136,13 +136,13 @@ export const getUniversityStats = async (req: Request, res: Response) => {
 // Get student placement data by degree
 export const getStudentPlacement = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'university') {
+    if (!(req as any).user || (req as any).user.role !== 'university') {
       return res.status(403).json({ message: 'Unauthorized access to university resources' });
     }
     
     // Find the university this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { university: true }
     });
     
@@ -208,13 +208,13 @@ export const getStudentPlacement = async (req: Request, res: Response) => {
 // Get employer partners
 export const getEmployerPartners = async (req: Request, res: Response) => {
   try {
-    if (!req.user || req.user.role !== 'university') {
+    if (!(req as any).user || (req as any).user.role !== 'university') {
       return res.status(403).json({ message: 'Unauthorized access to university resources' });
     }
     
     // Find the university this user belongs to
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: (req as any).user.id },
       include: { university: true }
     });
     

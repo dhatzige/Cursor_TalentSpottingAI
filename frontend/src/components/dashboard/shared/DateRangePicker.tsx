@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Button from './Button';
+import { Button } from '@/components/ui/button';
 
 export type DateRange = {
   startDate: Date;
@@ -215,7 +215,7 @@ export default function DateRangePicker({
                   id="start-date"
                   type="date"
                   value={formatDateForInput(dateRange.startDate)}
-                  onChange={(e) => handleDateChange('startDate', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDateChange('startDate', e.target.value)}
                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
@@ -228,7 +228,7 @@ export default function DateRangePicker({
                   id="end-date"
                   type="date"
                   value={formatDateForInput(dateRange.endDate)}
-                  onChange={(e) => handleDateChange('endDate', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDateChange('endDate', e.target.value)}
                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>

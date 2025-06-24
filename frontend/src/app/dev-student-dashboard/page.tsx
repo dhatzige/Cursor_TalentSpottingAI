@@ -213,14 +213,6 @@ export default function DevStudentDashboardPage() {
   );
 
   return (
-    <UnifiedDashboardLayout 
-      title="Student Dashboard (Dev Mode)" 
-      userRole="student"
-      userInfo={{
-        name: userInfo.name,
-        role: userInfo.role,
-      }}
-      children={dashboardContent}
-    />
+    <UnifiedDashboardLayout children={dashboardContent} />
   );
 }

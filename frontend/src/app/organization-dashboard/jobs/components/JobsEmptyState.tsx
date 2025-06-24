@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Button from '../../shared/ui/Button';
-import Card from '../../shared/ui/Card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 interface JobsEmptyStateProps {
   activeFilter: 'all' | 'open' | 'closed' | 'draft';

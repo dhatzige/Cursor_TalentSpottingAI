@@ -3,7 +3,7 @@ import * as postService from '../services/post.service';
 
 export const createPostHandler: RequestHandler = async (req, res) => {
   try {
-    const authorId = req.user?.id;
+    const authorId = (req as any).user?.id;
     if (!authorId) {
       res.status(401).json({ message: 'User not authenticated' });
       return;
@@ -63,4 +63,28 @@ export const deletePostHandler: RequestHandler = async (req, res) => {
   } catch (error: any) {
     res.status(500).json({ message: 'Failed to delete post', error: error.message });
   }
+};
+
+// Aliases for route compatibility
+export const getAllPosts = getAllPostsHandler;
+export const getPostById = getPostByIdHandler;
+export const createPost = createPostHandler;
+export const updatePost = updatePostHandler;
+export const deletePost = deletePostHandler;
+
+// Placeholder functions for missing post features
+export const likePost: RequestHandler = async (req, res) => {
+  res.status(501).json({ message: 'Like functionality not implemented yet' });
+};
+
+export const unlikePost: RequestHandler = async (req, res) => {
+  res.status(501).json({ message: 'Unlike functionality not implemented yet' });
+};
+
+export const addComment: RequestHandler = async (req, res) => {
+  res.status(501).json({ message: 'Comment functionality not implemented yet' });
+};
+
+export const getComments: RequestHandler = async (req, res) => {
+  res.status(501).json({ message: 'Comments functionality not implemented yet' });
 };

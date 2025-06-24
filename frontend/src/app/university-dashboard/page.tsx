@@ -84,7 +84,7 @@ export default function UniversityDashboardPage() {
   }, [authLoading]);
 
   return (
-    <UnifiedDashboardLayout title="" userRole="university" breadcrumbs={[{ label: 'Dashboard' }]}>
+    <UnifiedDashboardLayout>
       <div>
         
         
@@ -97,7 +97,7 @@ export default function UniversityDashboardPage() {
         {isLoading ? (
           <div className="flex flex-col gap-4 items-center justify-center py-12">
             <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-            <p className="text-gray-500">Loading dashboard data...</p>
+            <p className="text-gray-500"></p>
           </div>
         ) : (
           <div className="space-y-6">

@@ -296,22 +296,8 @@ export default function ApplicationReviewPage() {
   };
 
   return (
-    <UnifiedDashboardLayout
-      // Removing title to prevent duplication
-      title=""
-      description=""
-      userRole="employer"
-      userInfo={{
-        name: 'Demo User',
-        company: 'TalentSpottingAI Inc.',
-      }}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/organization-dashboard' },
-        { label: 'Applications' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-    >
-      {renderContent()}
+    <UnifiedDashboardLayout>
+      <div>Page content here</div>
     </UnifiedDashboardLayout>
   );
 }

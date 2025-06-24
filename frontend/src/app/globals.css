@@ -1,5 +1,8 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import "./gradient-bg.css";
+@import "../styles/clerk-custom.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -132,9 +135,14 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-gray-200 dark:border-gray-700 outline-gray-400/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-900 text-white;
+  }
+  
+  /* Ensure dark mode is always applied */
+  html {
+    @apply dark;
   }
 }

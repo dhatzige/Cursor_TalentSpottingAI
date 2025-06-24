@@ -17,10 +17,10 @@
 import { getOrganizationStats } from './organization-controller';
 import { getActiveJobs, getAllJobs, getJobById, createJob } from './jobs-controller';
 import { 
-  getJobApplications, 
-  getApplicationDetails,
+  getApplications, 
+  getApplicationById,
   updateApplicationStatus, 
-  addApplicationNote
+  getApplicationStats
 } from './applications-controller';
 import { getTopCandidates } from './candidates-controller';
 
@@ -36,10 +36,10 @@ export {
   createJob,
   
   // Applications
-  getJobApplications,
-  getApplicationDetails,
+  getApplications,
+  getApplicationById,
   updateApplicationStatus,
-  addApplicationNote,
+  getApplicationStats,
   
   // Candidates
   getTopCandidates

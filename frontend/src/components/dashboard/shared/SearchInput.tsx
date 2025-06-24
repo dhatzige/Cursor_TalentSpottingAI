@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import * as React from 'react';
+import { Search } from 'lucide-react';
 
 interface SearchInputProps {
   placeholder?: string;
@@ -29,18 +30,18 @@ export default function SearchInput({
   fullWidth = false,
   showSearchButton = true
 }: SearchInputProps) {
-  const [inputValue, setInputValue] = useState(value || '');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = React.useState(value || '');
+  const inputRef = React.useRef<HTMLInputElement>(null);
   
   // Update local state when external value changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (value !== undefined && value !== inputValue) {
       setInputValue(value);
     }
   }, [value]);
   
   // Auto-focus the input if specified
-  useEffect(() => {
+  React.useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
     }

@@ -28,11 +28,7 @@ export default function EmployerEventsPage() {
   const filteredEvents = events.filter((e) => e.status === filter);
 
   return (
-    <UnifiedDashboardLayout
-      title="Events"
-      userRole="employer"
-      breadcrumbs={[{ label: 'Dashboard', href: '/organization-dashboard' }, { label: 'Events' }]}
-    >
+    <UnifiedDashboardLayout>
       <div className="space-y-6">
         {/* Tabs */}
         <div className="flex items-center justify-between">

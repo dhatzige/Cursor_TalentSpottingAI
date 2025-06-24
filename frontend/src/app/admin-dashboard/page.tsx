@@ -78,7 +78,7 @@ export default function AdminDashboardPage() {
   }, [authLoading]);
 
   return (
-    <UnifiedDashboardLayout title="Admin Dashboard" userRole="admin">
+    <UnifiedDashboardLayout>
       <div>
         
         {error && (

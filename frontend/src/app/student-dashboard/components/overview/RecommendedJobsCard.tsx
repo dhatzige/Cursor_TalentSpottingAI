@@ -98,10 +98,20 @@ export default function RecommendedJobsCard({
       ) : (
         <div className="space-y-4">
           {jobs.slice(0, 3).map((job) => {
-            // Parse the post date string into a Date object
-            const postDate = new Date(job.postDate);
-            // Format the post date as "X days/hours ago"
-            const timeAgo = formatDistanceToNow(postDate, { addSuffix: true });
+            // Parse the date - handle both postDate and createdAt fields
+            let timeAgo = 'Recently';
+            try {
+              const dateString = job.postDate || (job as any).createdAt;
+              if (dateString) {
+                const postDate = new Date(dateString);
+                if (!isNaN(postDate.getTime())) {
+                  timeAgo = formatDistanceToNow(postDate, { addSuffix: true });
+                }
+              }
+            } catch (error) {
+              console.warn('Error parsing job date:', error);
+              timeAgo = 'Recently';
+            }
             
             return (
               <div 
@@ -114,7 +124,7 @@ export default function RecommendedJobsCard({
                       {job.title}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {job.company} • {job.location}
+                      {job.company} • {job.location || 'Remote'}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                       Posted {timeAgo}

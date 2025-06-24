@@ -145,7 +145,7 @@ export default function ApplicationDetails({
               className="w-full border border-gray-300 rounded-md p-2 min-h-[80px] mb-2"
               placeholder="Add a note about this application"
               value={noteContent}
-              onChange={(e) => setNoteContent(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNoteContent(e.target.value)}
             />
             <div className="flex justify-end">
               <Button
@@ -195,7 +195,7 @@ export default function ApplicationDetails({
           className="w-full border border-gray-300 rounded-md p-2 min-h-[100px]"
           placeholder="Provide feedback to the candidate (they will see this if accepted or rejected)"
           value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFeedback(e.target.value)}
         />
         
         {updateError && (

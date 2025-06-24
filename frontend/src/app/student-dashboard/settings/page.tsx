@@ -9,6 +9,8 @@ import { getPreferredTheme } from '@/lib/theme';
 import { useEffect } from 'react';
 import AppearanceSection from '@/components/settings/AppearanceSection';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
+import { useAuth, useUser } from '@clerk/nextjs';
+import { StudentService } from '@/lib/api';
 
 // Define types for the settings state to avoid TypeScript errors
 type NotificationsSettings = {
@@ -39,13 +41,12 @@ type SettingsState = {
 
 export default function SettingsPage() {
   // Protect this route - only students can access
-    const { loading: authLoading } = useProtectedRoute(['student']);
+  const { loading: authLoading } = useProtectedRoute(['student']);
+  const { user } = useUser();
+  const { getToken } = useAuth();
   
-  // Mock user info - In a real application, this would come from auth context
-  const userInfo = {
-    name: 'Alex Johnson',
-    role: 'Student',
-  };
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   // State for the settings form with proper typing
   const [settings, setSettings] = useState<SettingsState>({
@@ -71,6 +72,26 @@ export default function SettingsPage() {
 
   // Dirty flag & save hook
   const { saveSettings, saving, saved } = useSaveSettings<SettingsState>();
+
+  // Load user profile data
+  useEffect(() => {
+    if (authLoading) return;
+    
+    const fetchUserProfile = async () => {
+      try {
+        const profileData = await StudentService.getProfile(getToken);
+        if (profileData?.user) {
+          setUserProfile(profileData.user);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [authLoading, getToken]);
 
   // sync dark mode
   useEffect(() => {
@@ -112,11 +133,24 @@ export default function SettingsPage() {
     });
   };
 
+  // Get user display name
+  const getUserDisplayName = () => {
+    if (userProfile?.studentProfile) {
+      return `${userProfile.studentProfile.firstName} ${userProfile.studentProfile.lastName}`;
+    }
+    return user?.fullName || 'Student';
+  };
+
   // Create the content to be used as children
   const content = (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 dark:text-white">Account Settings</h1>
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 dark:text-white">Account Settings</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {loadingProfile ? 'Loading...' : `Manage settings for ${getUserDisplayName()}`}
+          </p>
+        </div>
         
         <button
             onClick={() => { saveSettings(settings).then(() => setDirty(false)); }}
@@ -366,21 +400,6 @@ export default function SettingsPage() {
   
   // Return the layout with content as children
   return (
-    <UnifiedDashboardLayout
-      // Removing title to prevent duplication
-      title="" 
-      description=""
-      userRole="student"
-      userInfo={userInfo}
-      breadcrumbs={[
-        // If in development, link to the no-auth version
-        { label: 'Dashboard', href: isDev ? '/student-dashboard-noauth' : '/student-dashboard' },
-        { label: 'Settings' }
-      ]}
-      className="pt-0 mt-0" // Removing padding at the top
-      children={content} // Explicitly set children prop to fix TypeScript error
-    >
-      {content}
-    </UnifiedDashboardLayout>
+    <UnifiedDashboardLayout children={content} />
   );
 }
